@@ -304,7 +304,7 @@ def _build_test_cases(
 
         args_str = ", ".join(happy_args)
         code = gen(func_name, "basic_usage", "happy_path",
-                   f"Should handle typical input correctly", args_str, "expected")
+                   "Should handle typical input correctly", args_str, "expected")
         cases.append({
             "name": f"test_{func_name}_basic_usage",
             "category": "happy_path",

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import re
-import unicodedata
 
 
 def format_social_content(

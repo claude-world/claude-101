@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-import re
-from datetime import date, datetime, timezone
+from datetime import date
 from typing import Any
 
 
@@ -111,8 +110,8 @@ def _generate_pros_cons(option_name: str) -> tuple[list[str], list[str]]:
 
     # Generic fallback
     else:
-        pros.extend([f"Addresses the stated requirements", "Feasible with current resources"])
-        cons.extend([f"Trade-offs need further evaluation", "May require additional research"])
+        pros.extend(["Addresses the stated requirements", "Feasible with current resources"])
+        cons.extend(["Trade-offs need further evaluation", "May require additional research"])
 
     return pros, cons
 

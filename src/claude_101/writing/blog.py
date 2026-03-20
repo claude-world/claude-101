@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import math
 import re
 
 
@@ -182,9 +181,9 @@ def _personalize_section_name(template: str, topic: str, style: str) -> str:
         "Step 1: Foundation": f"Step 1: Setting Up {topic_short}",
         "Step 2: Core Implementation": f"Step 2: Building {topic_short}",
         "Step 3: Polish & Edge Cases": f"Step 3: Polishing {topic_short}",
-        "Items 1-3": f"Top Picks (1-3)",
-        "Items 4-6": f"Strong Contenders (4-6)",
-        "Items 7-10": f"Hidden Gems (7-10)",
+        "Items 1-3": "Top Picks (1-3)",
+        "Items 4-6": "Strong Contenders (4-6)",
+        "Items 7-10": "Hidden Gems (7-10)",
         "Approach & Solution": f"The {topic_short} Solution",
         "Results & Metrics": f"Results: Measuring {topic_short} Impact",
     }

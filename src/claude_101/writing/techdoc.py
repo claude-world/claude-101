@@ -359,7 +359,7 @@ def _build_template(
         lines.append("")
         lines.append("**Status:** Proposed")
         lines.append("")
-        lines.append(f"**Date:** [YYYY-MM-DD]")
+        lines.append("**Date:** [YYYY-MM-DD]")
         lines.append("")
 
     elif doc_type == "changelog":
@@ -375,7 +375,7 @@ def _build_template(
         lines.append(f"# {title}")
         lines.append("")
         lines.append("<!-- badges -->")
-        lines.append(f"![License](https://img.shields.io/badge/license-MIT-blue)")
+        lines.append("![License](https://img.shields.io/badge/license-MIT-blue)")
         lines.append("")
 
     else:

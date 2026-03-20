@@ -244,7 +244,7 @@ def _build_body(tone: str, purpose: str, key_points: list[str], fmt: str) -> str
             lines.append(f"  {i}. {point}")
     else:
         lines.append(f"[Paragraph 1: Provide context about {purpose}.]")
-        lines.append(f"\n[Paragraph 2: Detail the key information or request.]")
+        lines.append("\n[Paragraph 2: Detail the key information or request.]")
 
     if fmt == "detailed":
         lines.append(f"\n[Additional context: Provide background information about {purpose}.]")
@@ -269,11 +269,11 @@ def _build_closing(tone: str) -> str:
 
 def _build_cta(tone: str, purpose: str) -> str:
     ctas = {
-        "professional": f"Could you please review and share your thoughts at your earliest convenience?",
-        "friendly": f"Would love to hear your thoughts — let me know when you have a moment!",
-        "assertive": f"Please confirm receipt and provide your response by [deadline].",
-        "apologetic": f"Please let us know how we can further assist you to resolve this matter.",
-        "congratulatory": f"I would love to hear about your plans — let's catch up soon!",
+        "professional": "Could you please review and share your thoughts at your earliest convenience?",
+        "friendly": "Would love to hear your thoughts — let me know when you have a moment!",
+        "assertive": "Please confirm receipt and provide your response by [deadline].",
+        "apologetic": "Please let us know how we can further assist you to resolve this matter.",
+        "congratulatory": "I would love to hear about your plans — let's catch up soon!",
     }
     return ctas.get(tone, ctas["professional"])
 

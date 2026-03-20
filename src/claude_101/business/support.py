@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import re
 
 from .._utils import flesch_score, count_pattern_matches
 

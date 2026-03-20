@@ -576,7 +576,7 @@ export function {fn}({ts_param}){ts_ret} {{
 
 def _js_api(name: str, desc: str, is_ts: bool) -> tuple[str, list[str]]:
     fn = _to_camel(name)
-    code_lines = [f'/**', f' * {desc or f"API endpoint handler for {fn}."}', f' */']
+    code_lines = ['/**', f' * {desc or f"API endpoint handler for {fn}."}', ' */']
     if is_ts:
         code_lines += [
             '',

@@ -9,10 +9,9 @@ import sqlparse
 from sqlparse.sql import (
     Identifier,
     IdentifierList,
-    Parenthesis,
     Where,
 )
-from sqlparse.tokens import Keyword, DML, DDL, Punctuation
+from sqlparse.tokens import Keyword, DML, DDL
 
 
 # ── Dialect detection ────────────────────────────────────────────────────────
@@ -109,7 +108,6 @@ def _extract_columns(parsed: list[sqlparse.sql.Statement]) -> list[str]:
 def _walk_for_columns(token_list: Any, columns: list[str]) -> None:
     """Recursively walk tokens to find column identifiers."""
     in_select = False
-    in_where = False
 
     for token in token_list.tokens:
         if token.ttype is DML and token.value.upper() == "SELECT":

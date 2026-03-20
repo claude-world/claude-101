@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import math
-import re
 
 
 # ---------------------------------------------------------------------------
@@ -257,7 +255,6 @@ def _estimate_hours(
     if task_count == 0:
         return []
     # Give first task ~30% more than average, last task ~30% less
-    base = phase_hours / task_count
     weights = [1.0 + 0.3 * (1 - 2 * i / max(task_count - 1, 1)) for i in range(task_count)]
     total_weight = sum(weights)
     hours = [round(w / total_weight * phase_hours, 1) for w in weights]

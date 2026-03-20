@@ -1,9 +1,10 @@
 """Tests for the CLI interface."""
 
 import json
-import sys
 from io import StringIO
 from unittest.mock import patch
+
+import pytest
 
 from claude_101.cli import main, _build_registry, _parse_docstring_args
 
@@ -190,7 +191,3 @@ class TestErrorHandling:
         with pytest.raises(SystemExit) as exc_info:
             main(["nonexistent-tool"])
         assert exc_info.value.code == 2
-
-
-# Need pytest import for SystemExit checks
-import pytest

@@ -153,7 +153,7 @@ def _generate_openapi(title: str, endpoints: list[dict[str, Any]]) -> str:
 
             # Tags from first path segment
             if op_parts and op_parts[0]:
-                lines.append(f"      tags:")
+                lines.append("      tags:")
                 lines.append(f"        - {op_parts[0]}")
 
             # Parameters
@@ -163,7 +163,7 @@ def _generate_openapi(title: str, endpoints: list[dict[str, Any]]) -> str:
                     lines.append(f"        - name: {param['name']}")
                     lines.append(f"          in: {param['in']}")
                     lines.append(f"          required: {'true' if param['required'] else 'false'}")
-                    lines.append(f"          schema:")
+                    lines.append("          schema:")
                     lines.append(f"            type: {param['type']}")
 
             # Request body for POST/PUT/PATCH

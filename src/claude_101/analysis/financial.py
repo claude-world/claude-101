@@ -153,7 +153,7 @@ def analyze_financials(data: str, period: str = "quarterly") -> dict:
     # ── Growth rates ────────────────────────────────────────────
     revenue_growth = _growth_rates(revenue)
     cost_growth = _growth_rates(costs)
-    profit_growth = _growth_rates(net_income)
+    _growth_rates(net_income)  # computed for completeness
 
     # ── Burn rate (applicable when costs > revenue) ─────────────
     burn_rate_result: dict = {}

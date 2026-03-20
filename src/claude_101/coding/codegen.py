@@ -3,6 +3,193 @@
 from __future__ import annotations
 
 
+# ── Description-aware patterns ──────────────────────────────────────────────
+
+_DESCRIPTION_PATTERNS: dict[str, list[dict]] = {
+    "crud": [
+        {"name": "create", "args": "data: dict", "doc": "Create a new record"},
+        {"name": "get", "args": "id: str", "doc": "Get a record by ID"},
+        {
+            "name": "list",
+            "args": "filters: dict = None",
+            "doc": "List all records with optional filters",
+        },
+        {
+            "name": "update",
+            "args": "id: str, data: dict",
+            "doc": "Update an existing record",
+        },
+        {"name": "delete", "args": "id: str", "doc": "Delete a record by ID"},
+    ],
+    "api": [
+        {
+            "name": "get",
+            "args": "endpoint: str, params: dict = None",
+            "doc": "Send GET request",
+        },
+        {
+            "name": "post",
+            "args": "endpoint: str, data: dict",
+            "doc": "Send POST request",
+        },
+        {"name": "put", "args": "endpoint: str, data: dict", "doc": "Send PUT request"},
+        {"name": "delete", "args": "endpoint: str", "doc": "Send DELETE request"},
+    ],
+    "auth": [
+        {
+            "name": "login",
+            "args": "username: str, password: str",
+            "doc": "Authenticate user",
+        },
+        {"name": "logout", "args": "", "doc": "End user session"},
+        {
+            "name": "register",
+            "args": "username: str, password: str, email: str",
+            "doc": "Register new user",
+        },
+        {
+            "name": "verify_token",
+            "args": "token: str",
+            "doc": "Verify authentication token",
+        },
+    ],
+    "cache": [
+        {"name": "get", "args": "key: str", "doc": "Get value from cache"},
+        {
+            "name": "set",
+            "args": "key: str, value: any, ttl: int = 300",
+            "doc": "Set value in cache",
+        },
+        {"name": "delete", "args": "key: str", "doc": "Delete key from cache"},
+        {"name": "clear", "args": "", "doc": "Clear all cache entries"},
+    ],
+    "queue": [
+        {
+            "name": "publish",
+            "args": "message: dict, topic: str = ''",
+            "doc": "Publish message to queue",
+        },
+        {
+            "name": "consume",
+            "args": "topic: str, callback",
+            "doc": "Consume messages from queue",
+        },
+        {
+            "name": "acknowledge",
+            "args": "message_id: str",
+            "doc": "Acknowledge processed message",
+        },
+    ],
+}
+
+
+def _detect_description_pattern(description: str) -> str | None:
+    """Check if any key from _DESCRIPTION_PATTERNS appears in the lowercased description."""
+    if not description:
+        return None
+    lower = description.lower()
+    for key in _DESCRIPTION_PATTERNS:
+        if key in lower:
+            return key
+    return None
+
+
+def _build_pattern_methods_python(pattern_key: str, indent: str = "    ") -> str:
+    """Build Python method stubs from a description pattern."""
+    methods = _DESCRIPTION_PATTERNS[pattern_key]
+    parts: list[str] = []
+    for m in methods:
+        args_str = f"self, {m['args']}" if m["args"] else "self"
+        parts.append(f"{indent}def {m['name']}({args_str}):")
+        parts.append(f'{indent}    """{m["doc"]}."""')
+        parts.append(f"{indent}    raise NotImplementedError")
+        parts.append("")
+    return "\n".join(parts)
+
+
+def _build_pattern_functions_python(pattern_key: str, prefix: str) -> str:
+    """Build Python standalone functions from a description pattern."""
+    methods = _DESCRIPTION_PATTERNS[pattern_key]
+    parts: list[str] = []
+    for m in methods:
+        fn_name = f"{prefix}_{m['name']}" if prefix else m["name"]
+        args_str = m["args"] if m["args"] else ""
+        parts.append(f"def {fn_name}({args_str}):")
+        parts.append(f'    """{m["doc"]}."""')
+        parts.append("    raise NotImplementedError")
+        parts.append("")
+        parts.append("")
+    return "\n".join(parts)
+
+
+def _build_pattern_methods_js(pattern_key: str, is_ts: bool, indent: str = "  ") -> str:
+    """Build JS/TS method stubs from a description pattern."""
+    methods = _DESCRIPTION_PATTERNS[pattern_key]
+    parts: list[str] = []
+    for m in methods:
+        # Convert Python-style args to JS/TS style
+        args = _convert_args_to_js(m["args"], is_ts)
+        ret_type = ": unknown" if is_ts else ""
+        parts.append(f"{indent}/** {m['doc']}. */")
+        parts.append(f"{indent}{m['name']}({args}){ret_type} {{")
+        parts.append(f'{indent}  throw new Error("Not implemented");')
+        parts.append(f"{indent}}}")
+        parts.append("")
+    return "\n".join(parts)
+
+
+def _convert_args_to_js(args: str, is_ts: bool) -> str:
+    """Convert Python-style arg annotations to JS/TS style."""
+    if not args:
+        return ""
+    params: list[str] = []
+    for part in args.split(","):
+        part = part.strip()
+        if not part:
+            continue
+        if ":" in part and "=" in part:
+            # e.g. "key: str, value: any, ttl: int = 300"
+            name_type, default = part.split("=", 1)
+            name_type = name_type.strip()
+            default = default.strip()
+            # Convert Python defaults to JS equivalents
+            js_default = {"None": "null", "True": "true", "False": "false"}.get(
+                default, default
+            )
+            name, _type = name_type.split(":", 1)
+            name = name.strip()
+            js_type = _py_type_to_js(_type.strip())
+            if is_ts:
+                params.append(f"{name}: {js_type} = {js_default}")
+            else:
+                params.append(f"{name} = {js_default}")
+        elif ":" in part:
+            name, _type = part.split(":", 1)
+            name = name.strip()
+            js_type = _py_type_to_js(_type.strip())
+            if is_ts:
+                params.append(f"{name}: {js_type}")
+            else:
+                params.append(name)
+        else:
+            params.append(part)
+    return ", ".join(params)
+
+
+def _py_type_to_js(py_type: str) -> str:
+    """Simple Python type to JS/TS type mapping."""
+    mapping = {
+        "str": "string",
+        "int": "number",
+        "float": "number",
+        "bool": "boolean",
+        "dict": "Record<string, unknown>",
+        "list": "unknown[]",
+        "any": "unknown",
+    }
+    return mapping.get(py_type, "unknown")
+
+
 # ── Language metadata ────────────────────────────────────────────────────────
 
 _NAMING = {
@@ -61,7 +248,11 @@ def _convert_name(name: str, convention: str) -> str:
 
 def _python_class(name: str, desc: str) -> tuple[str, list[str]]:
     cn = _to_pascal(name)
-    code = f'''"""Module for {cn}."""
+    pattern_key = _detect_description_pattern(desc)
+    docstring = desc or f"{cn} class."
+    if pattern_key:
+        method_stubs = _build_pattern_methods_python(pattern_key)
+        code = f'''"""Module for {cn}."""
 
 from __future__ import annotations
 
@@ -71,7 +262,27 @@ from typing import Any
 
 @dataclass
 class {cn}:
-    """{desc or f"{cn} class."}"""
+    """{docstring}"""
+
+    name: str = ""
+    _data: dict[str, Any] = field(default_factory=dict, repr=False)
+
+{method_stubs}
+    def __str__(self) -> str:
+        return f"{cn}(name={{self.name!r}})"
+'''
+    else:
+        code = f'''"""Module for {cn}."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from typing import Any
+
+
+@dataclass
+class {cn}:
+    """{docstring}"""
 
     name: str = ""
     _data: dict[str, Any] = field(default_factory=dict, repr=False)
@@ -92,7 +303,20 @@ class {cn}:
 
 def _python_function(name: str, desc: str) -> tuple[str, list[str]]:
     fn = _to_snake(name)
-    code = f'''"""Utility functions for {fn}."""
+    docstring = desc or f"Process data via {fn}."
+    pattern_key = _detect_description_pattern(desc)
+    if pattern_key:
+        func_stubs = _build_pattern_functions_python(pattern_key, fn)
+        code = f'''"""{docstring}"""
+
+from __future__ import annotations
+
+from typing import Any
+
+
+{func_stubs}'''
+    else:
+        code = f'''"""Utility functions for {fn}."""
 
 from __future__ import annotations
 
@@ -100,7 +324,7 @@ from typing import Any
 
 
 def {fn}(data: Any, *, verbose: bool = False) -> dict[str, Any]:
-    """{desc or f"Process data via {fn}."}
+    """{docstring}
 
     Args:
         data: Input data to process.
@@ -517,8 +741,28 @@ def _js_class(name: str, desc: str, is_ts: bool) -> tuple[str, list[str]]:
     ts_data = ": Record<string, unknown>" if is_ts else ""
     ts_bool = ": boolean" if is_ts else ""
     ts_obj = ": Record<string, unknown>" if is_ts else ""
-    code = f"""/**
- * {desc or f"{cn} class."}
+    docstring = desc or f"{cn} class."
+    pattern_key = _detect_description_pattern(desc)
+    if pattern_key:
+        method_stubs = _build_pattern_methods_js(pattern_key, is_ts)
+        code = f"""/**
+ * {docstring}
+ */
+export class {cn} {{
+  constructor(name{ts_types} = "") {{
+    this.name = name;
+    this._data{ts_data} = {{}};
+  }}
+
+{method_stubs}
+  toString(){ts_types} {{
+    return `{cn}(name=${{this.name}})`;
+  }}
+}}
+"""
+    else:
+        code = f"""/**
+ * {docstring}
  */
 export class {cn} {{
   constructor(name{ts_types} = "") {{
@@ -544,14 +788,32 @@ export class {cn} {{
 
 def _js_function(name: str, desc: str, is_ts: bool) -> tuple[str, list[str]]:
     fn = _to_camel(name)
-    ts_param = (
-        "data: unknown, options: {{ verbose?: boolean }} = {{}}"
-        if is_ts
-        else "data, options = {}"
-    )
-    ts_ret = ": Record<string, unknown>" if is_ts else ""
-    code = f"""/**
- * {desc or f"Process data via {fn}."}
+    docstring = desc or f"Process data via {fn}."
+    pattern_key = _detect_description_pattern(desc)
+    if pattern_key:
+        methods = _DESCRIPTION_PATTERNS[pattern_key]
+        parts: list[str] = ["/**", f" * {docstring}", " */", ""]
+        for m in methods:
+            func_name = f"{fn}_{_to_camel(m['name'])}" if fn else _to_camel(m["name"])
+            # Actually use camelCase combo: e.g. fetchDataCreate
+            func_name = _to_camel(f"{fn}_{m['name']}")
+            args = _convert_args_to_js(m["args"], is_ts)
+            ret_type = ": unknown" if is_ts else ""
+            parts.append(f"/** {m['doc']}. */")
+            parts.append(f"export function {func_name}({args}){ret_type} {{")
+            parts.append('  throw new Error("Not implemented");')
+            parts.append("}")
+            parts.append("")
+        code = "\n".join(parts) + "\n"
+    else:
+        ts_param = (
+            "data: unknown, options: {{ verbose?: boolean }} = {{}}"
+            if is_ts
+            else "data, options = {}"
+        )
+        ts_ret = ": Record<string, unknown>" if is_ts else ""
+        code = f"""/**
+ * {docstring}
  * @param data - Input data to process.
  * @param options - Processing options.
  * @returns Processing results.
@@ -1457,7 +1719,12 @@ def scaffold_code(
 
     code, imports = _generate_code(lang, pat, name, description)
     converted_name = _convert_name(name, convention)
+    desc_pattern = _detect_description_pattern(description)
     notes.append(f"Generated {pat} scaffold for '{converted_name}' in {lang}")
+    if desc_pattern:
+        notes.append(
+            f"Description matched pattern '{desc_pattern}'; methods customized accordingly"
+        )
 
     return {
         "language": lang,
@@ -1468,4 +1735,5 @@ def scaffold_code(
         "imports": imports,
         "file_extension": extension,
         "notes": notes,
+        "description_matched": desc_pattern,
     }

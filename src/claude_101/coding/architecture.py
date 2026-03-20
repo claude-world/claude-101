@@ -10,18 +10,277 @@ from typing import Any
 
 _DEFAULT_CRITERIA = ["Performance", "Maintainability", "Cost", "Complexity", "Risk"]
 
+# ── Technology knowledge base ────────────────────────────────────────────────
+# Maps well-known technology names to their known characteristics so that
+# the trade-off matrix contains *real*, differentiated values instead of
+# generic "medium" for every option.
+
+_TECH_PROFILES: dict[str, dict[str, str]] = {
+    # Message queues
+    "rabbitmq": {
+        "performance": "high",
+        "cost": "low",
+        "complexity": "medium",
+        "scalability": "medium",
+        "maturity": "high",
+    },
+    "kafka": {
+        "performance": "very_high",
+        "cost": "medium",
+        "complexity": "high",
+        "scalability": "very_high",
+        "maturity": "high",
+    },
+    "sqs": {
+        "performance": "high",
+        "cost": "low",
+        "complexity": "low",
+        "scalability": "very_high",
+        "maturity": "high",
+    },
+    "redis": {
+        "performance": "very_high",
+        "cost": "low",
+        "complexity": "low",
+        "scalability": "medium",
+        "maturity": "high",
+    },
+    # Databases
+    "postgresql": {
+        "performance": "high",
+        "cost": "low",
+        "complexity": "medium",
+        "scalability": "medium",
+        "maturity": "very_high",
+    },
+    "mysql": {
+        "performance": "high",
+        "cost": "low",
+        "complexity": "low",
+        "scalability": "medium",
+        "maturity": "very_high",
+    },
+    "mongodb": {
+        "performance": "high",
+        "cost": "medium",
+        "complexity": "low",
+        "scalability": "high",
+        "maturity": "high",
+    },
+    "dynamodb": {
+        "performance": "very_high",
+        "cost": "variable",
+        "complexity": "medium",
+        "scalability": "very_high",
+        "maturity": "high",
+    },
+    "sqlite": {
+        "performance": "medium",
+        "cost": "free",
+        "complexity": "very_low",
+        "scalability": "low",
+        "maturity": "very_high",
+    },
+    "cassandra": {
+        "performance": "very_high",
+        "cost": "high",
+        "complexity": "high",
+        "scalability": "very_high",
+        "maturity": "high",
+    },
+    # Web frameworks
+    "express": {
+        "performance": "medium",
+        "cost": "low",
+        "complexity": "low",
+        "scalability": "medium",
+        "maturity": "very_high",
+    },
+    "fastapi": {
+        "performance": "high",
+        "cost": "low",
+        "complexity": "low",
+        "scalability": "high",
+        "maturity": "medium",
+    },
+    "django": {
+        "performance": "medium",
+        "cost": "low",
+        "complexity": "medium",
+        "scalability": "medium",
+        "maturity": "very_high",
+    },
+    "flask": {
+        "performance": "medium",
+        "cost": "low",
+        "complexity": "low",
+        "scalability": "medium",
+        "maturity": "high",
+    },
+    "spring": {
+        "performance": "high",
+        "cost": "low",
+        "complexity": "high",
+        "scalability": "high",
+        "maturity": "very_high",
+    },
+    "nextjs": {
+        "performance": "high",
+        "cost": "low",
+        "complexity": "medium",
+        "scalability": "high",
+        "maturity": "medium",
+    },
+    # Cloud providers
+    "aws": {
+        "performance": "very_high",
+        "cost": "variable",
+        "complexity": "high",
+        "scalability": "very_high",
+        "maturity": "very_high",
+    },
+    "gcp": {
+        "performance": "very_high",
+        "cost": "variable",
+        "complexity": "high",
+        "scalability": "very_high",
+        "maturity": "high",
+    },
+    "azure": {
+        "performance": "very_high",
+        "cost": "variable",
+        "complexity": "high",
+        "scalability": "very_high",
+        "maturity": "high",
+    },
+    "vercel": {
+        "performance": "high",
+        "cost": "low",
+        "complexity": "very_low",
+        "scalability": "high",
+        "maturity": "medium",
+    },
+    "cloudflare": {
+        "performance": "very_high",
+        "cost": "low",
+        "complexity": "low",
+        "scalability": "very_high",
+        "maturity": "medium",
+    },
+    # Frontend frameworks
+    "react": {
+        "performance": "medium",
+        "cost": "low",
+        "complexity": "medium",
+        "scalability": "high",
+        "maturity": "very_high",
+    },
+    "vue": {
+        "performance": "high",
+        "cost": "low",
+        "complexity": "low",
+        "scalability": "high",
+        "maturity": "high",
+    },
+    "svelte": {
+        "performance": "very_high",
+        "cost": "low",
+        "complexity": "low",
+        "scalability": "medium",
+        "maturity": "medium",
+    },
+    "angular": {
+        "performance": "medium",
+        "cost": "low",
+        "complexity": "high",
+        "scalability": "high",
+        "maturity": "very_high",
+    },
+}
+
+# Mapping from profile trait names to ADR criteria names so we can translate
+# a profile entry into the standard criteria used in the trade-off matrix.
+_PROFILE_TO_CRITERIA: dict[str, str] = {
+    "performance": "performance",
+    "cost": "cost",
+    "complexity": "complexity",
+    "scalability": "maintainability",  # scalability is the best proxy we have
+    "maturity": "risk",  # high maturity → low risk, handled below
+}
+
+# Maturity-to-risk inversion: higher maturity means lower risk.
+_MATURITY_TO_RISK: dict[str, str] = {
+    "very_high": "low",
+    "high": "low",
+    "medium": "medium",
+    "low": "high",
+    "very_low": "high",
+}
+
+
+def _lookup_tech_profile(name: str) -> dict[str, str] | None:
+    """Fuzzy-match *name* against ``_TECH_PROFILES`` keys.
+
+    Matching strategy (in order):
+    1. Exact match after lower-casing and stripping whitespace.
+    2. Check whether any profile key is *contained* in *name* (handles cases
+       like "Use PostgreSQL" or "PostgreSQL 16").
+    3. Check whether *name* is contained in any profile key.
+    """
+    normalised = name.lower().strip()
+    # 1. Exact match
+    if normalised in _TECH_PROFILES:
+        return _TECH_PROFILES[normalised]
+    # 2. Profile key contained in name
+    for key, profile in _TECH_PROFILES.items():
+        if key in normalised:
+            return profile
+    # 3. Name contained in profile key
+    for key, profile in _TECH_PROFILES.items():
+        if normalised in key:
+            return profile
+    return None
+
 
 def _assess_option(option_name: str, criteria: list[str]) -> dict[str, str]:
     """Auto-generate a trade-off assessment for an option.
 
-    Uses simple heuristics based on common option name patterns:
+    First attempts to match the option name against ``_TECH_PROFILES`` for
+    real, differentiated values.  Falls back to keyword-based heuristics when
+    no profile is found, and appends a note for unknown technologies.
+
+    Heuristic fallback patterns:
     - Options mentioning "simple", "existing", "monolith" → lower complexity, higher maintainability
     - Options mentioning "new", "custom", "build" → higher complexity, higher performance
     - Options mentioning "cloud", "managed", "saas" → lower complexity, higher cost
     - Options mentioning "open-source", "free" → lower cost
     """
+    # ── 1. Try technology knowledge base ──────────────────────────────────
+    profile = _lookup_tech_profile(option_name)
+    if profile is not None:
+        assessment: dict[str, str] = {}
+        for criterion in criteria:
+            crit_lower = criterion.lower()
+            if crit_lower == "performance":
+                assessment[criterion] = profile.get("performance", "medium")
+            elif crit_lower == "cost":
+                assessment[criterion] = profile.get("cost", "medium")
+            elif crit_lower == "complexity":
+                assessment[criterion] = profile.get("complexity", "medium")
+            elif crit_lower == "maintainability":
+                # Use scalability as a proxy; higher scalability → easier to maintain at scale.
+                assessment[criterion] = profile.get("scalability", "medium")
+            elif crit_lower == "risk":
+                # Invert maturity: very_high maturity → low risk.
+                maturity = profile.get("maturity", "medium")
+                assessment[criterion] = _MATURITY_TO_RISK.get(maturity, "medium")
+            else:
+                assessment[criterion] = "medium"
+        return assessment
+
+    # ── 2. Keyword-based heuristic fallback ───────────────────────────────
     name_lower = option_name.lower()
-    assessment: dict[str, str] = {}
+    assessment = {}
 
     for criterion in criteria:
         crit_lower = criterion.lower()
@@ -293,6 +552,12 @@ def _generate_markdown(
             row_values = [scores.get(c, "medium") for c in criteria]
             lines.append(f"| {opt_name} | " + " | ".join(row_values) + " |")
         lines.append("")
+        # Render notes for unknown technologies
+        tm_notes = trade_off_matrix.get("notes", {})
+        if tm_notes:
+            for opt_name, note in tm_notes.items():
+                lines.append(f"*{opt_name}: {note}*")
+            lines.append("")
 
     # Decision
     lines.append("## Decision")
@@ -367,13 +632,19 @@ def create_adr(
     # Trade-off matrix
     criteria = list(_DEFAULT_CRITERIA)
     opt_assessments: dict[str, dict[str, str]] = {}
+    notes: dict[str, str] = {}
     for opt in parsed_options:
         opt_assessments[opt["name"]] = _assess_option(opt["name"], criteria)
+        # If the option did not match any known tech profile, record a note
+        if _lookup_tech_profile(opt["name"]) is None:
+            notes[opt["name"]] = "unknown technology \u2014 using default values"
 
-    trade_off_matrix = {
+    trade_off_matrix: dict[str, Any] = {
         "criteria": criteria,
         "options": opt_assessments,
     }
+    if notes:
+        trade_off_matrix["notes"] = notes
 
     # Consequences
     consequences = _infer_consequences(parsed_options, decision)

@@ -103,8 +103,21 @@ def analyze_survey(data: str, scale_max: int = 5) -> dict:
     response_count = len(rows)
     midpoint = scale_max / 2.0
 
+    # ── Identify the NPS / recommend question column ────────────
+    nps_keywords = {"recommend", "nps", "likelihood", "refer"}
+    nps_col_idx: int | None = None
+    for col_idx in question_indices:
+        if any(kw in headers[col_idx].strip().lower() for kw in nps_keywords):
+            nps_col_idx = col_idx
+            break
+    # Fallback: use the last numeric question column (common convention)
+    if nps_col_idx is None and question_indices:
+        # We'll resolve this after identifying numeric columns below
+        pass
+
     questions_result: list[dict] = []
     all_scores: list[int] = []
+    numeric_question_indices: list[int] = []
 
     for col_idx in question_indices:
         question_name = headers[col_idx]
@@ -118,6 +131,7 @@ def analyze_survey(data: str, scale_max: int = 5) -> dict:
         # Clamp to valid scale range
         int_values = [max(1, min(scale_max, v)) for v in int_values]
         all_scores.extend(int_values)
+        numeric_question_indices.append(col_idx)
 
         float_vals = [float(v) for v in int_values]
         mean = round(statistics.mean(float_vals), 2)
@@ -142,7 +156,18 @@ def analyze_survey(data: str, scale_max: int = 5) -> dict:
         )
 
     # ── NPS ─────────────────────────────────────────────────────
-    nps = _compute_nps(all_scores, scale_max)
+    # Use only the identified recommend/NPS column, or fall back to the last
+    # numeric question column.
+    if nps_col_idx is None and numeric_question_indices:
+        nps_col_idx = numeric_question_indices[-1]
+
+    nps_scores: list[int] = []
+    if nps_col_idx is not None:
+        raw_nps = col_values[nps_col_idx]
+        nps_scores = [v for v in (_to_int(s) for s in raw_nps) if v is not None]
+        nps_scores = [max(1, min(scale_max, v)) for v in nps_scores]
+
+    nps = _compute_nps(nps_scores, scale_max)
 
     # ── Overall satisfaction ────────────────────────────────────
     overall_satisfaction = 0.0

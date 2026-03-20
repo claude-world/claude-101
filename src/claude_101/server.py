@@ -265,6 +265,7 @@ async def build_comparison_matrix(
     items: str,
     criteria: str,
     weights: str = "",
+    scores: str = "",
 ) -> str:
     """Build a weighted comparison matrix for competitive analysis.
 
@@ -272,11 +273,12 @@ async def build_comparison_matrix(
         items: Comma-separated items to compare (e.g. "React, Vue, Angular").
         criteria: Comma-separated evaluation criteria (e.g. "Performance, DX, Ecosystem").
         weights: Optional comma-separated weights (e.g. "0.4, 0.3, 0.3"). Equal if omitted.
+        scores: Optional scores (format: "Item1:Crit1=8,Crit2=7;Item2:Crit1=6,Crit2=9").
 
     Returns:
-        JSON with matrix structure, weight normalization, and sensitivity framework.
+        JSON with matrix structure, weight normalization, rankings, and sensitivity framework.
     """
-    return _json(_build_comparison_matrix(items, criteria, weights))
+    return _json(_build_comparison_matrix(items, criteria, weights, scores))
 
 
 @mcp.tool()

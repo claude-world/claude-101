@@ -155,11 +155,19 @@ def _parse_action_item(raw: str) -> dict:
     if owner_match:
         owner = f"@{owner_match.group(1)}"
 
+    # Extract owner from "Name to <verb>" pattern (e.g. "Bob to update timeline")
+    # Only match if no @mention owner was found and the text starts with a
+    # capitalized name followed by " to <verb>".
+    if owner == "unassigned":
+        name_to_match = re.match(r"^([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)\s+to\s+\w+", task)
+        if name_to_match:
+            owner = name_to_match.group(1).strip()
+
     # Extract deadline patterns
     deadline_patterns = [
         r"(?:by|before|due|deadline)\s*[:\-]?\s*(\d{1,2}[/\-]\d{1,2}(?:[/\-]\d{2,4})?)",
         r"(?:by|before|due|deadline)\s*[:\-]?\s*(\w+\s+\d{1,2}(?:,?\s+\d{4})?)",
-        r"(?:by|before|due)\s+(EOD|end of day|end of week|EOW|tomorrow|next\s+\w+|monday|tuesday|wednesday|thursday|friday)",
+        r"(?:by|before|due)\s+(EOD|end of day|end of week|EOW|tomorrow|next\s+\w+|monday|tuesday|wednesday|thursday|friday|saturday|sunday)",
     ]
     for dp in deadline_patterns:
         dm = re.search(dp, task, re.IGNORECASE)
@@ -169,6 +177,13 @@ def _parse_action_item(raw: str) -> dict:
 
     # Clean the task text (remove owner/deadline markers)
     task = re.sub(r"@\w+", "", task).strip()
+    # Remove leading "Name to " when we extracted an owner from that pattern
+    if owner != "unassigned" and not owner.startswith("@"):
+        task = re.sub(
+            r"^" + re.escape(owner) + r"\s+to\s+",
+            "",
+            task,
+        ).strip()
     task = re.sub(
         r"(?:by|before|due|deadline)\s*[:\-]?\s*\S+(?:\s+\S+)?",
         "",

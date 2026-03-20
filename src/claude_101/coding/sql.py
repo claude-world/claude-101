@@ -248,9 +248,12 @@ def _validate_sql(query: str) -> list[str]:
     if single_quotes % 2 != 0:
         warnings.append("Unmatched single quote")
 
-    # Missing semicolon at end
+    # Missing semicolon at end — only warn for multi-statement queries
     if stripped and not stripped.endswith(";"):
-        warnings.append("Missing semicolon at end of statement")
+        # Count non-empty statements
+        stmts = [s for s in sqlparse.parse(stripped) if str(s).strip()]
+        if len(stmts) > 1:
+            warnings.append("Missing semicolon at end of statement")
 
     # SELECT without FROM (not SELECT 1, SELECT CURRENT_DATE, etc.)
     upper = stripped.upper()
@@ -276,6 +279,72 @@ def _validate_sql(query: str) -> list[str]:
         warnings.append("SELECT * used — consider specifying columns explicitly")
 
     return warnings
+
+
+def _performance_hints(query: str, parsed: list[sqlparse.sql.Statement]) -> list[str]:
+    """Detect common SQL performance anti-patterns."""
+    hints: list[str] = []
+    upper = query.upper()
+
+    # SELECT * — consider selecting only needed columns
+    if re.search(r"SELECT\s+\*", upper):
+        hints.append(
+            "SELECT * — Consider selecting only needed columns for better performance"
+        )
+
+    # JOIN without ON or with always-true condition (cartesian join)
+    # Look for JOIN ... JOIN or JOIN ... WHERE without an ON in between
+    join_positions = [m.start() for m in re.finditer(r"\bJOIN\b", upper)]
+    on_positions = [m.start() for m in re.finditer(r"\bON\b", upper)]
+    for jpos in join_positions:
+        # Check for CROSS JOIN — those are intentionally without ON
+        pre = upper[:jpos].rstrip()
+        if pre.endswith("CROSS"):
+            continue
+        # Find the next relevant keyword after JOIN (another JOIN, WHERE, GROUP, ORDER, LIMIT, HAVING, or end)
+        next_kw = re.search(
+            r"\b(?:JOIN|WHERE|GROUP|ORDER|LIMIT|HAVING|UNION)\b", upper[jpos + 4 :]
+        )
+        boundary = jpos + 4 + next_kw.start() if next_kw else len(upper)
+        # Check if there's an ON between this JOIN and the next boundary
+        has_on = any(jpos < op < boundary for op in on_positions)
+        if not has_on:
+            hints.append("Potential cartesian join — JOIN without ON condition")
+            break  # one warning is enough
+
+    # Subquery in WHERE → may cause N+1 performance
+    where_match = re.search(r"\bWHERE\b", upper)
+    if where_match:
+        where_clause = upper[where_match.start() :]
+        if re.search(r"\(\s*SELECT\b", where_clause):
+            hints.append(
+                "Subquery in WHERE may cause N+1 performance; consider using a JOIN"
+            )
+
+    # LIKE with leading wildcard
+    if re.search(r"LIKE\s+'%", upper):
+        hints.append("Leading wildcard in LIKE prevents index usage")
+
+    # ORDER BY without LIMIT
+    if re.search(r"\bORDER\s+BY\b", upper) and not re.search(r"\bLIMIT\b", upper):
+        hints.append(
+            "ORDER BY without LIMIT — consider adding LIMIT for large result sets"
+        )
+
+    # HAVING without aggregation function
+    having_match = re.search(
+        r"\bHAVING\s+(.+?)(?:\bORDER\b|\bLIMIT\b|\bUNION\b|;|$)", upper, re.DOTALL
+    )
+    if having_match:
+        having_clause = having_match.group(1)
+        agg_funcs = r"\b(?:COUNT|SUM|AVG|MIN|MAX|GROUP_CONCAT|STRING_AGG)\s*\("
+        if not re.search(agg_funcs, having_clause):
+            hints.append(
+                "HAVING without aggregation function — may indicate a logic error; "
+                "use WHERE for non-aggregate filters"
+            )
+
+    return hints
 
 
 def _explain_sql(query: str, parsed: list[sqlparse.sql.Statement]) -> str:
@@ -403,7 +472,7 @@ def process_sql(
     if op != "validate":
         warnings.extend(_validate_sql(query))
 
-    return {
+    output: dict[str, Any] = {
         "operation": op,
         "dialect": dialect,
         "result": result,
@@ -413,3 +482,9 @@ def process_sql(
         "statement_count": stmt_count,
         "warnings": warnings,
     }
+
+    # Add performance hints for explain operations
+    if op == "explain":
+        output["performance_hints"] = _performance_hints(query, parsed)
+
+    return output

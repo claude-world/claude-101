@@ -40,8 +40,12 @@ def draft_email(
     profile = _TONE_PROFILES[tone]
 
     # --- Parse context for structured cues ---
-    recipient = _extract_field(context, r"(?:to|recipient|for)\s*[:\-]?\s*(.+?)(?:\.|,|$)")
-    purpose = _extract_field(context, r"(?:purpose|about|regarding|re)\s*[:\-]?\s*(.+?)(?:\.|,|$)")
+    recipient = _extract_field(
+        context, r"(?:to|recipient|for)\s*[:\-]?\s*(.+?)(?:\.|,|$)"
+    )
+    purpose = _extract_field(
+        context, r"(?:purpose|about|regarding|re)\s*[:\-]?\s*(.+?)(?:\.|,|$)"
+    )
     key_points = _extract_key_points(context)
 
     recipient_label = recipient or "the recipient"
@@ -109,7 +113,13 @@ _TONE_PROFILES: dict[str, dict] = {
     "professional": {
         "formality": "high",
         "formality_score": 85,
-        "vocabulary": ["please", "regarding", "as discussed", "at your convenience", "I would appreciate"],
+        "vocabulary": [
+            "please",
+            "regarding",
+            "as discussed",
+            "at your convenience",
+            "I would appreciate",
+        ],
         "avoid": ["hey", "gonna", "wanna", "ASAP", "FYI"],
         "greeting": "Dear",
         "sign_off": "Best regards,",
@@ -117,7 +127,13 @@ _TONE_PROFILES: dict[str, dict] = {
     "friendly": {
         "formality": "medium",
         "formality_score": 50,
-        "vocabulary": ["thanks", "looking forward", "great to hear", "sounds good", "happy to"],
+        "vocabulary": [
+            "thanks",
+            "looking forward",
+            "great to hear",
+            "sounds good",
+            "happy to",
+        ],
         "avoid": ["pursuant to", "herewith", "kindly be advised", "per our last email"],
         "greeting": "Hi",
         "sign_off": "Cheers,",
@@ -126,22 +142,46 @@ _TONE_PROFILES: dict[str, dict] = {
         "formality": "high",
         "formality_score": 80,
         "vocabulary": ["require", "expect", "by [date]", "non-negotiable", "must"],
-        "avoid": ["maybe", "if possible", "no rush", "whenever you can", "sorry to bother"],
+        "avoid": [
+            "maybe",
+            "if possible",
+            "no rush",
+            "whenever you can",
+            "sorry to bother",
+        ],
         "greeting": "Dear",
         "sign_off": "Regards,",
     },
     "apologetic": {
         "formality": "high",
         "formality_score": 75,
-        "vocabulary": ["sincerely apologize", "understand your frustration", "take full responsibility", "corrective steps", "will ensure"],
-        "avoid": ["but", "however", "in our defense", "it was not our fault", "you should have"],
+        "vocabulary": [
+            "sincerely apologize",
+            "understand your frustration",
+            "take full responsibility",
+            "corrective steps",
+            "will ensure",
+        ],
+        "avoid": [
+            "but",
+            "however",
+            "in our defense",
+            "it was not our fault",
+            "you should have",
+        ],
         "greeting": "Dear",
         "sign_off": "With sincere apologies,",
     },
     "congratulatory": {
         "formality": "medium",
         "formality_score": 55,
-        "vocabulary": ["congratulations", "well-deserved", "thrilled", "proud", "outstanding achievement"],
+        "vocabulary": [
+            "congratulations",
+            "well-deserved",
+            "thrilled",
+            "proud",
+            "outstanding achievement",
+        ],
         "avoid": ["about time", "finally", "took long enough", "not bad"],
         "greeting": "Dear",
         "sign_off": "Warm regards,",
@@ -164,11 +204,11 @@ def _extract_field(text: str, pattern: str) -> str | None:
 def _extract_key_points(text: str) -> list[str]:
     """Pull bullet-style key points or sentences from the context."""
     # Try numbered or bulleted items first
-    bullets = re.findall(r'(?:^|\n)\s*[\-\*\d\.]+\s*(.+)', text)
+    bullets = re.findall(r"(?:^|\n)\s*[\-\*\d\.]+\s*(.+)", text)
     if bullets:
         return [b.strip() for b in bullets[:6]]
     # Fall back to sentence splitting
-    sentences = re.split(r'(?<=[.!?])\s+', text.strip())
+    sentences = re.split(r"(?<=[.!?])\s+", text.strip())
     # Filter out very short fragments
     points = [s.strip() for s in sentences if len(s.split()) >= 3]
     return points[:6]
@@ -247,7 +287,9 @@ def _build_body(tone: str, purpose: str, key_points: list[str], fmt: str) -> str
         lines.append("\n[Paragraph 2: Detail the key information or request.]")
 
     if fmt == "detailed":
-        lines.append(f"\n[Additional context: Provide background information about {purpose}.]")
+        lines.append(
+            f"\n[Additional context: Provide background information about {purpose}.]"
+        )
         lines.append("[Supporting details: Include data, references, or examples.]")
         lines.append("[Timeline: Mention any relevant dates or deadlines.]")
 
@@ -286,14 +328,41 @@ def _compute_formality(text: str) -> float:
 def _analyze_tone_words(text: str) -> dict:
     """Count positive/negative/neutral word ratios."""
     _POSITIVE = [
-        "great", "excellent", "happy", "pleased", "thank", "appreciate",
-        "wonderful", "fantastic", "good", "amazing", "love", "enjoy",
-        "thrilled", "delighted", "perfect", "outstanding", "brilliant",
+        "great",
+        "excellent",
+        "happy",
+        "pleased",
+        "thank",
+        "appreciate",
+        "wonderful",
+        "fantastic",
+        "good",
+        "amazing",
+        "love",
+        "enjoy",
+        "thrilled",
+        "delighted",
+        "perfect",
+        "outstanding",
+        "brilliant",
     ]
     _NEGATIVE = [
-        "unfortunately", "sorry", "problem", "issue", "concerned",
-        "disappointed", "frustrated", "difficult", "fail", "wrong",
-        "bad", "poor", "terrible", "awful", "regret", "mistake",
+        "unfortunately",
+        "sorry",
+        "problem",
+        "issue",
+        "concerned",
+        "disappointed",
+        "frustrated",
+        "difficult",
+        "fail",
+        "wrong",
+        "bad",
+        "poor",
+        "terrible",
+        "awful",
+        "regret",
+        "mistake",
     ]
     words = text.lower().split()
     total = len(words) if words else 1
@@ -317,14 +386,33 @@ def _analyze_tone_words(text: str) -> dict:
 def _analyze_email_structure(text: str) -> dict:
     """Detect structural email components via pattern matching."""
     markers = {
-        "has_greeting": ["dear", "hi ", "hello", "hey ", "good morning", "good afternoon"],
+        "has_greeting": [
+            "dear",
+            "hi ",
+            "hello",
+            "hey ",
+            "good morning",
+            "good afternoon",
+        ],
         "has_cta": [
-            "please review", "let me know", "could you", "would you",
-            "looking forward", "your thoughts", "please confirm", "please advise",
+            "please review",
+            "let me know",
+            "could you",
+            "would you",
+            "looking forward",
+            "your thoughts",
+            "please confirm",
+            "please advise",
         ],
         "has_closing": [
-            "regards", "sincerely", "cheers", "thanks", "best",
-            "warm regards", "kind regards", "thank you",
+            "regards",
+            "sincerely",
+            "cheers",
+            "thanks",
+            "best",
+            "warm regards",
+            "kind regards",
+            "thank you",
         ],
         "has_signature": ["[your name]", "sent from", "---"],
     }

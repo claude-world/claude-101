@@ -49,15 +49,55 @@ _LEVELS = {
 # ---------------------------------------------------------------------------
 
 _ROLE_TYPES = {
-    "technical": ["engineer", "developer", "programmer", "devops", "sre",
-                  "backend", "frontend", "fullstack", "full-stack", "architect",
-                  "infrastructure", "platform", "security"],
-    "manager": ["manager", "director", "vp", "head of", "lead", "chief",
-                "cto", "cio", "coo", "scrum master", "product owner"],
-    "designer": ["designer", "ux", "ui", "product design", "graphic",
-                 "visual", "interaction", "design lead"],
-    "data": ["data", "analyst", "scientist", "machine learning", "ml",
-             "ai", "analytics", "business intelligence", "statistician"],
+    "technical": [
+        "engineer",
+        "developer",
+        "programmer",
+        "devops",
+        "sre",
+        "backend",
+        "frontend",
+        "fullstack",
+        "full-stack",
+        "architect",
+        "infrastructure",
+        "platform",
+        "security",
+    ],
+    "manager": [
+        "manager",
+        "director",
+        "vp",
+        "head of",
+        "lead",
+        "chief",
+        "cto",
+        "cio",
+        "coo",
+        "scrum master",
+        "product owner",
+    ],
+    "designer": [
+        "designer",
+        "ux",
+        "ui",
+        "product design",
+        "graphic",
+        "visual",
+        "interaction",
+        "design lead",
+    ],
+    "data": [
+        "data",
+        "analyst",
+        "scientist",
+        "machine learning",
+        "ml",
+        "ai",
+        "analytics",
+        "business intelligence",
+        "statistician",
+    ],
     "product": ["product manager", "product", "pm", "growth", "strategy"],
 }
 
@@ -413,7 +453,8 @@ _PRODUCT_QUESTIONS = {
             },
         },
     ],
-    "behavioral": _MANAGER_QUESTIONS["behavioral"][:2] + _TECHNICAL_QUESTIONS["behavioral"][:2],
+    "behavioral": _MANAGER_QUESTIONS["behavioral"][:2]
+    + _TECHNICAL_QUESTIONS["behavioral"][:2],
     "situational": _TECHNICAL_QUESTIONS["situational"],
     "culture_fit": _TECHNICAL_QUESTIONS["culture_fit"],
 }
@@ -430,6 +471,7 @@ _ROLE_QUESTION_BANKS: dict[str, dict] = {
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _detect_role_type(role: str) -> str:
     """Detect role type from role title keywords."""
@@ -556,16 +598,20 @@ def _technical_topics(role_type: str, level: str) -> list[str]:
 
     # Add level-specific topics
     if level in ("senior", "lead", "executive"):
-        topics.extend([
-            "Cross-team collaboration",
-            "Mentoring and knowledge sharing",
-            "Strategic planning",
-        ])
+        topics.extend(
+            [
+                "Cross-team collaboration",
+                "Mentoring and knowledge sharing",
+                "Strategic planning",
+            ]
+        )
     if level in ("lead", "executive"):
-        topics.extend([
-            "Organizational design",
-            "Budget and resource management",
-        ])
+        topics.extend(
+            [
+                "Organizational design",
+                "Budget and resource management",
+            ]
+        )
 
     return topics
 
@@ -581,10 +627,18 @@ def _behavioral_topics(level: str) -> list[str]:
 
     level_additions: dict[str, list[str]] = {
         "junior": ["Willingness to learn", "Following processes", "Asking for help"],
-        "mid": ["Taking ownership", "Proactive problem solving", "Cross-team collaboration"],
+        "mid": [
+            "Taking ownership",
+            "Proactive problem solving",
+            "Cross-team collaboration",
+        ],
         "senior": ["Mentorship", "Technical decision making", "Stakeholder management"],
         "lead": ["Team building", "Strategic vision", "Driving organizational change"],
-        "executive": ["Company-wide impact", "Board communication", "Industry thought leadership"],
+        "executive": [
+            "Company-wide impact",
+            "Board communication",
+            "Industry thought leadership",
+        ],
     }
 
     return base + level_additions.get(level, level_additions["mid"])
@@ -634,10 +688,12 @@ def _questions_to_ask(role_type: str, level: str) -> list[str]:
     questions = base + role_specific.get(role_type, role_specific["technical"])
 
     if level in ("lead", "executive"):
-        questions.extend([
-            "What is the company's 3-year vision?",
-            "How does this role influence company strategy?",
-        ])
+        questions.extend(
+            [
+                "What is the company's 3-year vision?",
+                "How does this role influence company strategy?",
+            ]
+        )
 
     return questions
 
@@ -692,23 +748,29 @@ def _preparation_checklist(role_type: str, level: str) -> list[str]:
     ]
 
     if role_type == "technical":
-        checklist.extend([
-            "Review fundamental data structures and algorithms",
-            "Practice coding on a whiteboard or shared editor",
-            "Prepare to discuss system design for your level",
-        ])
+        checklist.extend(
+            [
+                "Review fundamental data structures and algorithms",
+                "Practice coding on a whiteboard or shared editor",
+                "Prepare to discuss system design for your level",
+            ]
+        )
     elif role_type == "designer":
-        checklist.extend([
-            "Update your portfolio with recent work and case studies",
-            "Prepare to walk through your design process end-to-end",
-            "Practice presenting your work clearly in under 5 minutes per case study",
-        ])
+        checklist.extend(
+            [
+                "Update your portfolio with recent work and case studies",
+                "Prepare to walk through your design process end-to-end",
+                "Practice presenting your work clearly in under 5 minutes per case study",
+            ]
+        )
     elif role_type == "data":
-        checklist.extend([
-            "Review SQL queries — expect a live exercise",
-            "Prepare to explain statistical concepts in plain language",
-            "Have examples of data-driven decisions you influenced",
-        ])
+        checklist.extend(
+            [
+                "Review SQL queries — expect a live exercise",
+                "Prepare to explain statistical concepts in plain language",
+                "Have examples of data-driven decisions you influenced",
+            ]
+        )
 
     if level in ("senior", "lead", "executive"):
         checklist.append("Prepare examples of cross-team or organizational impact")
@@ -723,18 +785,22 @@ def _parse_job_description(text: str) -> dict:
 
     # Extract skills from common JD patterns
     skill_patterns = [
-        r'(?:experience (?:with|in|using))\s+([A-Za-z\s,/+#]+?)(?:\.|,\s*(?:and|or)|\n)',
-        r'(?:proficiency in|proficient in|knowledge of|familiar with)\s+([A-Za-z\s,/+#]+?)(?:\.|,\s*(?:and|or)|\n)',
-        r'(?:skills?(?:\s+required)?:?\s*)([A-Za-z\s,/+#]+?)(?:\n|$)',
+        r"(?:experience (?:with|in|using))\s+([A-Za-z\s,/+#]+?)(?:\.|,\s*(?:and|or)|\n)",
+        r"(?:proficiency in|proficient in|knowledge of|familiar with)\s+([A-Za-z\s,/+#]+?)(?:\.|,\s*(?:and|or)|\n)",
+        r"(?:skills?(?:\s+required)?:?\s*)([A-Za-z\s,/+#]+?)(?:\n|$)",
     ]
     skills: list[str] = []
     for pat in skill_patterns:
         for match in re.findall(pat, text, re.IGNORECASE):
-            parts = re.split(r'[,;]|\band\b|\bor\b', match)
+            parts = re.split(r"[,;]|\band\b|\bor\b", match)
             skills.extend(p.strip() for p in parts if p.strip() and len(p.strip()) > 1)
 
     # Extract years of experience
-    years_match = re.search(r'(\d+)\+?\s*(?:years?|yrs?)\s*(?:of\s+)?(?:experience|exp)', text, re.IGNORECASE)
+    years_match = re.search(
+        r"(\d+)\+?\s*(?:years?|yrs?)\s*(?:of\s+)?(?:experience|exp)",
+        text,
+        re.IGNORECASE,
+    )
     years = int(years_match.group(1)) if years_match else None
 
     # Extract qualifications
@@ -783,10 +849,41 @@ def _validate_star_response(response: str) -> dict:
         return {"score": 0, "components": {}, "feedback": ["No response provided"]}
 
     markers = {
-        "situation": ["situation", "context", "background", "when i was", "at my previous", "in my role"],
-        "task": ["task", "responsibility", "my role was", "i was asked", "i needed to", "goal was"],
-        "action": ["action", "i did", "i decided", "i implemented", "steps i took", "i created", "i led"],
-        "result": ["result", "outcome", "achieved", "led to", "increased", "decreased", "improved", "saved"],
+        "situation": [
+            "situation",
+            "context",
+            "background",
+            "when i was",
+            "at my previous",
+            "in my role",
+        ],
+        "task": [
+            "task",
+            "responsibility",
+            "my role was",
+            "i was asked",
+            "i needed to",
+            "goal was",
+        ],
+        "action": [
+            "action",
+            "i did",
+            "i decided",
+            "i implemented",
+            "steps i took",
+            "i created",
+            "i led",
+        ],
+        "result": [
+            "result",
+            "outcome",
+            "achieved",
+            "led to",
+            "increased",
+            "decreased",
+            "improved",
+            "saved",
+        ],
     }
     components = text_structure_check(response, markers)
     present = sum(1 for v in components.values() if v)
@@ -795,21 +892,34 @@ def _validate_star_response(response: str) -> dict:
     feedback: list[str] = []
     for comp, found in components.items():
         if not found:
-            feedback.append(f"Missing '{comp.upper()}' component — add context about your {comp}")
+            feedback.append(
+                f"Missing '{comp.upper()}' component — add context about your {comp}"
+            )
 
-    if count_pattern_matches(response, ["percent", "%", "increased", "decreased", "saved", "$"]) == 0:
-        feedback.append("Consider adding quantified results (numbers, percentages, dollar amounts)")
+    if (
+        count_pattern_matches(
+            response, ["percent", "%", "increased", "decreased", "saved", "$"]
+        )
+        == 0
+    ):
+        feedback.append(
+            "Consider adding quantified results (numbers, percentages, dollar amounts)"
+        )
 
     return {"score": score, "components": components, "feedback": feedback}
 
 
-def _compute_time_allocation(questions: list[dict], total_minutes: int = 60) -> list[dict]:
+def _compute_time_allocation(
+    questions: list[dict], total_minutes: int = 60
+) -> list[dict]:
     """Allocate time per question based on difficulty."""
     if not questions:
         return []
 
     time_per_difficulty = {"easy": 2, "medium": 3, "hard": 5}
-    raw_times = [time_per_difficulty.get(q.get("difficulty", "medium"), 3) for q in questions]
+    raw_times = [
+        time_per_difficulty.get(q.get("difficulty", "medium"), 3) for q in questions
+    ]
     raw_total = sum(raw_times) or 1
     scale = total_minutes / raw_total
 
@@ -826,6 +936,7 @@ def _compute_time_allocation(questions: list[dict], total_minutes: int = 60) -> 
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
+
 
 def prepare_interview(
     role: str,

@@ -48,26 +48,112 @@ def flesch_grade(score: float) -> str:
 
 def sentence_tokenize(text: str) -> list[str]:
     """Split text into sentences."""
-    parts = re.split(r'(?<=[.!?])\s+', text.strip())
+    parts = re.split(r"(?<=[.!?])\s+", text.strip())
     return [s for s in parts if s.strip()]
 
 
 def keyword_frequency(text: str, top_n: int = 10) -> list[tuple[str, int]]:
     """Extract top-N keywords by frequency (excluding stopwords)."""
     stopwords = {
-        "the", "a", "an", "and", "or", "but", "in", "on", "at", "to", "for",
-        "of", "with", "by", "from", "is", "it", "that", "this", "was", "are",
-        "be", "has", "have", "had", "not", "as", "we", "they", "you", "i",
-        "he", "she", "its", "my", "your", "our", "their", "can", "will",
-        "do", "does", "did", "been", "being", "would", "could", "should",
-        "may", "might", "shall", "about", "up", "out", "if", "so", "no",
-        "than", "too", "very", "just", "also", "more", "some", "any", "all",
-        "each", "every", "both", "few", "most", "other", "into", "over",
-        "such", "after", "before", "between", "through", "during", "what",
-        "which", "who", "whom", "how", "when", "where", "why", "these",
-        "those", "then", "there", "here", "only", "own", "same", "while",
+        "the",
+        "a",
+        "an",
+        "and",
+        "or",
+        "but",
+        "in",
+        "on",
+        "at",
+        "to",
+        "for",
+        "of",
+        "with",
+        "by",
+        "from",
+        "is",
+        "it",
+        "that",
+        "this",
+        "was",
+        "are",
+        "be",
+        "has",
+        "have",
+        "had",
+        "not",
+        "as",
+        "we",
+        "they",
+        "you",
+        "i",
+        "he",
+        "she",
+        "its",
+        "my",
+        "your",
+        "our",
+        "their",
+        "can",
+        "will",
+        "do",
+        "does",
+        "did",
+        "been",
+        "being",
+        "would",
+        "could",
+        "should",
+        "may",
+        "might",
+        "shall",
+        "about",
+        "up",
+        "out",
+        "if",
+        "so",
+        "no",
+        "than",
+        "too",
+        "very",
+        "just",
+        "also",
+        "more",
+        "some",
+        "any",
+        "all",
+        "each",
+        "every",
+        "both",
+        "few",
+        "most",
+        "other",
+        "into",
+        "over",
+        "such",
+        "after",
+        "before",
+        "between",
+        "through",
+        "during",
+        "what",
+        "which",
+        "who",
+        "whom",
+        "how",
+        "when",
+        "where",
+        "why",
+        "these",
+        "those",
+        "then",
+        "there",
+        "here",
+        "only",
+        "own",
+        "same",
+        "while",
     }
-    words = re.findall(r'\b[a-zA-Z]{3,}\b', text.lower())
+    words = re.findall(r"\b[a-zA-Z]{3,}\b", text.lower())
     filtered = [w for w in words if w not in stopwords]
     return Counter(filtered).most_common(top_n)
 
@@ -77,8 +163,8 @@ def _count_syllables(word: str) -> int:
     word = word.lower().strip(".,!?;:'\"")
     if not word:
         return 0
-    count = len(re.findall(r'[aeiouy]+', word))
-    if word.endswith('e') and not word.endswith('le'):
+    count = len(re.findall(r"[aeiouy]+", word))
+    if word.endswith("e") and not word.endswith("le"):
         count -= 1
     return max(1, count)
 
@@ -87,6 +173,7 @@ def parse_csv(data: str) -> tuple[list[str], list[list[str]]]:
     """Parse CSV string into headers and rows."""
     import csv
     import io
+
     reader = csv.reader(io.StringIO(data.strip()))
     rows = list(reader)
     if not rows:
@@ -97,6 +184,7 @@ def parse_csv(data: str) -> tuple[list[str], list[list[str]]]:
 def parse_json_data(data: str) -> list[dict]:
     """Parse JSON string into list of dicts."""
     import json
+
     parsed = json.loads(data)
     if isinstance(parsed, list):
         return parsed
@@ -108,6 +196,7 @@ def parse_json_data(data: str) -> list[dict]:
 def basic_stats(values: list[float]) -> dict:
     """Calculate basic statistics for a list of numbers."""
     import statistics
+
     if not values:
         return {"count": 0}
     result = {
@@ -125,7 +214,9 @@ def basic_stats(values: list[float]) -> dict:
         result["p75"] = sorted_vals[(3 * n) // 4]
         q1, q3 = result["p25"], result["p75"]
         iqr = q3 - q1
-        result["outliers"] = [v for v in values if v < q1 - 1.5 * iqr or v > q3 + 1.5 * iqr]
+        result["outliers"] = [
+            v for v in values if v < q1 - 1.5 * iqr or v > q3 + 1.5 * iqr
+        ]
     return result
 
 
@@ -138,15 +229,48 @@ def formality_score(text: str) -> float:
         return 50.0
 
     _FORMAL_MARKERS = [
-        "regarding", "furthermore", "consequently", "therefore", "sincerely",
-        "respectfully", "accordingly", "henceforth", "pursuant", "hereby",
-        "please", "kindly", "appreciate", "acknowledge", "endeavor",
-        "facilitate", "commence", "subsequent", "aforementioned", "notwithstanding",
+        "regarding",
+        "furthermore",
+        "consequently",
+        "therefore",
+        "sincerely",
+        "respectfully",
+        "accordingly",
+        "henceforth",
+        "pursuant",
+        "hereby",
+        "please",
+        "kindly",
+        "appreciate",
+        "acknowledge",
+        "endeavor",
+        "facilitate",
+        "commence",
+        "subsequent",
+        "aforementioned",
+        "notwithstanding",
     ]
     _INFORMAL_MARKERS = [
-        "hey", "gonna", "wanna", "gotta", "kinda", "sorta", "yeah",
-        "yep", "nope", "cool", "awesome", "stuff", "thing", "ok",
-        "lol", "omg", "btw", "tbh", "imo", "fyi",
+        "hey",
+        "gonna",
+        "wanna",
+        "gotta",
+        "kinda",
+        "sorta",
+        "yeah",
+        "yep",
+        "nope",
+        "cool",
+        "awesome",
+        "stuff",
+        "thing",
+        "ok",
+        "lol",
+        "omg",
+        "btw",
+        "tbh",
+        "imo",
+        "fyi",
     ]
     _CONTRACTION_RE = re.compile(
         r"\b(?:don'?t|can'?t|won'?t|isn'?t|aren'?t|wasn'?t|weren'?t|"
@@ -200,23 +324,68 @@ def detect_named_entities(text: str) -> list[str]:
     not at sentence start, filters common false positives.
     """
     _SKIP_WORDS = {
-        "The", "This", "That", "There", "They", "Then", "When", "Where",
-        "What", "Which", "However", "Also", "Meanwhile", "After", "Before",
-        "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday",
-        "Sunday", "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December",
-        "I", "He", "She", "It", "We", "You", "But", "And", "Or", "So",
-        "If", "Not", "For", "Yet", "Because", "Since", "While", "Although",
+        "The",
+        "This",
+        "That",
+        "There",
+        "They",
+        "Then",
+        "When",
+        "Where",
+        "What",
+        "Which",
+        "However",
+        "Also",
+        "Meanwhile",
+        "After",
+        "Before",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday",
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+        "I",
+        "He",
+        "She",
+        "It",
+        "We",
+        "You",
+        "But",
+        "And",
+        "Or",
+        "So",
+        "If",
+        "Not",
+        "For",
+        "Yet",
+        "Because",
+        "Since",
+        "While",
+        "Although",
     }
 
     # Find capitalized word sequences
-    candidates = re.findall(r'\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)\b', text)
+    candidates = re.findall(r"\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)\b", text)
     # Also single capitalized words that appear mid-sentence
     sentences = sentence_tokenize(text)
     for sent in sentences:
         words = sent.split()
         for i, w in enumerate(words):
-            if i > 0 and re.match(r'^[A-Z][a-z]+$', w) and w not in _SKIP_WORDS:
+            if i > 0 and re.match(r"^[A-Z][a-z]+$", w) and w not in _SKIP_WORDS:
                 candidates.append(w)
 
     # Deduplicate preserving order, filter skip words
@@ -233,7 +402,9 @@ def count_pattern_matches(text: str, patterns: list[str]) -> int:
     """Count total keyword matches with word boundary matching (case-insensitive)."""
     total = 0
     for pattern in patterns:
-        total += len(re.findall(r'\b' + re.escape(pattern) + r'\b', text, re.IGNORECASE))
+        total += len(
+            re.findall(r"\b" + re.escape(pattern) + r"\b", text, re.IGNORECASE)
+        )
     return total
 
 
@@ -254,6 +425,15 @@ def text_structure_check(text: str, markers: dict[str, list[str]]) -> dict[str, 
     }
 
 
+def _normalize_weights(raw: list[float]) -> list[float]:
+    """Normalize a list of weights so they sum to 1.0."""
+    total = sum(raw)
+    if total == 0:
+        n = len(raw)
+        return [round(1.0 / n, 4)] * n if n else []
+    return [round(w / total, 4) for w in raw]
+
+
 def infer_column_type(values: list[str]) -> str:
     """Infer the type of a column from its values."""
     numeric = 0
@@ -265,7 +445,7 @@ def infer_column_type(values: list[str]) -> str:
             pass
     if numeric > len(values) * 0.8:
         return "numeric"
-    date_pattern = re.compile(r'\d{4}[-/]\d{1,2}[-/]\d{1,2}')
+    date_pattern = re.compile(r"\d{4}[-/]\d{1,2}[-/]\d{1,2}")
     if sum(1 for v in values if date_pattern.match(str(v))) > len(values) * 0.8:
         return "date"
     return "text"

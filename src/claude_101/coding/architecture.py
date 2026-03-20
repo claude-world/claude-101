@@ -27,7 +27,10 @@ def _assess_option(option_name: str, criteria: list[str]) -> dict[str, str]:
         crit_lower = criterion.lower()
 
         if crit_lower == "performance":
-            if any(kw in name_lower for kw in ("custom", "optimized", "native", "rust", "go", "c++")):
+            if any(
+                kw in name_lower
+                for kw in ("custom", "optimized", "native", "rust", "go", "c++")
+            ):
                 assessment[criterion] = "high"
             elif any(kw in name_lower for kw in ("simple", "basic", "script")):
                 assessment[criterion] = "low"
@@ -35,7 +38,10 @@ def _assess_option(option_name: str, criteria: list[str]) -> dict[str, str]:
                 assessment[criterion] = "medium"
 
         elif crit_lower == "maintainability":
-            if any(kw in name_lower for kw in ("standard", "existing", "managed", "saas", "convention")):
+            if any(
+                kw in name_lower
+                for kw in ("standard", "existing", "managed", "saas", "convention")
+            ):
                 assessment[criterion] = "high"
             elif any(kw in name_lower for kw in ("custom", "complex", "novel")):
                 assessment[criterion] = "low"
@@ -43,25 +49,43 @@ def _assess_option(option_name: str, criteria: list[str]) -> dict[str, str]:
                 assessment[criterion] = "medium"
 
         elif crit_lower == "cost":
-            if any(kw in name_lower for kw in ("free", "open-source", "oss", "existing", "self-host")):
+            if any(
+                kw in name_lower
+                for kw in ("free", "open-source", "oss", "existing", "self-host")
+            ):
                 assessment[criterion] = "low"
-            elif any(kw in name_lower for kw in ("cloud", "managed", "saas", "enterprise", "commercial")):
+            elif any(
+                kw in name_lower
+                for kw in ("cloud", "managed", "saas", "enterprise", "commercial")
+            ):
                 assessment[criterion] = "high"
             else:
                 assessment[criterion] = "medium"
 
         elif crit_lower == "complexity":
-            if any(kw in name_lower for kw in ("simple", "existing", "monolith", "basic", "standard")):
+            if any(
+                kw in name_lower
+                for kw in ("simple", "existing", "monolith", "basic", "standard")
+            ):
                 assessment[criterion] = "low"
-            elif any(kw in name_lower for kw in ("microservice", "distributed", "custom", "novel")):
+            elif any(
+                kw in name_lower
+                for kw in ("microservice", "distributed", "custom", "novel")
+            ):
                 assessment[criterion] = "high"
             else:
                 assessment[criterion] = "medium"
 
         elif crit_lower == "risk":
-            if any(kw in name_lower for kw in ("proven", "standard", "existing", "stable", "managed")):
+            if any(
+                kw in name_lower
+                for kw in ("proven", "standard", "existing", "stable", "managed")
+            ):
                 assessment[criterion] = "low"
-            elif any(kw in name_lower for kw in ("new", "experimental", "alpha", "beta", "novel", "custom")):
+            elif any(
+                kw in name_lower
+                for kw in ("new", "experimental", "alpha", "beta", "novel", "custom")
+            ):
                 assessment[criterion] = "high"
             else:
                 assessment[criterion] = "medium"
@@ -80,43 +104,111 @@ def _generate_pros_cons(option_name: str) -> tuple[list[str], list[str]]:
 
     # Simple / existing
     if any(kw in name_lower for kw in ("simple", "existing", "current")):
-        pros.extend(["Low learning curve", "Already integrated with existing systems", "Minimal migration effort"])
-        cons.extend(["May not scale well", "Limited feature set", "Technical debt may accumulate"])
+        pros.extend(
+            [
+                "Low learning curve",
+                "Already integrated with existing systems",
+                "Minimal migration effort",
+            ]
+        )
+        cons.extend(
+            [
+                "May not scale well",
+                "Limited feature set",
+                "Technical debt may accumulate",
+            ]
+        )
 
     # Cloud / managed
     elif any(kw in name_lower for kw in ("cloud", "managed", "saas", "serverless")):
-        pros.extend(["No infrastructure management", "Built-in scaling", "Vendor-provided reliability"])
-        cons.extend(["Vendor lock-in risk", "Ongoing costs may grow", "Limited customization"])
+        pros.extend(
+            [
+                "No infrastructure management",
+                "Built-in scaling",
+                "Vendor-provided reliability",
+            ]
+        )
+        cons.extend(
+            ["Vendor lock-in risk", "Ongoing costs may grow", "Limited customization"]
+        )
 
     # Open source
     elif any(kw in name_lower for kw in ("open-source", "oss", "open source")):
-        pros.extend(["No licensing costs", "Community support", "Full source access for customization"])
-        cons.extend(["Maintenance burden on team", "Community support may be inconsistent", "Security patches are team's responsibility"])
+        pros.extend(
+            [
+                "No licensing costs",
+                "Community support",
+                "Full source access for customization",
+            ]
+        )
+        cons.extend(
+            [
+                "Maintenance burden on team",
+                "Community support may be inconsistent",
+                "Security patches are team's responsibility",
+            ]
+        )
 
     # Custom / build
     elif any(kw in name_lower for kw in ("custom", "build", "in-house", "homegrown")):
-        pros.extend(["Tailored to exact requirements", "Full control over implementation", "No external dependencies"])
-        cons.extend(["High development effort", "Ongoing maintenance burden", "Risk of reinventing the wheel"])
+        pros.extend(
+            [
+                "Tailored to exact requirements",
+                "Full control over implementation",
+                "No external dependencies",
+            ]
+        )
+        cons.extend(
+            [
+                "High development effort",
+                "Ongoing maintenance burden",
+                "Risk of reinventing the wheel",
+            ]
+        )
 
     # Microservice
-    elif any(kw in name_lower for kw in ("microservice", "distributed", "event-driven")):
-        pros.extend(["Independent scaling", "Technology diversity per service", "Team autonomy"])
-        cons.extend(["Operational complexity", "Network latency overhead", "Distributed debugging difficulty"])
+    elif any(
+        kw in name_lower for kw in ("microservice", "distributed", "event-driven")
+    ):
+        pros.extend(
+            ["Independent scaling", "Technology diversity per service", "Team autonomy"]
+        )
+        cons.extend(
+            [
+                "Operational complexity",
+                "Network latency overhead",
+                "Distributed debugging difficulty",
+            ]
+        )
 
     # Monolith
     elif any(kw in name_lower for kw in ("monolith", "monolithic", "unified")):
-        pros.extend(["Simple deployment", "Easy debugging", "No network overhead between components"])
-        cons.extend(["Scaling constraints", "Technology lock-in", "Deployment coupling"])
+        pros.extend(
+            [
+                "Simple deployment",
+                "Easy debugging",
+                "No network overhead between components",
+            ]
+        )
+        cons.extend(
+            ["Scaling constraints", "Technology lock-in", "Deployment coupling"]
+        )
 
     # Generic fallback
     else:
-        pros.extend(["Addresses the stated requirements", "Feasible with current resources"])
-        cons.extend(["Trade-offs need further evaluation", "May require additional research"])
+        pros.extend(
+            ["Addresses the stated requirements", "Feasible with current resources"]
+        )
+        cons.extend(
+            ["Trade-offs need further evaluation", "May require additional research"]
+        )
 
     return pros, cons
 
 
-def _infer_consequences(options: list[dict[str, Any]], decision: str) -> dict[str, list[str]]:
+def _infer_consequences(
+    options: list[dict[str, Any]], decision: str
+) -> dict[str, list[str]]:
     """Infer consequences based on the selected option."""
     positive: list[str] = []
     negative: list[str] = []
@@ -145,6 +237,7 @@ def _infer_consequences(options: list[dict[str, Any]], decision: str) -> dict[st
 
 
 # ── Markdown generation ──────────────────────────────────────────────────────
+
 
 def _generate_markdown(
     title: str,
@@ -234,6 +327,7 @@ def _generate_markdown(
 
 # ── Public API ───────────────────────────────────────────────────────────────
 
+
 def create_adr(
     title: str,
     context: str,
@@ -255,18 +349,20 @@ def create_adr(
     status = "accepted" if decision.strip() else "proposed"
 
     # Parse options from comma-separated string
-    raw_options = [o.strip() for o in options.split(',') if o.strip()]
+    raw_options = [o.strip() for o in options.split(",") if o.strip()]
     if not raw_options:
         raw_options = ["Option A", "Option B"]
 
     parsed_options: list[dict[str, Any]] = []
     for opt_name in raw_options:
         pros, cons = _generate_pros_cons(opt_name)
-        parsed_options.append({
-            "name": opt_name,
-            "pros": pros,
-            "cons": cons,
-        })
+        parsed_options.append(
+            {
+                "name": opt_name,
+                "pros": pros,
+                "cons": cons,
+            }
+        )
 
     # Trade-off matrix
     criteria = list(_DEFAULT_CRITERIA)
@@ -284,8 +380,14 @@ def create_adr(
 
     # Generate markdown
     markdown = _generate_markdown(
-        title, today, status, context,
-        parsed_options, decision, consequences, trade_off_matrix,
+        title,
+        today,
+        status,
+        context,
+        parsed_options,
+        decision,
+        consequences,
+        trade_off_matrix,
     )
 
     return {

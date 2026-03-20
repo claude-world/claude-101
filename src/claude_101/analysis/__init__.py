@@ -1,11 +1,11 @@
 """Analysis tools — data, text, financial, legal, survey, and competitive analysis."""
 
-from claude_101.analysis.competitive import build_comparison_matrix
-from claude_101.analysis.data import analyze_data
-from claude_101.analysis.financial import analyze_financials
-from claude_101.analysis.legal import review_legal_document
-from claude_101.analysis.summarize import summarize_document
-from claude_101.analysis.survey import analyze_survey
+from .competitive import build_comparison_matrix
+from .data import analyze_data
+from .financial import analyze_financials
+from .legal import review_legal_document
+from .summarize import summarize_document
+from .survey import analyze_survey
 
 __all__ = [
     "analyze_data",

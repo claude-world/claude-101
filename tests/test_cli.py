@@ -115,14 +115,25 @@ class TestToolDispatch:
         assert "sections" in result
 
     def test_draft_email_with_options(self, capsys):
-        ret = main(["draft-email", "thanks for help", "--tone", "friendly", "--format", "brief"])
+        ret = main(
+            [
+                "draft-email",
+                "thanks for help",
+                "--tone",
+                "friendly",
+                "--format",
+                "brief",
+            ]
+        )
         assert ret == 0
         captured = capsys.readouterr()
         result = json.loads(captured.out)
         assert result["tone_guide"]["formality"] in ("low", "medium")
 
     def test_analyze_code(self, capsys):
-        ret = main(["analyze-code", "def foo():\n    return 42", "--language", "python"])
+        ret = main(
+            ["analyze-code", "def foo():\n    return 42", "--language", "python"]
+        )
         assert ret == 0
         captured = capsys.readouterr()
         result = json.loads(captured.out)
@@ -149,10 +160,17 @@ class TestToolDispatch:
         assert result["target_words"] == 800
 
     def test_float_parameter(self, capsys):
-        ret = main([
-            "scaffold-proposal", "business", "Cloud Migration",
-            "--investment", "100000", "--annual-return", "50000",
-        ])
+        ret = main(
+            [
+                "scaffold-proposal",
+                "business",
+                "Cloud Migration",
+                "--investment",
+                "100000",
+                "--annual-return",
+                "50000",
+            ]
+        )
         assert ret == 0
         captured = capsys.readouterr()
         result = json.loads(captured.out)

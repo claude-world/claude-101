@@ -197,11 +197,11 @@ tests/
     test_server.py      # 12 個測試
 ```
 
-**依賴：** 僅 `sqlparse` 和 `jinja2`（其餘皆用標準函式庫）。MCP 為可選依賴。
+**依賴：** 僅 `sqlparse`（其餘皆用標準函式庫）。MCP 為可選依賴。
 
 ## 貢獻
 
-請參閱 [CONTRIBUTING.zh-TW.md](CONTRIBUTING.zh-TW.md)。
+請參閱 [CONTRIBUTING.zh-TW.md](CONTRIBUTING.zh-TW.md)。版本歷史請見 [CHANGELOG.md](CHANGELOG.md)。
 
 ## 授權
 

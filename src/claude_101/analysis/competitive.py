@@ -2,14 +2,7 @@
 
 from __future__ import annotations
 
-
-def _normalize_weights(raw: list[float]) -> list[float]:
-    """Normalize a list of weights so they sum to 1.0."""
-    total = sum(raw)
-    if total == 0:
-        n = len(raw)
-        return [round(1.0 / n, 4)] * n if n else []
-    return [round(w / total, 4) for w in raw]
+from .._utils import _normalize_weights
 
 
 def _identify_critical_weights(

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 
-from claude_101._utils import (
+from .._utils import (
     flesch_score,
     flesch_grade,
     keyword_frequency,
@@ -42,7 +42,7 @@ def _score_sentence(
         score += 1.0  # Last sentence of a paragraph
 
     # ── Keyword density (0–3) ──────────────────────────────────
-    words = re.findall(r'\b[a-zA-Z]{3,}\b', sentence.lower())
+    words = re.findall(r"\b[a-zA-Z]{3,}\b", sentence.lower())
     if words:
         kw_count = sum(1 for w in words if w in keyword_set)
         density = kw_count / len(words)

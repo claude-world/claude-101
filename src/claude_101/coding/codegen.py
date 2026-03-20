@@ -26,24 +26,26 @@ _EXTENSIONS = {
 
 # ── Name conversion helpers ──────────────────────────────────────────────────
 
+
 def _to_snake(name: str) -> str:
     """Convert any name to snake_case."""
     import re
-    s = re.sub(r'[-\s]+', '_', name)
-    s = re.sub(r'([A-Z]+)([A-Z][a-z])', r'\1_\2', s)
-    s = re.sub(r'([a-z0-9])([A-Z])', r'\1_\2', s)
+
+    s = re.sub(r"[-\s]+", "_", name)
+    s = re.sub(r"([A-Z]+)([A-Z][a-z])", r"\1_\2", s)
+    s = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", s)
     return s.lower()
 
 
 def _to_camel(name: str) -> str:
     """Convert any name to camelCase."""
-    parts = _to_snake(name).split('_')
-    return parts[0] + ''.join(p.capitalize() for p in parts[1:])
+    parts = _to_snake(name).split("_")
+    return parts[0] + "".join(p.capitalize() for p in parts[1:])
 
 
 def _to_pascal(name: str) -> str:
     """Convert any name to PascalCase."""
-    return ''.join(p.capitalize() for p in _to_snake(name).split('_'))
+    return "".join(p.capitalize() for p in _to_snake(name).split("_"))
 
 
 def _convert_name(name: str, convention: str) -> str:
@@ -55,6 +57,7 @@ def _convert_name(name: str, convention: str) -> str:
 
 
 # ── Template generators (per language × pattern) ────────────────────────────
+
 
 def _python_class(name: str, desc: str) -> tuple[str, list[str]]:
     cn = _to_pascal(name)
@@ -68,7 +71,7 @@ from typing import Any
 
 @dataclass
 class {cn}:
-    """{desc or f'{cn} class.'}"""
+    """{desc or f"{cn} class."}"""
 
     name: str = ""
     _data: dict[str, Any] = field(default_factory=dict, repr=False)
@@ -97,7 +100,7 @@ from typing import Any
 
 
 def {fn}(data: Any, *, verbose: bool = False) -> dict[str, Any]:
-    """{desc or f'Process data via {fn}.'}
+    """{desc or f"Process data via {fn}."}
 
     Args:
         data: Input data to process.
@@ -138,7 +141,7 @@ from typing import Any
 
 
 def handle_{fn}(method: str, path: str, body: dict[str, Any] | None = None) -> dict[str, Any]:
-    """{desc or f'Handle API requests for {fn}.'}
+    """{desc or f"Handle API requests for {fn}."}
 
     Args:
         method: HTTP method (GET, POST, PUT, DELETE).
@@ -204,7 +207,7 @@ import sys
 
 
 def main(argv: list[str] | None = None) -> int:
-    """{desc or f'Run the {fn} CLI.'}"""
+    """{desc or f"Run the {fn} CLI."}"""
     parser = argparse.ArgumentParser(
         prog="{fn}",
         description="{desc or fn}",
@@ -265,7 +268,7 @@ from uuid import uuid4
 
 @dataclass
 class {cn}:
-    """{desc or f'{cn} data model.'}"""
+    """{desc or f"{cn} data model."}"""
 
     id: str = field(default_factory=lambda: uuid4().hex[:12])
     name: str = ""
@@ -312,7 +315,7 @@ from typing import Any
 
 
 class {cn}:
-    """{desc or f'{cn} singleton.'}
+    """{desc or f"{cn} singleton."}
 
     Thread-safe singleton implementation using double-checked locking.
     """
@@ -365,7 +368,7 @@ from typing import Any
 
 
 class Base{cn}(ABC):
-    """{desc or f'Abstract base for {cn} products.'}"""
+    """{desc or f"Abstract base for {cn} products."}"""
 
     @abstractmethod
     def execute(self, data: Any) -> Any:
@@ -464,7 +467,7 @@ class {cn}Observer(ABC):
 
 
 class {cn}Subject:
-    """{desc or f'Observable subject that notifies {cn}Observer instances.'}"""
+    """{desc or f"Observable subject that notifies {cn}Observer instances."}"""
 
     def __init__(self) -> None:
         self._observers: dict[str, list[{cn}Observer]] = defaultdict(list)
@@ -507,14 +510,15 @@ class {cn}Subject:
 
 # ── JS / TS generators ──────────────────────────────────────────────────────
 
+
 def _js_class(name: str, desc: str, is_ts: bool) -> tuple[str, list[str]]:
     cn = _to_pascal(name)
     ts_types = ": string" if is_ts else ""
     ts_data = ": Record<string, unknown>" if is_ts else ""
     ts_bool = ": boolean" if is_ts else ""
     ts_obj = ": Record<string, unknown>" if is_ts else ""
-    code = f'''/**
- * {desc or f'{cn} class.'}
+    code = f"""/**
+ * {desc or f"{cn} class."}
  */
 export class {cn} {{
   constructor(name{ts_types} = "") {{
@@ -534,16 +538,20 @@ export class {cn} {{
     return `{cn}(name=${{this.name}})`;
   }}
 }}
-'''
+"""
     return code, []
 
 
 def _js_function(name: str, desc: str, is_ts: bool) -> tuple[str, list[str]]:
     fn = _to_camel(name)
-    ts_param = "data: unknown, options: {{ verbose?: boolean }} = {{}}" if is_ts else "data, options = {}"
+    ts_param = (
+        "data: unknown, options: {{ verbose?: boolean }} = {{}}"
+        if is_ts
+        else "data, options = {}"
+    )
     ts_ret = ": Record<string, unknown>" if is_ts else ""
-    code = f'''/**
- * {desc or f'Process data via {fn}.'}
+    code = f"""/**
+ * {desc or f"Process data via {fn}."}
  * @param data - Input data to process.
  * @param options - Processing options.
  * @returns Processing results.
@@ -570,59 +578,59 @@ export function {fn}({ts_param}){ts_ret} {{
 
   return result;
 }}
-'''
+"""
     return code, []
 
 
 def _js_api(name: str, desc: str, is_ts: bool) -> tuple[str, list[str]]:
     fn = _to_camel(name)
-    code_lines = ['/**', f' * {desc or f"API endpoint handler for {fn}."}', ' */']
+    code_lines = ["/**", f" * {desc or f'API endpoint handler for {fn}.'}", " */"]
     if is_ts:
         code_lines += [
-            '',
-            'interface ApiResponse {',
-            '  statusCode: number;',
-            '  body: Record<string, unknown>;',
-            '}',
-            '',
-            f'export function handle{_to_pascal(name)}(',
-            '  method: string,',
-            '  path: string,',
-            '  body?: Record<string, unknown>,',
-            '): ApiResponse {',
+            "",
+            "interface ApiResponse {",
+            "  statusCode: number;",
+            "  body: Record<string, unknown>;",
+            "}",
+            "",
+            f"export function handle{_to_pascal(name)}(",
+            "  method: string,",
+            "  path: string,",
+            "  body?: Record<string, unknown>,",
+            "): ApiResponse {",
         ]
     else:
         code_lines += [
-            '',
-            f'export function handle{_to_pascal(name)}(method, path, body) {{',
+            "",
+            f"export function handle{_to_pascal(name)}(method, path, body) {{",
         ]
     code_lines += [
-        '  const handlers = {',
-        '    GET: () => ({ statusCode: 200, body: { items: [], total: 0 } }),',
-        '    POST: () => {',
+        "  const handlers = {",
+        "    GET: () => ({ statusCode: 200, body: { items: [], total: 0 } }),",
+        "    POST: () => {",
         '      if (!body) return { statusCode: 400, body: { error: "Body required" } };',
-        '      return { statusCode: 201, body: { id: 1, ...body } };',
-        '    },',
-        '    PUT: () => {',
+        "      return { statusCode: 201, body: { id: 1, ...body } };",
+        "    },",
+        "    PUT: () => {",
         '      if (!body) return { statusCode: 400, body: { error: "Body required" } };',
-        '      return { statusCode: 200, body: { updated: true, ...body } };',
-        '    },',
-        '    DELETE: () => ({ statusCode: 204, body: {} }),',
-        '  };',
-        '',
-        '  const handler = handlers[method.toUpperCase()];',
-        '  if (!handler) {',
-        '    return { statusCode: 405, body: { error: `Method ${method} not allowed` } };',
-        '  }',
-        '  return handler();',
-        '}',
+        "      return { statusCode: 200, body: { updated: true, ...body } };",
+        "    },",
+        "    DELETE: () => ({ statusCode: 204, body: {} }),",
+        "  };",
+        "",
+        "  const handler = handlers[method.toUpperCase()];",
+        "  if (!handler) {",
+        "    return { statusCode: 405, body: { error: `Method ${method} not allowed` } };",
+        "  }",
+        "  return handler();",
+        "}",
     ]
-    return '\n'.join(code_lines) + '\n', []
+    return "\n".join(code_lines) + "\n", []
 
 
 def _js_cli(name: str, desc: str, is_ts: bool) -> tuple[str, list[str]]:
     fn = _to_camel(name)
-    code = f'''#!/usr/bin/env node
+    code = f"""#!/usr/bin/env node
 /**
  * {desc or f"CLI tool for {fn}."}
  */
@@ -652,7 +660,7 @@ function main() {{
 }}
 
 main();
-'''
+"""
     return code, ["fs"]
 
 
@@ -661,8 +669,8 @@ def _js_singleton(name: str, desc: str, is_ts: bool) -> tuple[str, list[str]]:
     ts_any = ": unknown" if is_ts else ""
     ts_inst = f": {cn} | null" if is_ts else ""
     ts_map = ": Map<string, unknown>" if is_ts else ""
-    code = f'''/**
- * {desc or f'{cn} singleton.'}
+    code = f"""/**
+ * {desc or f"{cn} singleton."}
  */
 export class {cn} {{
   static _instance{ts_inst} = null;
@@ -694,15 +702,15 @@ export class {cn} {{
     {cn}._instance = null;
   }}
 }}
-'''
+"""
     return code, []
 
 
 def _js_factory(name: str, desc: str, is_ts: bool) -> tuple[str, list[str]]:
     cn = _to_pascal(name)
     if is_ts:
-        code = f'''/**
- * {desc or f'Factory pattern for {cn}.'}
+        code = f"""/**
+ * {desc or f"Factory pattern for {cn}."}
  */
 
 export interface I{cn} {{
@@ -747,10 +755,10 @@ export class {cn}Factory {{
     this.registry.set(name, ctor);
   }}
 }}
-'''
+"""
     else:
-        code = f'''/**
- * {desc or f'Factory pattern for {cn}.'}
+        code = f"""/**
+ * {desc or f"Factory pattern for {cn}."}
  */
 
 class Default{cn} {{
@@ -790,15 +798,15 @@ export class {cn}Factory {{
     this._registry.set(name, ctor);
   }}
 }}
-'''
+"""
     return code, []
 
 
 def _js_observer(name: str, desc: str, is_ts: bool) -> tuple[str, list[str]]:
     cn = _to_pascal(name)
     if is_ts:
-        code = f'''/**
- * {desc or f'Observer pattern for {cn}.'}
+        code = f"""/**
+ * {desc or f"Observer pattern for {cn}."}
  */
 
 export interface {cn}Event {{
@@ -842,10 +850,10 @@ export class {cn}Subject {{
     return this.notify({{ type, data, source }});
   }}
 }}
-'''
+"""
     else:
-        code = f'''/**
- * {desc or f'Observer pattern for {cn}.'}
+        code = f"""/**
+ * {desc or f"Observer pattern for {cn}."}
  */
 
 export class {cn}Subject {{
@@ -881,15 +889,15 @@ export class {cn}Subject {{
     return this.notify({{ type, data, source }});
   }}
 }}
-'''
+"""
     return code, []
 
 
 def _js_model(name: str, desc: str, is_ts: bool) -> tuple[str, list[str]]:
     cn = _to_pascal(name)
     if is_ts:
-        code = f'''/**
- * {desc or f'{cn} data model.'}
+        code = f"""/**
+ * {desc or f"{cn} data model."}
  */
 
 export interface {cn}Data {{
@@ -930,10 +938,10 @@ export class {cn} implements {cn}Data {{
     return errors;
   }}
 }}
-'''
+"""
     else:
-        code = f'''/**
- * {desc or f'{cn} data model.'}
+        code = f"""/**
+ * {desc or f"{cn} data model."}
  */
 
 export class {cn} {{
@@ -960,18 +968,19 @@ export class {cn} {{
     return errors;
   }}
 }}
-'''
+"""
     return code, []
 
 
 # ── Go generators ────────────────────────────────────────────────────────────
 
+
 def _go_class(name: str, desc: str) -> tuple[str, list[str]]:
     cn = _to_pascal(name)
-    code = f'''// Package {_to_snake(name)} provides {cn}.
+    code = f"""// Package {_to_snake(name)} provides {cn}.
 package {_to_snake(name)}
 
-// {cn} represents {desc or f'a {cn} entity'}.
+// {cn} represents {desc or f"a {cn} entity"}.
 type {cn} struct {{
 \tName string
 \tdata map[string]interface{{}}
@@ -1001,13 +1010,13 @@ func (e *{cn}) Process() map[string]interface{{}} {{
 func (e *{cn}) Validate() bool {{
 \treturn e.Name != ""
 }}
-'''
+"""
     return code, []
 
 
 def _go_function(name: str, desc: str) -> tuple[str, list[str]]:
     fn = _to_pascal(name)
-    code = f'''// Package {_to_snake(name)} provides {desc or fn}.
+    code = f"""// Package {_to_snake(name)} provides {desc or fn}.
 package {_to_snake(name)}
 
 import "fmt"
@@ -1042,13 +1051,13 @@ func {fn}(data interface{{}}, verbose bool) map[string]interface{{}} {{
 
 \treturn result
 }}
-'''
+"""
     return code, ["fmt"]
 
 
 def _go_generic(name: str, desc: str, pattern: str) -> tuple[str, list[str]]:
     cn = _to_pascal(name)
-    code = f'''// Package {_to_snake(name)} provides {desc or f'{cn} ({pattern})'}.
+    code = f'''// Package {_to_snake(name)} provides {desc or f"{cn} ({pattern})"}.
 package {_to_snake(name)}
 
 // {cn} implements the {pattern} pattern.
@@ -1072,10 +1081,11 @@ func (s *{cn}) Execute(input interface{{}}) (interface{{}}, error) {{
 
 # ── Rust generators ──────────────────────────────────────────────────────────
 
+
 def _rust_class(name: str, desc: str) -> tuple[str, list[str]]:
     cn = _to_pascal(name)
     sn = _to_snake(name)
-    code = f'''//! {desc or f'{cn} implementation.'}
+    code = f'''//! {desc or f"{cn} implementation."}
 
 use std::collections::HashMap;
 use std::fmt;
@@ -1137,7 +1147,7 @@ mod tests {{
 
 def _rust_function(name: str, desc: str) -> tuple[str, list[str]]:
     fn = _to_snake(name)
-    code = f'''//! {desc or f'Utility for {fn}.'}
+    code = f"""//! {desc or f"Utility for {fn}."}
 
 use std::collections::HashMap;
 
@@ -1173,14 +1183,14 @@ mod tests {{
         assert_eq!(result["word_count"], "2");
     }}
 }}
-'''
+"""
     return code, ["std::collections::HashMap"]
 
 
 def _rust_generic(name: str, desc: str, pattern: str) -> tuple[str, list[str]]:
     cn = _to_pascal(name)
     sn = _to_snake(name)
-    code = f'''//! {desc or f'{cn} ({pattern} pattern).'}
+    code = f'''//! {desc or f"{cn} ({pattern} pattern)."}
 
 /// {cn} implements the {pattern} pattern.
 pub struct {cn} {{
@@ -1215,13 +1225,14 @@ mod tests {{
 
 # ── Java generators ──────────────────────────────────────────────────────────
 
+
 def _java_class(name: str, desc: str) -> tuple[str, list[str]]:
     cn = _to_pascal(name)
     code = f'''import java.util.HashMap;
 import java.util.Map;
 
 /**
- * {desc or f'{cn} class.'}
+ * {desc or f"{cn} class."}
  */
 public class {cn} {{
     private String name;
@@ -1266,11 +1277,11 @@ public class {cn} {{
 
 def _java_function(name: str, desc: str) -> tuple[str, list[str]]:
     cn = _to_pascal(name)
-    code = f'''import java.util.HashMap;
+    code = f"""import java.util.HashMap;
 import java.util.Map;
 
 /**
- * {desc or f'Utility class for {cn}.'}
+ * {desc or f"Utility class for {cn}."}
  */
 public class {cn}Util {{
 
@@ -1302,14 +1313,14 @@ public class {cn}Util {{
         return result;
     }}
 }}
-'''
+"""
     return code, ["java.util.HashMap", "java.util.Map"]
 
 
 def _java_generic(name: str, desc: str, pattern: str) -> tuple[str, list[str]]:
     cn = _to_pascal(name)
     code = f'''/**
- * {desc or f'{cn} — {pattern} pattern.'}
+ * {desc or f"{cn} — {pattern} pattern."}
  */
 public class {cn} {{
     private final String name;
@@ -1344,7 +1355,9 @@ _PYTHON_GENERATORS = {
 }
 
 
-def _generate_code(language: str, pattern: str, name: str, desc: str) -> tuple[str, list[str]]:
+def _generate_code(
+    language: str, pattern: str, name: str, desc: str
+) -> tuple[str, list[str]]:
     """Dispatch to the correct generator and return (code, imports)."""
     lang = language.lower()
 
@@ -1398,6 +1411,7 @@ def _generate_code(language: str, pattern: str, name: str, desc: str) -> tuple[s
 
 # ── Public API ───────────────────────────────────────────────────────────────
 
+
 def scaffold_code(
     language: str,
     pattern: str,
@@ -1419,7 +1433,16 @@ def scaffold_code(
     pat = pattern.lower()
 
     supported_languages = {"python", "javascript", "typescript", "go", "rust", "java"}
-    supported_patterns = {"class", "function", "api-endpoint", "cli", "model", "singleton", "factory", "observer"}
+    supported_patterns = {
+        "class",
+        "function",
+        "api-endpoint",
+        "cli",
+        "model",
+        "singleton",
+        "factory",
+        "observer",
+    }
 
     notes: list[str] = []
     if lang not in supported_languages:

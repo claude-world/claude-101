@@ -20,26 +20,50 @@ class TestServerTools:
 
     def test_writing_tools_present(self):
         tools = mcp._tool_manager._tools
-        for name in ("draft_email", "draft_blog_post", "parse_meeting_notes",
-                      "format_social_content", "scaffold_tech_doc", "structure_story"):
+        for name in (
+            "draft_email",
+            "draft_blog_post",
+            "parse_meeting_notes",
+            "format_social_content",
+            "scaffold_tech_doc",
+            "structure_story",
+        ):
             assert name in tools, f"Missing writing tool: {name}"
 
     def test_analysis_tools_present(self):
         tools = mcp._tool_manager._tools
-        for name in ("analyze_data", "summarize_document", "build_comparison_matrix",
-                      "analyze_survey", "analyze_financials", "review_legal_document"):
+        for name in (
+            "analyze_data",
+            "summarize_document",
+            "build_comparison_matrix",
+            "analyze_survey",
+            "analyze_financials",
+            "review_legal_document",
+        ):
             assert name in tools, f"Missing analysis tool: {name}"
 
     def test_coding_tools_present(self):
         tools = mcp._tool_manager._tools
-        for name in ("scaffold_code", "analyze_code", "process_sql",
-                      "scaffold_api_doc", "generate_test_cases", "create_adr"):
+        for name in (
+            "scaffold_code",
+            "analyze_code",
+            "process_sql",
+            "scaffold_api_doc",
+            "generate_test_cases",
+            "create_adr",
+        ):
             assert name in tools, f"Missing coding tool: {name}"
 
     def test_business_tools_present(self):
         tools = mcp._tool_manager._tools
-        for name in ("plan_project", "prepare_interview", "scaffold_proposal",
-                      "build_support_response", "scaffold_prd", "evaluate_decision"):
+        for name in (
+            "plan_project",
+            "prepare_interview",
+            "scaffold_proposal",
+            "build_support_response",
+            "scaffold_prd",
+            "evaluate_decision",
+        ):
             assert name in tools, f"Missing business tool: {name}"
 
 
@@ -51,12 +75,14 @@ class TestMetaToolExecution:
 
     def test_list_guides_all(self):
         from claude_101.server import list_guides
+
         result = self._run(list_guides())
         data = json.loads(result)
         assert len(data) == 24
 
     def test_list_guides_by_category(self):
         from claude_101.server import list_guides
+
         result = self._run(list_guides("writing"))
         data = json.loads(result)
         assert len(data) == 6
@@ -64,6 +90,7 @@ class TestMetaToolExecution:
 
     def test_get_guide(self):
         from claude_101.server import get_guide
+
         result = self._run(get_guide(1))
         data = json.loads(result)
         assert data["id"] == 1
@@ -72,12 +99,14 @@ class TestMetaToolExecution:
 
     def test_get_guide_not_found(self):
         from claude_101.server import get_guide
+
         result = self._run(get_guide(99))
         data = json.loads(result)
         assert "error" in data
 
     def test_search_guides(self):
         from claude_101.server import search_guides
+
         result = self._run(search_guides("email"))
         data = json.loads(result)
         assert len(data) >= 1
@@ -87,4 +116,5 @@ class TestMetaToolExecution:
 class TestVersion:
     def test_version(self):
         from claude_101 import __version__
+
         assert __version__ == "0.1.0"

@@ -80,47 +80,202 @@ _STRUCTURES: dict[str, dict] = {
     "three-act": {
         "name": "Three-Act Structure",
         "beats": [
-            {"name": "Opening Image", "description": "Establish the protagonist's ordinary world and current state.", "percentage": 2, "tension_level": 1},
-            {"name": "Setup", "description": "Introduce characters, setting, tone, and the protagonist's flaw or desire.", "percentage": 8, "tension_level": 2},
-            {"name": "Catalyst", "description": "An inciting event disrupts the status quo and demands a response.", "percentage": 3, "tension_level": 4},
-            {"name": "Debate", "description": "The protagonist hesitates — should they accept the call to action?", "percentage": 7, "tension_level": 3},
-            {"name": "Break Into Act 2", "description": "The protagonist commits to the journey and enters a new world.", "percentage": 5, "tension_level": 5},
-            {"name": "B-Story Introduction", "description": "A subplot (often a relationship) begins that mirrors the main theme.", "percentage": 5, "tension_level": 3},
-            {"name": "Fun & Games", "description": "The premise is explored — the 'promise of the premise' delivers.", "percentage": 15, "tension_level": 5},
-            {"name": "Midpoint", "description": "A false victory or false defeat raises the stakes significantly.", "percentage": 5, "tension_level": 7},
-            {"name": "Bad Guys Close In", "description": "External pressures increase and internal doubts grow.", "percentage": 15, "tension_level": 7},
-            {"name": "All Is Lost", "description": "The protagonist's lowest point — it seems impossible to win.", "percentage": 5, "tension_level": 9},
-            {"name": "Dark Night of the Soul", "description": "The protagonist confronts their deepest fears and flaws.", "percentage": 5, "tension_level": 8},
-            {"name": "Break Into Act 3", "description": "A new insight or revelation inspires the final push.", "percentage": 3, "tension_level": 7},
-            {"name": "Finale", "description": "The protagonist faces the final challenge using lessons learned.", "percentage": 17, "tension_level": 10},
-            {"name": "Final Image", "description": "Show how the protagonist and their world have changed.", "percentage": 5, "tension_level": 3},
+            {
+                "name": "Opening Image",
+                "description": "Establish the protagonist's ordinary world and current state.",
+                "percentage": 2,
+                "tension_level": 1,
+            },
+            {
+                "name": "Setup",
+                "description": "Introduce characters, setting, tone, and the protagonist's flaw or desire.",
+                "percentage": 8,
+                "tension_level": 2,
+            },
+            {
+                "name": "Catalyst",
+                "description": "An inciting event disrupts the status quo and demands a response.",
+                "percentage": 3,
+                "tension_level": 4,
+            },
+            {
+                "name": "Debate",
+                "description": "The protagonist hesitates — should they accept the call to action?",
+                "percentage": 7,
+                "tension_level": 3,
+            },
+            {
+                "name": "Break Into Act 2",
+                "description": "The protagonist commits to the journey and enters a new world.",
+                "percentage": 5,
+                "tension_level": 5,
+            },
+            {
+                "name": "B-Story Introduction",
+                "description": "A subplot (often a relationship) begins that mirrors the main theme.",
+                "percentage": 5,
+                "tension_level": 3,
+            },
+            {
+                "name": "Fun & Games",
+                "description": "The premise is explored — the 'promise of the premise' delivers.",
+                "percentage": 15,
+                "tension_level": 5,
+            },
+            {
+                "name": "Midpoint",
+                "description": "A false victory or false defeat raises the stakes significantly.",
+                "percentage": 5,
+                "tension_level": 7,
+            },
+            {
+                "name": "Bad Guys Close In",
+                "description": "External pressures increase and internal doubts grow.",
+                "percentage": 15,
+                "tension_level": 7,
+            },
+            {
+                "name": "All Is Lost",
+                "description": "The protagonist's lowest point — it seems impossible to win.",
+                "percentage": 5,
+                "tension_level": 9,
+            },
+            {
+                "name": "Dark Night of the Soul",
+                "description": "The protagonist confronts their deepest fears and flaws.",
+                "percentage": 5,
+                "tension_level": 8,
+            },
+            {
+                "name": "Break Into Act 3",
+                "description": "A new insight or revelation inspires the final push.",
+                "percentage": 3,
+                "tension_level": 7,
+            },
+            {
+                "name": "Finale",
+                "description": "The protagonist faces the final challenge using lessons learned.",
+                "percentage": 17,
+                "tension_level": 10,
+            },
+            {
+                "name": "Final Image",
+                "description": "Show how the protagonist and their world have changed.",
+                "percentage": 5,
+                "tension_level": 3,
+            },
         ],
     },
     "heros-journey": {
         "name": "Hero's Journey (12 Stages)",
         "beats": [
-            {"name": "Ordinary World", "description": "The hero's normal life before the adventure begins.", "percentage": 8, "tension_level": 1},
-            {"name": "Call to Adventure", "description": "A challenge, quest, or problem disrupts the hero's world.", "percentage": 5, "tension_level": 3},
-            {"name": "Refusal of the Call", "description": "The hero hesitates or refuses due to fear or obligation.", "percentage": 5, "tension_level": 2},
-            {"name": "Meeting the Mentor", "description": "A wise figure provides guidance, tools, or confidence.", "percentage": 5, "tension_level": 3},
-            {"name": "Crossing the Threshold", "description": "The hero commits and enters the unfamiliar special world.", "percentage": 7, "tension_level": 5},
-            {"name": "Tests, Allies, Enemies", "description": "The hero faces trials, makes allies, and confronts enemies.", "percentage": 15, "tension_level": 5},
-            {"name": "Approach to the Inmost Cave", "description": "Preparation for the major ordeal — tension builds.", "percentage": 8, "tension_level": 7},
-            {"name": "The Ordeal", "description": "The hero faces their greatest challenge and near-death experience.", "percentage": 10, "tension_level": 10},
-            {"name": "Reward (Seizing the Sword)", "description": "The hero claims the prize after surviving the ordeal.", "percentage": 7, "tension_level": 6},
-            {"name": "The Road Back", "description": "The hero begins the journey home but faces new dangers.", "percentage": 10, "tension_level": 7},
-            {"name": "Resurrection", "description": "A final, climactic test where the hero is fundamentally transformed.", "percentage": 12, "tension_level": 9},
-            {"name": "Return with the Elixir", "description": "The hero returns home transformed, bringing a gift or lesson.", "percentage": 8, "tension_level": 3},
+            {
+                "name": "Ordinary World",
+                "description": "The hero's normal life before the adventure begins.",
+                "percentage": 8,
+                "tension_level": 1,
+            },
+            {
+                "name": "Call to Adventure",
+                "description": "A challenge, quest, or problem disrupts the hero's world.",
+                "percentage": 5,
+                "tension_level": 3,
+            },
+            {
+                "name": "Refusal of the Call",
+                "description": "The hero hesitates or refuses due to fear or obligation.",
+                "percentage": 5,
+                "tension_level": 2,
+            },
+            {
+                "name": "Meeting the Mentor",
+                "description": "A wise figure provides guidance, tools, or confidence.",
+                "percentage": 5,
+                "tension_level": 3,
+            },
+            {
+                "name": "Crossing the Threshold",
+                "description": "The hero commits and enters the unfamiliar special world.",
+                "percentage": 7,
+                "tension_level": 5,
+            },
+            {
+                "name": "Tests, Allies, Enemies",
+                "description": "The hero faces trials, makes allies, and confronts enemies.",
+                "percentage": 15,
+                "tension_level": 5,
+            },
+            {
+                "name": "Approach to the Inmost Cave",
+                "description": "Preparation for the major ordeal — tension builds.",
+                "percentage": 8,
+                "tension_level": 7,
+            },
+            {
+                "name": "The Ordeal",
+                "description": "The hero faces their greatest challenge and near-death experience.",
+                "percentage": 10,
+                "tension_level": 10,
+            },
+            {
+                "name": "Reward (Seizing the Sword)",
+                "description": "The hero claims the prize after surviving the ordeal.",
+                "percentage": 7,
+                "tension_level": 6,
+            },
+            {
+                "name": "The Road Back",
+                "description": "The hero begins the journey home but faces new dangers.",
+                "percentage": 10,
+                "tension_level": 7,
+            },
+            {
+                "name": "Resurrection",
+                "description": "A final, climactic test where the hero is fundamentally transformed.",
+                "percentage": 12,
+                "tension_level": 9,
+            },
+            {
+                "name": "Return with the Elixir",
+                "description": "The hero returns home transformed, bringing a gift or lesson.",
+                "percentage": 8,
+                "tension_level": 3,
+            },
         ],
     },
     "five-act": {
         "name": "Five-Act Structure (Freytag's Pyramid)",
         "beats": [
-            {"name": "Exposition", "description": "Introduce the setting, characters, and initial situation.", "percentage": 15, "tension_level": 2},
-            {"name": "Rising Action", "description": "Complications and conflicts escalate, building tension.", "percentage": 25, "tension_level": 5},
-            {"name": "Climax", "description": "The turning point — the moment of highest tension and conflict.", "percentage": 15, "tension_level": 10},
-            {"name": "Falling Action", "description": "The consequences of the climax unfold; conflicts begin to resolve.", "percentage": 25, "tension_level": 6},
-            {"name": "Denouement", "description": "Final resolution — loose ends tied up, new equilibrium established.", "percentage": 20, "tension_level": 2},
+            {
+                "name": "Exposition",
+                "description": "Introduce the setting, characters, and initial situation.",
+                "percentage": 15,
+                "tension_level": 2,
+            },
+            {
+                "name": "Rising Action",
+                "description": "Complications and conflicts escalate, building tension.",
+                "percentage": 25,
+                "tension_level": 5,
+            },
+            {
+                "name": "Climax",
+                "description": "The turning point — the moment of highest tension and conflict.",
+                "percentage": 15,
+                "tension_level": 10,
+            },
+            {
+                "name": "Falling Action",
+                "description": "The consequences of the climax unfold; conflicts begin to resolve.",
+                "percentage": 25,
+                "tension_level": 6,
+            },
+            {
+                "name": "Denouement",
+                "description": "Final resolution — loose ends tied up, new equilibrium established.",
+                "percentage": 20,
+                "tension_level": 2,
+            },
         ],
     },
 }
@@ -206,13 +361,15 @@ def _build_beats(spec: dict, total_words: int) -> list[dict]:
     beats: list[dict] = []
     for b in spec["beats"]:
         target_words = round(total_words * b["percentage"] / 100)
-        beats.append({
-            "name": b["name"],
-            "description": b["description"],
-            "percentage": b["percentage"],
-            "target_words": target_words,
-            "tension_level": b["tension_level"],
-        })
+        beats.append(
+            {
+                "name": b["name"],
+                "description": b["description"],
+                "percentage": b["percentage"],
+                "target_words": target_words,
+                "tension_level": b["tension_level"],
+            }
+        )
     return beats
 
 
@@ -336,15 +493,19 @@ def _analyze_pacing(text: str, beats: list[dict]) -> list[dict]:
         actual = min(segment_len, len(words_list) - offset)
         actual = max(0, actual)
         deviation = actual - target if target else 0
-        result.append({
-            "beat": beat.get("name", ""),
-            "target_words": target,
-            "actual_words": actual,
-            "deviation": deviation,
-            "pacing": "on_track" if abs(deviation) < target * 0.2 else (
-                "slow" if deviation > 0 else "fast"
-            ) if target else "unknown",
-        })
+        result.append(
+            {
+                "beat": beat.get("name", ""),
+                "target_words": target,
+                "actual_words": actual,
+                "deviation": deviation,
+                "pacing": "on_track"
+                if abs(deviation) < target * 0.2
+                else ("slow" if deviation > 0 else "fast")
+                if target
+                else "unknown",
+            }
+        )
         offset += actual
     return result
 
@@ -367,9 +528,11 @@ def _analyze_dialogue_ratio(text: str) -> dict:
         "total_words": total,
         "ratio": ratio,
         "assessment": (
-            "heavy_dialogue" if ratio > 0.5 else
-            "balanced" if ratio > 0.2 else
-            "narrative_heavy"
+            "heavy_dialogue"
+            if ratio > 0.5
+            else "balanced"
+            if ratio > 0.2
+            else "narrative_heavy"
         ),
     }
 
@@ -380,13 +543,16 @@ def _detect_scene_transitions(text: str) -> dict:
         return {"count": 0, "avg_scene_words": 0}
 
     # Scene break patterns
-    breaks = re.findall(r'(?:\n\s*\n\s*\n|\n\s*\*\s*\*\s*\*\s*\n|\n\s*---\s*\n|\n\s*#)', text)
+    breaks = re.findall(
+        r"(?:\n\s*\n\s*\n|\n\s*\*\s*\*\s*\*\s*\n|\n\s*---\s*\n|\n\s*#)", text
+    )
     # Time/location transition phrases
     time_phrases = re.findall(
-        r'\b(?:later that|the next|hours later|days later|meanwhile|'
-        r'the following|that evening|that night|the next morning|'
-        r'across town|back at|elsewhere|at the same time)\b',
-        text, re.IGNORECASE,
+        r"\b(?:later that|the next|hours later|days later|meanwhile|"
+        r"the following|that evening|that night|the next morning|"
+        r"across town|back at|elsewhere|at the same time)\b",
+        text,
+        re.IGNORECASE,
     )
     total_transitions = len(breaks) + len(time_phrases)
     scenes = total_transitions + 1
@@ -409,7 +575,7 @@ def _analyze_character_mentions(text: str, elements_parsed: dict) -> dict:
 
     mentions: dict[str, int] = {}
     for name in characters:
-        count = len(re.findall(r'\b' + re.escape(name) + r'\b', text, re.IGNORECASE))
+        count = len(re.findall(r"\b" + re.escape(name) + r"\b", text, re.IGNORECASE))
         mentions[name] = count
 
     total_mentions = sum(mentions.values())
@@ -437,16 +603,16 @@ def _parse_elements(elements: str) -> dict:
 
     # Look for explicit labels
     char_match = re.search(
-        r'(?:characters?|protagonist|hero|heroine)\s*[:]\s*(.+?)(?:\n|$|;)',
+        r"(?:characters?|protagonist|hero|heroine)\s*[:]\s*(.+?)(?:\n|$|;)",
         elements,
         re.IGNORECASE,
     )
     if char_match:
         raw = char_match.group(1)
-        characters = [c.strip() for c in re.split(r'[,;]|\band\b', raw) if c.strip()]
+        characters = [c.strip() for c in re.split(r"[,;]|\band\b", raw) if c.strip()]
 
     setting_match = re.search(
-        r'(?:setting|location|place|world|where)\s*[:]\s*(.+?)(?:\n|$|;)',
+        r"(?:setting|location|place|world|where)\s*[:]\s*(.+?)(?:\n|$|;)",
         elements,
         re.IGNORECASE,
     )
@@ -454,7 +620,7 @@ def _parse_elements(elements: str) -> dict:
         setting = setting_match.group(1).strip()
 
     conflict_match = re.search(
-        r'(?:conflict|problem|challenge|struggle|theme)\s*[:]\s*(.+?)(?:\n|$|;)',
+        r"(?:conflict|problem|challenge|struggle|theme)\s*[:]\s*(.+?)(?:\n|$|;)",
         elements,
         re.IGNORECASE,
     )
@@ -464,18 +630,31 @@ def _parse_elements(elements: str) -> dict:
     # If no explicit labels, try to infer from free text
     if not characters:
         # Look for capitalized names (2+ consecutive capitalized words)
-        name_candidates = re.findall(r'\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\b', elements)
+        name_candidates = re.findall(r"\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\b", elements)
         # Filter out common non-name words
         skip_words = {
-            "The", "This", "That", "There", "They", "Then", "When", "Where",
-            "What", "Which", "However", "Also", "Meanwhile", "After", "Before",
+            "The",
+            "This",
+            "That",
+            "There",
+            "They",
+            "Then",
+            "When",
+            "Where",
+            "What",
+            "Which",
+            "However",
+            "Also",
+            "Meanwhile",
+            "After",
+            "Before",
         }
         characters = [n for n in name_candidates if n not in skip_words][:5]
 
     if not setting:
         # Look for location-like phrases
         loc_match = re.search(
-            r'\b(?:in|at|on)\s+((?:a\s+)?(?:the\s+)?[A-Za-z\s]{3,30}?(?:city|town|village|forest|castle|ship|space|world|kingdom|school|house|island|mountain))',
+            r"\b(?:in|at|on)\s+((?:a\s+)?(?:the\s+)?[A-Za-z\s]{3,30}?(?:city|town|village|forest|castle|ship|space|world|kingdom|school|house|island|mountain))",
             elements,
             re.IGNORECASE,
         )
@@ -485,7 +664,7 @@ def _parse_elements(elements: str) -> dict:
     if not conflict:
         # Look for conflict-like phrases
         con_match = re.search(
-            r'\b(?:must|against|versus|vs\.?|battle|fight|struggle|overcome|survive|escape|save|stop|prevent|discover)\s+(.+?)(?:\.|$)',
+            r"\b(?:must|against|versus|vs\.?|battle|fight|struggle|overcome|survive|escape|save|stop|prevent|discover)\s+(.+?)(?:\.|$)",
             elements,
             re.IGNORECASE,
         )

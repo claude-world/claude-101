@@ -17,7 +17,16 @@ from sqlparse.tokens import Keyword, DML, DDL
 # ── Dialect detection ────────────────────────────────────────────────────────
 
 _DIALECT_HINTS: dict[str, list[str]] = {
-    "postgresql": ["RETURNING", "ILIKE", "::int", "::text", "SERIAL", "BIGSERIAL", "JSONB", "ARRAY["],
+    "postgresql": [
+        "RETURNING",
+        "ILIKE",
+        "::int",
+        "::text",
+        "SERIAL",
+        "BIGSERIAL",
+        "JSONB",
+        "ARRAY[",
+    ],
     "mysql": ["LIMIT", "AUTO_INCREMENT", "ENGINE=", "UNSIGNED", "ENUM(", "`"],
     "sqlite": ["AUTOINCREMENT", "GLOB", "PRAGMA", "INTEGER PRIMARY KEY"],
     "mssql": ["TOP ", "NVARCHAR", "GETDATE()", "IDENTITY(", "NOLOCK"],
@@ -40,12 +49,25 @@ def _detect_dialect(query: str) -> str:
 
 # ── Table / column extraction ────────────────────────────────────────────────
 
+
 def _extract_tables(parsed: list[sqlparse.sql.Statement]) -> list[str]:
     """Extract table names from parsed statements."""
     tables: list[str] = []
-    table_keywords = {"FROM", "JOIN", "INNER JOIN", "LEFT JOIN", "RIGHT JOIN",
-                      "FULL JOIN", "CROSS JOIN", "LEFT OUTER JOIN",
-                      "RIGHT OUTER JOIN", "FULL OUTER JOIN", "INTO", "UPDATE", "TABLE"}
+    table_keywords = {
+        "FROM",
+        "JOIN",
+        "INNER JOIN",
+        "LEFT JOIN",
+        "RIGHT JOIN",
+        "FULL JOIN",
+        "CROSS JOIN",
+        "LEFT OUTER JOIN",
+        "RIGHT OUTER JOIN",
+        "FULL OUTER JOIN",
+        "INTO",
+        "UPDATE",
+        "TABLE",
+    }
 
     for stmt in parsed:
         tokens = list(stmt.flatten())
@@ -65,11 +87,21 @@ def _extract_tables(parsed: list[sqlparse.sql.Statement]) -> list[str]:
                     j = i + 1
                     if combined in table_keywords and combined != word:
                         j = i + 2
-                    while j < len(tokens) and tokens[j].ttype in (sqlparse.tokens.Whitespace, sqlparse.tokens.Newline):
+                    while j < len(tokens) and tokens[j].ttype in (
+                        sqlparse.tokens.Whitespace,
+                        sqlparse.tokens.Newline,
+                    ):
                         j += 1
-                    if j < len(tokens) and tokens[j].ttype in (sqlparse.tokens.Name, None):
+                    if j < len(tokens) and tokens[j].ttype in (
+                        sqlparse.tokens.Name,
+                        None,
+                    ):
                         name = tokens[j].value.strip('`"[] ')
-                        if name and name.upper() not in table_keywords and not name.startswith('('):
+                        if (
+                            name
+                            and name.upper() not in table_keywords
+                            and not name.startswith("(")
+                        ):
                             tables.append(name)
                     i = j
                     continue
@@ -99,7 +131,7 @@ def _extract_columns(parsed: list[sqlparse.sql.Statement]) -> list[str]:
     result: list[str] = []
     for c in columns:
         low = c.lower()
-        if low not in seen and low != '*':
+        if low not in seen and low != "*":
             seen.add(low)
             result.append(c)
     return result
@@ -113,7 +145,12 @@ def _walk_for_columns(token_list: Any, columns: list[str]) -> None:
         if token.ttype is DML and token.value.upper() == "SELECT":
             in_select = True
             continue
-        if token.ttype is Keyword and token.value.upper() in ("FROM", "INTO", "SET", "VALUES"):
+        if token.ttype is Keyword and token.value.upper() in (
+            "FROM",
+            "INTO",
+            "SET",
+            "VALUES",
+        ):
             in_select = False
             continue
 
@@ -137,19 +174,20 @@ def _walk_for_columns(token_list: Any, columns: list[str]) -> None:
                 for ident in token.get_identifiers():
                     if isinstance(ident, Identifier):
                         name = ident.get_real_name()
-                        if name and name != '*':
+                        if name and name != "*":
                             columns.append(name)
-                    elif hasattr(ident, 'value'):
+                    elif hasattr(ident, "value"):
                         val = ident.value.strip()
-                        if val and val != '*' and val != ',':
+                        if val and val != "*" and val != ",":
                             columns.append(val)
             elif isinstance(token, Identifier):
                 name = token.get_real_name()
-                if name and name != '*':
+                if name and name != "*":
                     columns.append(name)
 
 
 # ── Query type detection ─────────────────────────────────────────────────────
+
 
 def _query_type(parsed: list[sqlparse.sql.Statement]) -> str:
     """Determine the primary query type."""
@@ -157,20 +195,34 @@ def _query_type(parsed: list[sqlparse.sql.Statement]) -> str:
         first_token = stmt.token_first(skip_ws=True, skip_cm=True)
         if first_token:
             val = first_token.value.upper()
-            if val in ("SELECT", "INSERT", "UPDATE", "DELETE", "CREATE", "ALTER", "DROP", "TRUNCATE",
-                       "MERGE", "WITH", "EXPLAIN", "GRANT", "REVOKE"):
+            if val in (
+                "SELECT",
+                "INSERT",
+                "UPDATE",
+                "DELETE",
+                "CREATE",
+                "ALTER",
+                "DROP",
+                "TRUNCATE",
+                "MERGE",
+                "WITH",
+                "EXPLAIN",
+                "GRANT",
+                "REVOKE",
+            ):
                 return val
     return "UNKNOWN"
 
 
 # ── Operations ───────────────────────────────────────────────────────────────
 
+
 def _format_sql(query: str) -> str:
     """Pretty-print SQL using sqlparse."""
     return sqlparse.format(
         query,
         reindent=True,
-        keyword_case='upper',
+        keyword_case="upper",
         strip_comments=False,
         indent_width=2,
     ).strip()
@@ -182,8 +234,8 @@ def _validate_sql(query: str) -> list[str]:
     stripped = query.strip()
 
     # Unmatched parentheses
-    open_parens = stripped.count('(')
-    close_parens = stripped.count(')')
+    open_parens = stripped.count("(")
+    close_parens = stripped.count(")")
     if open_parens != close_parens:
         diff = open_parens - close_parens
         if diff > 0:
@@ -197,30 +249,30 @@ def _validate_sql(query: str) -> list[str]:
         warnings.append("Unmatched single quote")
 
     # Missing semicolon at end
-    if stripped and not stripped.endswith(';'):
+    if stripped and not stripped.endswith(";"):
         warnings.append("Missing semicolon at end of statement")
 
     # SELECT without FROM (not SELECT 1, SELECT CURRENT_DATE, etc.)
     upper = stripped.upper()
-    if 'SELECT' in upper and 'FROM' not in upper:
+    if "SELECT" in upper and "FROM" not in upper:
         # Check if it's a simple expression (SELECT 1, SELECT NOW(), etc.)
-        select_match = re.search(r'SELECT\s+(.+)', upper)
+        select_match = re.search(r"SELECT\s+(.+)", upper)
         if select_match:
-            expr = select_match.group(1).strip().rstrip(';')
+            expr = select_match.group(1).strip().rstrip(";")
             # Only warn if it looks like column references
-            if re.search(r'[a-zA-Z_]\w*\s*,', expr) or '.' in expr:
+            if re.search(r"[a-zA-Z_]\w*\s*,", expr) or "." in expr:
                 warnings.append("SELECT without FROM clause")
 
     # DELETE without WHERE
-    if 'DELETE' in upper and 'WHERE' not in upper:
+    if "DELETE" in upper and "WHERE" not in upper:
         warnings.append("DELETE without WHERE clause — this will delete all rows")
 
     # UPDATE without WHERE
-    if 'UPDATE' in upper and 'SET' in upper and 'WHERE' not in upper:
+    if "UPDATE" in upper and "SET" in upper and "WHERE" not in upper:
         warnings.append("UPDATE without WHERE clause — this will update all rows")
 
     # SELECT *
-    if re.search(r'SELECT\s+\*', upper):
+    if re.search(r"SELECT\s+\*", upper):
         warnings.append("SELECT * used — consider specifying columns explicitly")
 
     return warnings
@@ -247,32 +299,46 @@ def _explain_sql(query: str, parsed: list[sqlparse.sql.Statement]) -> str:
         if tables:
             parts.append(f"1. FROM: Read from {', '.join(tables)}")
         # JOIN
-        join_match = re.findall(r'(?:LEFT|RIGHT|INNER|FULL|CROSS)?\s*JOIN\s+(\w+)', upper)
+        join_match = re.findall(
+            r"(?:LEFT|RIGHT|INNER|FULL|CROSS)?\s*JOIN\s+(\w+)", upper
+        )
         if join_match:
-            parts.append(f"2. JOIN: Join with {', '.join(j.lower() for j in join_match)}")
+            parts.append(
+                f"2. JOIN: Join with {', '.join(j.lower() for j in join_match)}"
+            )
         # WHERE
-        where_match = re.search(r'WHERE\s+(.+?)(?:GROUP|ORDER|HAVING|LIMIT|UNION|$)', upper, re.DOTALL)
+        where_match = re.search(
+            r"WHERE\s+(.+?)(?:GROUP|ORDER|HAVING|LIMIT|UNION|$)", upper, re.DOTALL
+        )
         if where_match:
-            parts.append(f"3. WHERE: Filter rows where {where_match.group(1).strip()[:80]}")
+            parts.append(
+                f"3. WHERE: Filter rows where {where_match.group(1).strip()[:80]}"
+            )
         # GROUP BY
-        group_match = re.search(r'GROUP\s+BY\s+(.+?)(?:HAVING|ORDER|LIMIT|$)', upper, re.DOTALL)
+        group_match = re.search(
+            r"GROUP\s+BY\s+(.+?)(?:HAVING|ORDER|LIMIT|$)", upper, re.DOTALL
+        )
         if group_match:
             parts.append(f"4. GROUP BY: Group by {group_match.group(1).strip()[:60]}")
         # HAVING
-        having_match = re.search(r'HAVING\s+(.+?)(?:ORDER|LIMIT|$)', upper, re.DOTALL)
+        having_match = re.search(r"HAVING\s+(.+?)(?:ORDER|LIMIT|$)", upper, re.DOTALL)
         if having_match:
-            parts.append(f"5. HAVING: Filter groups where {having_match.group(1).strip()[:60]}")
+            parts.append(
+                f"5. HAVING: Filter groups where {having_match.group(1).strip()[:60]}"
+            )
         # SELECT
         if columns:
             parts.append(f"6. SELECT: Return columns {', '.join(columns[:10])}")
         else:
             parts.append("6. SELECT: Return all columns (*)")
         # ORDER BY
-        order_match = re.search(r'ORDER\s+BY\s+(.+?)(?:LIMIT|OFFSET|$)', upper, re.DOTALL)
+        order_match = re.search(
+            r"ORDER\s+BY\s+(.+?)(?:LIMIT|OFFSET|$)", upper, re.DOTALL
+        )
         if order_match:
             parts.append(f"7. ORDER BY: Sort by {order_match.group(1).strip()[:60]}")
         # LIMIT
-        limit_match = re.search(r'LIMIT\s+(\d+)', upper)
+        limit_match = re.search(r"LIMIT\s+(\d+)", upper)
         if limit_match:
             parts.append(f"8. LIMIT: Return at most {limit_match.group(1)} rows")
     elif qtype == "INSERT":
@@ -281,7 +347,7 @@ def _explain_sql(query: str, parsed: list[sqlparse.sql.Statement]) -> str:
             parts.append(f"Target columns: {', '.join(columns)}")
     elif qtype == "UPDATE":
         parts.append(f"Updates rows in {tables[0] if tables else '?'}")
-        set_match = re.search(r'SET\s+(.+?)(?:WHERE|$)', upper, re.DOTALL)
+        set_match = re.search(r"SET\s+(.+?)(?:WHERE|$)", upper, re.DOTALL)
         if set_match:
             parts.append(f"Sets: {set_match.group(1).strip()[:80]}")
     elif qtype == "DELETE":
@@ -291,6 +357,7 @@ def _explain_sql(query: str, parsed: list[sqlparse.sql.Statement]) -> str:
 
 
 # ── Public API ───────────────────────────────────────────────────────────────
+
 
 def process_sql(
     query: str,

@@ -199,11 +199,11 @@ tests/
     test_server.py      # 12 tests
 ```
 
-**Dependencies:** Only `sqlparse` and `jinja2` (stdlib for everything else). MCP is optional.
+**Dependencies:** Only `sqlparse` (stdlib for everything else). MCP is optional.
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines. See [CHANGELOG.md](CHANGELOG.md) for release history.
 
 ## License
 

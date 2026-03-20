@@ -30,6 +30,9 @@ htmlcov/
 .DS_Store
 Thumbs.db
 
+# Caches
+.ruff_cache/
+
 # Environment
 .env
 .env.local

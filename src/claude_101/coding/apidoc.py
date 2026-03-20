@@ -55,7 +55,7 @@ def _parse_endpoints(raw: str) -> list[dict[str, Any]]:
     endpoints: list[dict[str, Any]] = []
 
     # Split by comma or newline
-    parts = re.split(r'[,\n]+', raw.strip())
+    parts = re.split(r"[,\n]+", raw.strip())
 
     for part in parts:
         part = part.strip()
@@ -63,7 +63,11 @@ def _parse_endpoints(raw: str) -> list[dict[str, Any]]:
             continue
 
         # Match: METHOD /path - description  OR  METHOD /path
-        m = re.match(r'(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\s+(/\S*)\s*(?:-\s*(.+))?', part, re.IGNORECASE)
+        m = re.match(
+            r"(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\s+(/\S*)\s*(?:-\s*(.+))?",
+            part,
+            re.IGNORECASE,
+        )
         if not m:
             continue
 
@@ -72,51 +76,72 @@ def _parse_endpoints(raw: str) -> list[dict[str, Any]]:
         description = m.group(3).strip() if m.group(3) else f"{method} {path}"
 
         # Extract path parameters from {curly_braces}
-        path_params = re.findall(r'\{(\w+)\}', path)
+        path_params = re.findall(r"\{(\w+)\}", path)
         parameters: list[dict[str, Any]] = []
         for param in path_params:
             # Infer type from common naming patterns
-            if param.endswith('_id') or param == 'id':
+            if param.endswith("_id") or param == "id":
                 ptype = "integer"
             else:
                 ptype = "string"
-            parameters.append({
-                "name": param,
-                "in": "path",
-                "type": ptype,
-                "required": True,
-            })
+            parameters.append(
+                {
+                    "name": param,
+                    "in": "path",
+                    "type": ptype,
+                    "required": True,
+                }
+            )
 
         # Add common query parameters for GET list endpoints
         if method == "GET" and not path_params:
-            parameters.extend([
-                {"name": "page", "in": "query", "type": "integer", "required": False},
-                {"name": "limit", "in": "query", "type": "integer", "required": False},
-            ])
+            parameters.extend(
+                [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "type": "integer",
+                        "required": False,
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "type": "integer",
+                        "required": False,
+                    },
+                ]
+            )
 
         # Determine responses
         responses: dict[str, dict[str, str]] = {}
-        standard = _STANDARD_RESPONSES.get(method, {"200": "Success", "500": "Internal Server Error"})
+        standard = _STANDARD_RESPONSES.get(
+            method, {"200": "Success", "500": "Internal Server Error"}
+        )
         for code, desc in standard.items():
             responses[code] = {"description": desc}
 
-        endpoints.append({
-            "method": method,
-            "path": path,
-            "description": description,
-            "parameters": parameters,
-            "responses": responses,
-        })
+        endpoints.append(
+            {
+                "method": method,
+                "path": path,
+                "description": description,
+                "parameters": parameters,
+                "responses": responses,
+            }
+        )
 
     return endpoints
 
 
 # ── OpenAPI YAML generation ──────────────────────────────────────────────────
 
+
 def _indent(text: str, level: int) -> str:
     """Indent each line by the given number of spaces."""
     prefix = "  " * level
-    return "\n".join(prefix + line if line.strip() else line for line in text.splitlines())
+    return "\n".join(
+        prefix + line if line.strip() else line for line in text.splitlines()
+    )
 
 
 def _generate_openapi(title: str, endpoints: list[dict[str, Any]]) -> str:
@@ -146,8 +171,8 @@ def _generate_openapi(title: str, endpoints: list[dict[str, Any]]) -> str:
             method = ep["method"].lower()
             lines.append(f"    {method}:")
             # Generate operation ID
-            op_parts = path.strip('/').replace('{', '').replace('}', '').split('/')
-            op_id = method + ''.join(p.capitalize() for p in op_parts if p)
+            op_parts = path.strip("/").replace("{", "").replace("}", "").split("/")
+            op_id = method + "".join(p.capitalize() for p in op_parts if p)
             lines.append(f"      operationId: {op_id}")
             lines.append(f"      summary: {ep['description']}")
 
@@ -162,7 +187,9 @@ def _generate_openapi(title: str, endpoints: list[dict[str, Any]]) -> str:
                 for param in ep["parameters"]:
                     lines.append(f"        - name: {param['name']}")
                     lines.append(f"          in: {param['in']}")
-                    lines.append(f"          required: {'true' if param['required'] else 'false'}")
+                    lines.append(
+                        f"          required: {'true' if param['required'] else 'false'}"
+                    )
                     lines.append("          schema:")
                     lines.append(f"            type: {param['type']}")
 
@@ -184,7 +211,7 @@ def _generate_openapi(title: str, endpoints: list[dict[str, Any]]) -> str:
             for code, resp in sorted(ep["responses"].items()):
                 lines.append(f"        '{code}':")
                 lines.append(f"          description: {resp['description']}")
-                if code.startswith('2') and code != '204':
+                if code.startswith("2") and code != "204":
                     lines.append("          content:")
                     lines.append("            application/json:")
                     lines.append("              schema:")
@@ -195,6 +222,7 @@ def _generate_openapi(title: str, endpoints: list[dict[str, Any]]) -> str:
 
 
 # ── Markdown generation ──────────────────────────────────────────────────────
+
 
 def _generate_markdown(title: str, endpoints: list[dict[str, Any]]) -> str:
     """Generate a markdown API reference."""
@@ -210,7 +238,9 @@ def _generate_markdown(title: str, endpoints: list[dict[str, Any]]) -> str:
     # Table of contents
     for i, ep in enumerate(endpoints, 1):
         anchor = f"{ep['method'].lower()}-{ep['path'].strip('/').replace('/', '-').replace('{', '').replace('}', '')}"
-        lines.append(f"{i}. [{ep['method']} {ep['path']}](#{anchor}) — {ep['description']}")
+        lines.append(
+            f"{i}. [{ep['method']} {ep['path']}](#{anchor}) — {ep['description']}"
+        )
     lines.append("")
     lines.append("---")
     lines.append("")
@@ -230,7 +260,9 @@ def _generate_markdown(title: str, endpoints: list[dict[str, Any]]) -> str:
             lines.append("|------|-----|------|----------|")
             for param in ep["parameters"]:
                 req = "Yes" if param["required"] else "No"
-                lines.append(f"| `{param['name']}` | {param['in']} | {param['type']} | {req} |")
+                lines.append(
+                    f"| `{param['name']}` | {param['in']} | {param['type']} | {req} |"
+                )
             lines.append("")
 
         # Request body
@@ -268,8 +300,9 @@ def _parse_code_routes(code: str) -> list[dict[str, Any]]:
     # Flask: @app.route("/path", methods=["GET"])
     flask_pat = re.findall(
         r'@\w+\.(?:route|get|post|put|patch|delete)\s*\(\s*["\'](/[^"\']*)["\']'
-        r'(?:.*?methods\s*=\s*\[([^\]]*)\])?',
-        code, re.IGNORECASE | re.DOTALL,
+        r"(?:.*?methods\s*=\s*\[([^\]]*)\])?",
+        code,
+        re.IGNORECASE | re.DOTALL,
     )
     for path, methods_str in flask_pat:
         if methods_str:
@@ -282,7 +315,8 @@ def _parse_code_routes(code: str) -> list[dict[str, Any]]:
     # FastAPI: @app.get("/path")
     fastapi_pat = re.findall(
         r'@\w+\.(get|post|put|patch|delete)\s*\(\s*["\'](/[^"\']*)["\']',
-        code, re.IGNORECASE,
+        code,
+        re.IGNORECASE,
     )
     for method, path in fastapi_pat:
         routes.append({"method": method.upper(), "path": path, "source": "fastapi"})
@@ -290,7 +324,8 @@ def _parse_code_routes(code: str) -> list[dict[str, Any]]:
     # Express: app.get("/path", ...)  or router.get("/path", ...)
     express_pat = re.findall(
         r'(?:app|router)\.(get|post|put|patch|delete)\s*\(\s*["\'](/[^"\']*)["\']',
-        code, re.IGNORECASE,
+        code,
+        re.IGNORECASE,
     )
     for method, path in express_pat:
         routes.append({"method": method.upper(), "path": path, "source": "express"})
@@ -299,7 +334,8 @@ def _parse_code_routes(code: str) -> list[dict[str, Any]]:
 
 
 def _detect_auth_patterns(
-    endpoints: list[dict[str, Any]], code: str,
+    endpoints: list[dict[str, Any]],
+    code: str,
 ) -> dict[str, Any]:
     """Detect authentication patterns from endpoints and code."""
     if not code.strip():
@@ -309,22 +345,30 @@ def _detect_auth_patterns(
     details: list[str] = []
 
     # Bearer / JWT
-    if re.search(r'bearer|jwt|jsonwebtoken|access_token|authorization.*header', code, re.IGNORECASE):
+    if re.search(
+        r"bearer|jwt|jsonwebtoken|access_token|authorization.*header",
+        code,
+        re.IGNORECASE,
+    ):
         auth_types.append("bearer_token")
         details.append("JWT/Bearer token authentication detected")
 
     # API Key
-    if re.search(r'api[_-]?key|x-api-key|apikey', code, re.IGNORECASE):
+    if re.search(r"api[_-]?key|x-api-key|apikey", code, re.IGNORECASE):
         auth_types.append("api_key")
         details.append("API key authentication detected")
 
     # OAuth
-    if re.search(r'oauth|client_id|client_secret|authorization_code|refresh_token', code, re.IGNORECASE):
+    if re.search(
+        r"oauth|client_id|client_secret|authorization_code|refresh_token",
+        code,
+        re.IGNORECASE,
+    ):
         auth_types.append("oauth2")
         details.append("OAuth 2.0 flow detected")
 
     # Basic Auth
-    if re.search(r'basic\s+auth|base64|username.*password', code, re.IGNORECASE):
+    if re.search(r"basic\s+auth|base64|username.*password", code, re.IGNORECASE):
         auth_types.append("basic")
         details.append("Basic authentication detected")
 
@@ -350,7 +394,11 @@ def _check_api_consistency(endpoints: list[dict[str, Any]]) -> dict:
 
     plural_count = sum(1 for s in segments if s.endswith("s"))
     singular_count = len(segments) - plural_count
-    if plural_count > 0 and singular_count > 0 and min(plural_count, singular_count) / max(plural_count, singular_count) > 0.3:
+    if (
+        plural_count > 0
+        and singular_count > 0
+        and min(plural_count, singular_count) / max(plural_count, singular_count) > 0.3
+    ):
         issues.append("Inconsistent plural/singular naming in path segments")
         score -= 15
 
@@ -358,15 +406,19 @@ def _check_api_consistency(endpoints: list[dict[str, Any]]) -> dict:
     for ep in endpoints:
         method = ep["method"]
         path = ep["path"]
-        has_id = bool(re.search(r'\{[^}]+\}', path))
+        has_id = bool(re.search(r"\{[^}]+\}", path))
 
         if method == "GET" and has_id:
             pass  # GET /resource/{id} is fine
         elif method == "POST" and has_id:
-            issues.append(f"POST {path} — POST usually targets collection paths, not individual resources")
+            issues.append(
+                f"POST {path} — POST usually targets collection paths, not individual resources"
+            )
             score -= 10
         elif method == "DELETE" and not has_id:
-            issues.append(f"DELETE {path} — DELETE usually targets specific resources with an ID")
+            issues.append(
+                f"DELETE {path} — DELETE usually targets specific resources with an ID"
+            )
             score -= 10
 
     # Check for consistent param naming
@@ -377,9 +429,11 @@ def _check_api_consistency(endpoints: list[dict[str, Any]]) -> dict:
 
     if param_names:
         has_snake = any("_" in n for n in param_names)
-        has_camel = any(re.search(r'[a-z][A-Z]', n) for n in param_names)
+        has_camel = any(re.search(r"[a-z][A-Z]", n) for n in param_names)
         if has_snake and has_camel:
-            issues.append("Mixed naming conventions in parameters (snake_case and camelCase)")
+            issues.append(
+                "Mixed naming conventions in parameters (snake_case and camelCase)"
+            )
             score -= 10
 
     return {"score": max(0, score), "issues": issues}
@@ -415,6 +469,7 @@ def _generate_example_bodies(endpoints: list[dict[str, Any]]) -> dict[str, dict]
 
 
 # ── Public API ───────────────────────────────────────────────────────────────
+
 
 def scaffold_api_doc(
     endpoints: str,

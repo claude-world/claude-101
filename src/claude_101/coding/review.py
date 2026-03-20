@@ -9,14 +9,64 @@ from typing import Any
 # ── Language detection ───────────────────────────────────────────────────────
 
 _LANG_SIGNALS: list[tuple[str, list[str]]] = [
-    ("python", [r'\bdef\s+\w+\s*\(', r'\bimport\s+\w+', r'\bclass\s+\w+.*:', r'\bself\b', r':\s*$']),
-    ("rust", [r'\bfn\s+\w+', r'\blet\s+mut\b', r'\bimpl\b', r'\bpub\s+fn\b', r'->.*\{']),
-    ("go", [r'\bfunc\s+\w+', r'\bpackage\s+\w+', r'\bgo\s+\w+', r':=', r'\bdefer\b']),
-    ("java", [r'\bpublic\s+class\b', r'\bprivate\s+\w+', r'\bSystem\.out\b', r'\bvoid\s+\w+', r'@Override']),
-    ("typescript", [r'\binterface\s+\w+', r':\s*\w+\s*[=;,\)]', r'\bconst\s+\w+:\s*\w+', r'\btype\s+\w+\s*=']),
-    ("javascript", [r'\bfunction\s+\w+', r'\bconst\s+\w+\s*=', r'\blet\s+\w+\s*=', r'=>', r'\brequire\(']),
-    ("c", [r'#include\s*<', r'\bint\s+main\s*\(', r'\bprintf\s*\(', r'\bmalloc\s*\(', r'\bvoid\s*\*']),
-    ("cpp", [r'#include\s*<', r'\bstd::', r'\bcout\b', r'\btemplate\s*<', r'\bnamespace\b']),
+    (
+        "python",
+        [
+            r"\bdef\s+\w+\s*\(",
+            r"\bimport\s+\w+",
+            r"\bclass\s+\w+.*:",
+            r"\bself\b",
+            r":\s*$",
+        ],
+    ),
+    (
+        "rust",
+        [r"\bfn\s+\w+", r"\blet\s+mut\b", r"\bimpl\b", r"\bpub\s+fn\b", r"->.*\{"],
+    ),
+    ("go", [r"\bfunc\s+\w+", r"\bpackage\s+\w+", r"\bgo\s+\w+", r":=", r"\bdefer\b"]),
+    (
+        "java",
+        [
+            r"\bpublic\s+class\b",
+            r"\bprivate\s+\w+",
+            r"\bSystem\.out\b",
+            r"\bvoid\s+\w+",
+            r"@Override",
+        ],
+    ),
+    (
+        "typescript",
+        [
+            r"\binterface\s+\w+",
+            r":\s*\w+\s*[=;,\)]",
+            r"\bconst\s+\w+:\s*\w+",
+            r"\btype\s+\w+\s*=",
+        ],
+    ),
+    (
+        "javascript",
+        [
+            r"\bfunction\s+\w+",
+            r"\bconst\s+\w+\s*=",
+            r"\blet\s+\w+\s*=",
+            r"=>",
+            r"\brequire\(",
+        ],
+    ),
+    (
+        "c",
+        [
+            r"#include\s*<",
+            r"\bint\s+main\s*\(",
+            r"\bprintf\s*\(",
+            r"\bmalloc\s*\(",
+            r"\bvoid\s*\*",
+        ],
+    ),
+    (
+        "cpp",
+        [r"#include\s*<", r"\bstd::", r"\bcout\b", r"\btemplate\s*<", r"\bnamespace\b"],
+    ),
 ]
 
 
@@ -33,6 +83,7 @@ def _detect_language(code: str) -> str:
 
 
 # ── Comment detection ────────────────────────────────────────────────────────
+
 
 def _count_comments(lines: list[str], language: str) -> int:
     """Count comment lines (single-line and multi-line block comments)."""
@@ -74,7 +125,15 @@ def _count_comments(lines: list[str], language: str) -> int:
         # Single-line comments
         if language == "python" and stripped.startswith("#"):
             count += 1
-        elif language in ("javascript", "typescript", "java", "go", "rust", "c", "cpp") and stripped.startswith("//"):
+        elif language in (
+            "javascript",
+            "typescript",
+            "java",
+            "go",
+            "rust",
+            "c",
+            "cpp",
+        ) and stripped.startswith("//"):
             count += 1
         elif language == "rust" and stripped.startswith("///"):
             count += 1
@@ -85,25 +144,36 @@ def _count_comments(lines: list[str], language: str) -> int:
 # ── Complexity analysis ──────────────────────────────────────────────────────
 
 _BRANCH_KEYWORDS = re.compile(
-    r'\b(if|elif|else|for|while|and|or|except|catch|case|switch|&&|\|\|)\b'
+    r"\b(if|elif|else|for|while|and|or|except|catch|case|switch|&&|\|\|)\b"
 )
 
 _FUNC_PATTERNS: dict[str, re.Pattern[str]] = {
-    "python": re.compile(r'^\s*def\s+\w+', re.MULTILINE),
-    "javascript": re.compile(r'(?:function\s+\w+|(?:const|let|var)\s+\w+\s*=\s*(?:async\s+)?(?:\([^)]*\)|[a-zA-Z_]\w*)\s*=>)', re.MULTILINE),
-    "typescript": re.compile(r'(?:function\s+\w+|(?:const|let|var)\s+\w+\s*(?::\s*[^=]+)?\s*=\s*(?:async\s+)?(?:\([^)]*\)|[a-zA-Z_]\w*)\s*=>)', re.MULTILINE),
-    "go": re.compile(r'^\s*func\s+', re.MULTILINE),
-    "rust": re.compile(r'^\s*(?:pub\s+)?fn\s+\w+', re.MULTILINE),
-    "java": re.compile(r'^\s*(?:public|private|protected|static|\s)+[\w<>\[\]]+\s+\w+\s*\(', re.MULTILINE),
+    "python": re.compile(r"^\s*def\s+\w+", re.MULTILINE),
+    "javascript": re.compile(
+        r"(?:function\s+\w+|(?:const|let|var)\s+\w+\s*=\s*(?:async\s+)?(?:\([^)]*\)|[a-zA-Z_]\w*)\s*=>)",
+        re.MULTILINE,
+    ),
+    "typescript": re.compile(
+        r"(?:function\s+\w+|(?:const|let|var)\s+\w+\s*(?::\s*[^=]+)?\s*=\s*(?:async\s+)?(?:\([^)]*\)|[a-zA-Z_]\w*)\s*=>)",
+        re.MULTILINE,
+    ),
+    "go": re.compile(r"^\s*func\s+", re.MULTILINE),
+    "rust": re.compile(r"^\s*(?:pub\s+)?fn\s+\w+", re.MULTILINE),
+    "java": re.compile(
+        r"^\s*(?:public|private|protected|static|\s)+[\w<>\[\]]+\s+\w+\s*\(",
+        re.MULTILINE,
+    ),
 }
 
 _CLASS_PATTERNS: dict[str, re.Pattern[str]] = {
-    "python": re.compile(r'^\s*class\s+\w+', re.MULTILINE),
-    "javascript": re.compile(r'^\s*(?:export\s+)?class\s+\w+', re.MULTILINE),
-    "typescript": re.compile(r'^\s*(?:export\s+)?(?:abstract\s+)?class\s+\w+', re.MULTILINE),
-    "java": re.compile(r'^\s*(?:public|private|abstract)?\s*class\s+\w+', re.MULTILINE),
-    "rust": re.compile(r'^\s*(?:pub\s+)?struct\s+\w+', re.MULTILINE),
-    "go": re.compile(r'^\s*type\s+\w+\s+struct\b', re.MULTILINE),
+    "python": re.compile(r"^\s*class\s+\w+", re.MULTILINE),
+    "javascript": re.compile(r"^\s*(?:export\s+)?class\s+\w+", re.MULTILINE),
+    "typescript": re.compile(
+        r"^\s*(?:export\s+)?(?:abstract\s+)?class\s+\w+", re.MULTILINE
+    ),
+    "java": re.compile(r"^\s*(?:public|private|abstract)?\s*class\s+\w+", re.MULTILINE),
+    "rust": re.compile(r"^\s*(?:pub\s+)?struct\s+\w+", re.MULTILINE),
+    "go": re.compile(r"^\s*type\s+\w+\s+struct\b", re.MULTILINE),
 }
 
 
@@ -129,10 +199,10 @@ def _nesting_depth(lines: list[str], language: str) -> int:
             if not stripped:
                 continue
             for ch in stripped:
-                if ch == '{':
+                if ch == "{":
                     depth += 1
                     max_depth = max(max_depth, depth)
-                elif ch == '}':
+                elif ch == "}":
                     depth = max(0, depth - 1)
 
     return max_depth
@@ -153,6 +223,7 @@ def _complexity_grade(cyclomatic: int) -> str:
 
 # ── Issue detection ──────────────────────────────────────────────────────────
 
+
 def _detect_issues(lines: list[str], code: str, language: str) -> list[dict[str, Any]]:
     """Detect common code issues."""
     issues: list[dict[str, Any]] = []
@@ -162,22 +233,41 @@ def _detect_issues(lines: list[str], code: str, language: str) -> list[dict[str,
     for i, line in enumerate(lines, 1):
         stripped = line.strip()
         # Skip comments, blank, pure assignments, constant definitions
-        if not stripped or stripped.startswith(('#', '//', '/*', '*', '"""', "'''")):
+        if not stripped or stripped.startswith(("#", "//", "/*", "*", '"""', "'''")):
             continue
         # Look for numbers in conditional / arithmetic contexts
-        if any(kw in stripped for kw in ('if ', 'elif ', 'while ', 'for ', 'return ', '==', '!=', '>', '<', '+', '-', '*', '/')):
+        if any(
+            kw in stripped
+            for kw in (
+                "if ",
+                "elif ",
+                "while ",
+                "for ",
+                "return ",
+                "==",
+                "!=",
+                ">",
+                "<",
+                "+",
+                "-",
+                "*",
+                "/",
+            )
+        ):
             for m in magic_re.finditer(stripped):
                 try:
                     val = float(m.group(1))
                 except ValueError:
                     continue
                 if val not in (0, 1, 2, -1, 0.0, 1.0):
-                    issues.append({
-                        "type": "magic_number",
-                        "description": f"Magic number {m.group(1)} — consider using a named constant",
-                        "line": i,
-                        "severity": "info",
-                    })
+                    issues.append(
+                        {
+                            "type": "magic_number",
+                            "description": f"Magic number {m.group(1)} — consider using a named constant",
+                            "line": i,
+                            "severity": "info",
+                        }
+                    )
                     break  # One per line is enough
 
     # Long functions (>50 lines between def/func/fn)
@@ -192,90 +282,101 @@ def _detect_issues(lines: list[str], code: str, language: str) -> list[dict[str,
         end = func_starts[idx + 1] - 1 if idx + 1 < len(func_starts) else len(lines)
         length = end - start + 1
         if length > 50:
-            issues.append({
-                "type": "long_function",
-                "description": f"Function starting here is {length} lines (>50). Consider breaking it up.",
-                "line": start,
-                "severity": "warning",
-            })
+            issues.append(
+                {
+                    "type": "long_function",
+                    "description": f"Function starting here is {length} lines (>50). Consider breaking it up.",
+                    "line": start,
+                    "severity": "warning",
+                }
+            )
 
     # Deep nesting (>4)
     if language == "python":
         for i, line in enumerate(lines, 1):
             stripped = line.rstrip()
-            if not stripped or stripped.lstrip().startswith('#'):
+            if not stripped or stripped.lstrip().startswith("#"):
                 continue
             indent = len(stripped) - len(stripped.lstrip())
             depth = indent // 4
             if depth > 4:
-                issues.append({
-                    "type": "deep_nesting",
-                    "description": f"Nesting depth of {depth} (>4). Consider extracting to a function.",
-                    "line": i,
-                    "severity": "warning",
-                })
+                issues.append(
+                    {
+                        "type": "deep_nesting",
+                        "description": f"Nesting depth of {depth} (>4). Consider extracting to a function.",
+                        "line": i,
+                        "severity": "warning",
+                    }
+                )
                 break  # Report once
     else:
         depth = 0
         for i, line in enumerate(lines, 1):
             for ch in line:
-                if ch == '{':
+                if ch == "{":
                     depth += 1
-                elif ch == '}':
+                elif ch == "}":
                     depth = max(0, depth - 1)
             if depth > 4:
-                issues.append({
-                    "type": "deep_nesting",
-                    "description": f"Nesting depth of {depth} (>4). Consider extracting to a function.",
-                    "line": i,
-                    "severity": "warning",
-                })
+                issues.append(
+                    {
+                        "type": "deep_nesting",
+                        "description": f"Nesting depth of {depth} (>4). Consider extracting to a function.",
+                        "line": i,
+                        "severity": "warning",
+                    }
+                )
                 break
 
     # TODO / FIXME / HACK comments
-    todo_re = re.compile(r'\b(TODO|FIXME|HACK|XXX)\b', re.IGNORECASE)
+    todo_re = re.compile(r"\b(TODO|FIXME|HACK|XXX)\b", re.IGNORECASE)
     for i, line in enumerate(lines, 1):
         m = todo_re.search(line)
         if m:
             tag = m.group(1).upper()
-            issues.append({
-                "type": "todo_comment",
-                "description": f"{tag} comment found",
-                "line": i,
-                "severity": "info",
-            })
+            issues.append(
+                {
+                    "type": "todo_comment",
+                    "description": f"{tag} comment found",
+                    "line": i,
+                    "severity": "info",
+                }
+            )
 
     # Unused imports (simple heuristic: import name not referenced elsewhere)
     if language == "python":
-        import_re = re.compile(r'^\s*(?:from\s+\S+\s+)?import\s+(.+)', re.MULTILINE)
+        import_re = re.compile(r"^\s*(?:from\s+\S+\s+)?import\s+(.+)", re.MULTILINE)
         for i, line in enumerate(lines, 1):
             m = import_re.match(line)
             if m:
                 imported_names = m.group(1)
                 # Handle "import X as Y", "from X import a, b"
-                for part in imported_names.split(','):
+                for part in imported_names.split(","):
                     part = part.strip()
-                    if ' as ' in part:
-                        name = part.split(' as ')[-1].strip()
+                    if " as " in part:
+                        name = part.split(" as ")[-1].strip()
                     else:
-                        name = part.split('.')[-1].strip()
-                    if name.startswith('(') or not name or name == '*':
+                        name = part.split(".")[-1].strip()
+                    if name.startswith("(") or not name or name == "*":
                         continue
                     # Check if name appears anywhere else in the code (not on import lines)
-                    rest_lines = lines[:i - 1] + lines[i:]
-                    rest = '\n'.join(rest_lines)
-                    if not re.search(r'\b' + re.escape(name) + r'\b', rest):
-                        issues.append({
-                            "type": "unused_import",
-                            "description": f"Import '{name}' appears unused",
-                            "line": i,
-                            "severity": "warning",
-                        })
+                    rest_lines = lines[: i - 1] + lines[i:]
+                    rest = "\n".join(rest_lines)
+                    if not re.search(r"\b" + re.escape(name) + r"\b", rest):
+                        issues.append(
+                            {
+                                "type": "unused_import",
+                                "description": f"Import '{name}' appears unused",
+                                "line": i,
+                                "severity": "warning",
+                            }
+                        )
 
     return issues
 
 
 # ── Public API ───────────────────────────────────────────────────────────────
+
 
 def analyze_code(code: str, language: str = "auto") -> dict:
     """Perform static analysis on a code snippet.

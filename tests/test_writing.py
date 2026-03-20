@@ -1,6 +1,11 @@
 """Tests for writing tools."""
 
-from claude_101._utils import formality_score, detect_named_entities, count_pattern_matches, text_structure_check
+from claude_101._utils import (
+    formality_score,
+    detect_named_entities,
+    count_pattern_matches,
+    text_structure_check,
+)
 from claude_101.writing.email import draft_email
 from claude_101.writing.blog import draft_blog_post
 from claude_101.writing.meeting import parse_meeting_notes
@@ -75,7 +80,9 @@ class TestParseMeetingNotes:
 
 class TestFormatSocialContent:
     def test_twitter(self):
-        r = format_social_content("Just shipped a new feature! Check it out.", platform="twitter")
+        r = format_social_content(
+            "Just shipped a new feature! Check it out.", platform="twitter"
+        )
         assert r["platform"] == "twitter"
         assert r["char_limit"] == 280
         assert r["within_limit"] is True
@@ -124,7 +131,9 @@ class TestStructureStory:
         assert len(r["beats"]) >= 10
 
     def test_with_elements(self):
-        r = structure_story(genre="mystery", elements="protagonist: detective, setting: 1920s Chicago")
+        r = structure_story(
+            genre="mystery", elements="protagonist: detective, setting: 1920s Chicago"
+        )
         assert r["genre"] == "mystery"
         assert len(r["genre_conventions"]) >= 1
 
@@ -132,6 +141,7 @@ class TestStructureStory:
 # ---------------------------------------------------------------------------
 # New: Shared utility tests
 # ---------------------------------------------------------------------------
+
 
 class TestFormalityScore:
     def test_formal_text(self):
@@ -173,18 +183,24 @@ class TestCountPatternMatches:
 
 class TestTextStructureCheck:
     def test_found(self):
-        r = text_structure_check("Dear John, please review.", {"greeting": ["dear"], "cta": ["please review"]})
+        r = text_structure_check(
+            "Dear John, please review.",
+            {"greeting": ["dear"], "cta": ["please review"]},
+        )
         assert r["greeting"] is True
         assert r["cta"] is True
 
     def test_not_found(self):
-        r = text_structure_check("Hello world", {"greeting": ["dear"], "cta": ["please review"]})
+        r = text_structure_check(
+            "Hello world", {"greeting": ["dear"], "cta": ["please review"]}
+        )
         assert r["greeting"] is False
 
 
 # ---------------------------------------------------------------------------
 # New: Email text analysis tests
 # ---------------------------------------------------------------------------
+
 
 class TestDraftEmailAnalysis:
     def test_text_analysis_present(self):
@@ -224,6 +240,7 @@ class TestDraftEmailAnalysis:
 # New: Blog content analysis tests
 # ---------------------------------------------------------------------------
 
+
 class TestBlogContentAnalysis:
     def test_topic_analysis(self):
         r = draft_blog_post("Introduction to Machine Learning with Python")
@@ -251,6 +268,7 @@ class TestBlogContentAnalysis:
 # New: Tech doc analysis tests
 # ---------------------------------------------------------------------------
 
+
 class TestScaffoldTechDocAnalysis:
     def test_effort_estimate(self):
         r = scaffold_tech_doc("readme", "My Project")
@@ -258,7 +276,7 @@ class TestScaffoldTechDocAnalysis:
         assert r["effort_estimate"]["min_hours"] > 0
 
     def test_code_analysis(self):
-        code = 'def hello():\n    pass\n\nclass Foo:\n    pass\n'
+        code = "def hello():\n    pass\n\nclass Foo:\n    pass\n"
         r = scaffold_tech_doc("readme", "My Project", content=code)
         assert "analysis" in r
         assert "code_structure" in r["analysis"]
@@ -279,6 +297,7 @@ class TestScaffoldTechDocAnalysis:
 # ---------------------------------------------------------------------------
 # New: Story text analysis tests
 # ---------------------------------------------------------------------------
+
 
 class TestStructureStoryAnalysis:
     def test_no_analysis_without_text(self):

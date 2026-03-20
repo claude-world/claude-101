@@ -14,11 +14,11 @@ def _parse_code_structure(code: str) -> dict:
 
     # Function patterns (Python, JS/TS, Go, Rust, Java)
     func_patterns = [
-        r'(?:def|async def)\s+(\w+)\s*\(',           # Python
-        r'(?:function|async function)\s+(\w+)\s*\(',  # JS
-        r'(?:func)\s+(\w+)\s*\(',                     # Go
-        r'(?:fn)\s+(\w+)\s*\(',                       # Rust
-        r'(?:public|private|protected|static)?\s*\w+\s+(\w+)\s*\(',  # Java
+        r"(?:def|async def)\s+(\w+)\s*\(",  # Python
+        r"(?:function|async function)\s+(\w+)\s*\(",  # JS
+        r"(?:func)\s+(\w+)\s*\(",  # Go
+        r"(?:fn)\s+(\w+)\s*\(",  # Rust
+        r"(?:public|private|protected|static)?\s*\w+\s+(\w+)\s*\(",  # Java
     ]
     functions: list[str] = []
     for pat in func_patterns:
@@ -26,9 +26,9 @@ def _parse_code_structure(code: str) -> dict:
 
     # Class patterns
     class_patterns = [
-        r'class\s+(\w+)',           # Python/JS/TS/Java
-        r'struct\s+(\w+)',          # Go/Rust
-        r'interface\s+(\w+)',       # TS/Java
+        r"class\s+(\w+)",  # Python/JS/TS/Java
+        r"struct\s+(\w+)",  # Go/Rust
+        r"interface\s+(\w+)",  # TS/Java
     ]
     classes: list[str] = []
     for pat in class_patterns:
@@ -36,8 +36,8 @@ def _parse_code_structure(code: str) -> dict:
 
     # Import patterns
     import_patterns = [
-        r'(?:from\s+\S+\s+)?import\s+(.+)',          # Python
-        r'(?:import|require)\s*\(?["\'](.+?)["\']\)?', # JS
+        r"(?:from\s+\S+\s+)?import\s+(.+)",  # Python
+        r'(?:import|require)\s*\(?["\'](.+?)["\']\)?',  # JS
     ]
     imports: list[str] = []
     for pat in import_patterns:
@@ -80,8 +80,13 @@ def _estimate_doc_effort(doc_type: str, section_count: int) -> dict:
     """Estimate documentation effort in hours."""
     # Base hours per section by doc type
     hours_per_section = {
-        "readme": 0.5, "api": 1.0, "rfc": 1.5, "adr": 0.3,
-        "runbook": 0.8, "changelog": 0.2, "contributing": 0.4,
+        "readme": 0.5,
+        "api": 1.0,
+        "rfc": 1.5,
+        "adr": 0.3,
+        "runbook": 0.8,
+        "changelog": 0.2,
+        "contributing": 0.4,
         "architecture": 1.2,
     }
     base = hours_per_section.get(doc_type, 0.5)
@@ -151,7 +156,17 @@ def scaffold_tech_doc(
     if content.strip():
         analysis: dict = {}
         # Check if content looks like code
-        code_indicators = ["def ", "function ", "class ", "import ", "const ", "var ", "let ", "fn ", "func "]
+        code_indicators = [
+            "def ",
+            "function ",
+            "class ",
+            "import ",
+            "const ",
+            "var ",
+            "let ",
+            "fn ",
+            "func ",
+        ]
         is_code = any(ind in content for ind in code_indicators)
         if is_code:
             analysis["code_structure"] = _parse_code_structure(content)
@@ -171,16 +186,56 @@ def scaffold_tech_doc(
 _DOC_TYPES: dict[str, dict] = {
     "readme": {
         "sections": [
-            {"name": "Title & Badges", "description": "Project name, version badge, CI status, license badge", "required": True},
-            {"name": "Overview", "description": "One-paragraph description of what the project does and who it's for", "required": True},
-            {"name": "Features", "description": "Bulleted list of key features and capabilities", "required": True},
-            {"name": "Quick Start", "description": "Minimal steps to get running (install + first command)", "required": True},
-            {"name": "Installation", "description": "Detailed installation instructions for all platforms", "required": True},
-            {"name": "Usage", "description": "Common usage examples with code blocks", "required": True},
-            {"name": "Configuration", "description": "Available config options, environment variables, config files", "required": False},
-            {"name": "API Reference", "description": "Link to full API docs or inline summary", "required": False},
-            {"name": "Contributing", "description": "How to contribute, link to CONTRIBUTING.md", "required": True},
-            {"name": "License", "description": "License type and link to LICENSE file", "required": True},
+            {
+                "name": "Title & Badges",
+                "description": "Project name, version badge, CI status, license badge",
+                "required": True,
+            },
+            {
+                "name": "Overview",
+                "description": "One-paragraph description of what the project does and who it's for",
+                "required": True,
+            },
+            {
+                "name": "Features",
+                "description": "Bulleted list of key features and capabilities",
+                "required": True,
+            },
+            {
+                "name": "Quick Start",
+                "description": "Minimal steps to get running (install + first command)",
+                "required": True,
+            },
+            {
+                "name": "Installation",
+                "description": "Detailed installation instructions for all platforms",
+                "required": True,
+            },
+            {
+                "name": "Usage",
+                "description": "Common usage examples with code blocks",
+                "required": True,
+            },
+            {
+                "name": "Configuration",
+                "description": "Available config options, environment variables, config files",
+                "required": False,
+            },
+            {
+                "name": "API Reference",
+                "description": "Link to full API docs or inline summary",
+                "required": False,
+            },
+            {
+                "name": "Contributing",
+                "description": "How to contribute, link to CONTRIBUTING.md",
+                "required": True,
+            },
+            {
+                "name": "License",
+                "description": "License type and link to LICENSE file",
+                "required": True,
+            },
         ],
         "best_practices": [
             "Lead with a clear one-line description of what the project does",
@@ -193,16 +248,56 @@ _DOC_TYPES: dict[str, dict] = {
     },
     "api": {
         "sections": [
-            {"name": "Overview", "description": "API purpose, base URL, versioning strategy", "required": True},
-            {"name": "Authentication", "description": "Auth methods (API key, OAuth, JWT), token format, examples", "required": True},
-            {"name": "Rate Limiting", "description": "Rate limits, headers, retry strategy", "required": True},
-            {"name": "Endpoints", "description": "Grouped endpoint documentation with methods, params, responses", "required": True},
-            {"name": "Request Format", "description": "Content types, headers, pagination parameters", "required": True},
-            {"name": "Response Format", "description": "Response envelope structure, status codes, pagination", "required": True},
-            {"name": "Error Handling", "description": "Error codes, error response format, common errors", "required": True},
-            {"name": "Examples", "description": "Complete request/response examples for common workflows", "required": True},
-            {"name": "SDKs & Libraries", "description": "Official and community client libraries", "required": False},
-            {"name": "Changelog", "description": "API version history and breaking changes", "required": False},
+            {
+                "name": "Overview",
+                "description": "API purpose, base URL, versioning strategy",
+                "required": True,
+            },
+            {
+                "name": "Authentication",
+                "description": "Auth methods (API key, OAuth, JWT), token format, examples",
+                "required": True,
+            },
+            {
+                "name": "Rate Limiting",
+                "description": "Rate limits, headers, retry strategy",
+                "required": True,
+            },
+            {
+                "name": "Endpoints",
+                "description": "Grouped endpoint documentation with methods, params, responses",
+                "required": True,
+            },
+            {
+                "name": "Request Format",
+                "description": "Content types, headers, pagination parameters",
+                "required": True,
+            },
+            {
+                "name": "Response Format",
+                "description": "Response envelope structure, status codes, pagination",
+                "required": True,
+            },
+            {
+                "name": "Error Handling",
+                "description": "Error codes, error response format, common errors",
+                "required": True,
+            },
+            {
+                "name": "Examples",
+                "description": "Complete request/response examples for common workflows",
+                "required": True,
+            },
+            {
+                "name": "SDKs & Libraries",
+                "description": "Official and community client libraries",
+                "required": False,
+            },
+            {
+                "name": "Changelog",
+                "description": "API version history and breaking changes",
+                "required": False,
+            },
         ],
         "best_practices": [
             "Document every endpoint with method, path, params, and response",
@@ -215,15 +310,51 @@ _DOC_TYPES: dict[str, dict] = {
     },
     "rfc": {
         "sections": [
-            {"name": "Title & Metadata", "description": "RFC number, title, author, date, status (draft/accepted/rejected)", "required": True},
-            {"name": "Summary", "description": "One-paragraph summary of the proposal", "required": True},
-            {"name": "Motivation", "description": "Why this change is needed, what problem it solves", "required": True},
-            {"name": "Detailed Design", "description": "Technical design with diagrams, interfaces, data flow", "required": True},
-            {"name": "Alternatives Considered", "description": "Other approaches evaluated and why they were rejected", "required": True},
-            {"name": "Migration Plan", "description": "How to roll out the change, backward compatibility", "required": True},
-            {"name": "Drawbacks", "description": "Known limitations, trade-offs, risks", "required": True},
-            {"name": "Unresolved Questions", "description": "Open questions to resolve during implementation", "required": False},
-            {"name": "References", "description": "Related RFCs, external resources, prior art", "required": False},
+            {
+                "name": "Title & Metadata",
+                "description": "RFC number, title, author, date, status (draft/accepted/rejected)",
+                "required": True,
+            },
+            {
+                "name": "Summary",
+                "description": "One-paragraph summary of the proposal",
+                "required": True,
+            },
+            {
+                "name": "Motivation",
+                "description": "Why this change is needed, what problem it solves",
+                "required": True,
+            },
+            {
+                "name": "Detailed Design",
+                "description": "Technical design with diagrams, interfaces, data flow",
+                "required": True,
+            },
+            {
+                "name": "Alternatives Considered",
+                "description": "Other approaches evaluated and why they were rejected",
+                "required": True,
+            },
+            {
+                "name": "Migration Plan",
+                "description": "How to roll out the change, backward compatibility",
+                "required": True,
+            },
+            {
+                "name": "Drawbacks",
+                "description": "Known limitations, trade-offs, risks",
+                "required": True,
+            },
+            {
+                "name": "Unresolved Questions",
+                "description": "Open questions to resolve during implementation",
+                "required": False,
+            },
+            {
+                "name": "References",
+                "description": "Related RFCs, external resources, prior art",
+                "required": False,
+            },
         ],
         "best_practices": [
             "Write the Summary so someone can decide whether to read further",
@@ -236,11 +367,31 @@ _DOC_TYPES: dict[str, dict] = {
     },
     "adr": {
         "sections": [
-            {"name": "Title", "description": "ADR number and short descriptive title", "required": True},
-            {"name": "Status", "description": "Proposed, Accepted, Deprecated, Superseded", "required": True},
-            {"name": "Context", "description": "The situation and forces at play (technical, political, social)", "required": True},
-            {"name": "Decision", "description": "The change being proposed or decided", "required": True},
-            {"name": "Consequences", "description": "What happens as a result — both positive and negative", "required": True},
+            {
+                "name": "Title",
+                "description": "ADR number and short descriptive title",
+                "required": True,
+            },
+            {
+                "name": "Status",
+                "description": "Proposed, Accepted, Deprecated, Superseded",
+                "required": True,
+            },
+            {
+                "name": "Context",
+                "description": "The situation and forces at play (technical, political, social)",
+                "required": True,
+            },
+            {
+                "name": "Decision",
+                "description": "The change being proposed or decided",
+                "required": True,
+            },
+            {
+                "name": "Consequences",
+                "description": "What happens as a result — both positive and negative",
+                "required": True,
+            },
         ],
         "best_practices": [
             "Keep ADRs short (1-2 pages) — they should be quick to write and read",
@@ -252,14 +403,46 @@ _DOC_TYPES: dict[str, dict] = {
     },
     "runbook": {
         "sections": [
-            {"name": "Overview", "description": "What this runbook covers, when to use it, severity level", "required": True},
-            {"name": "Prerequisites", "description": "Required access, tools, permissions, dashboards", "required": True},
-            {"name": "Detection", "description": "How to detect the issue — alerts, metrics, symptoms", "required": True},
-            {"name": "Diagnosis", "description": "Step-by-step diagnostic commands and what to look for", "required": True},
-            {"name": "Remediation", "description": "Step-by-step fix instructions with rollback plan", "required": True},
-            {"name": "Verification", "description": "How to verify the fix worked — checks, metrics, tests", "required": True},
-            {"name": "Escalation", "description": "When and how to escalate, contact information", "required": True},
-            {"name": "Post-Incident", "description": "Follow-up tasks, post-mortem template link", "required": False},
+            {
+                "name": "Overview",
+                "description": "What this runbook covers, when to use it, severity level",
+                "required": True,
+            },
+            {
+                "name": "Prerequisites",
+                "description": "Required access, tools, permissions, dashboards",
+                "required": True,
+            },
+            {
+                "name": "Detection",
+                "description": "How to detect the issue — alerts, metrics, symptoms",
+                "required": True,
+            },
+            {
+                "name": "Diagnosis",
+                "description": "Step-by-step diagnostic commands and what to look for",
+                "required": True,
+            },
+            {
+                "name": "Remediation",
+                "description": "Step-by-step fix instructions with rollback plan",
+                "required": True,
+            },
+            {
+                "name": "Verification",
+                "description": "How to verify the fix worked — checks, metrics, tests",
+                "required": True,
+            },
+            {
+                "name": "Escalation",
+                "description": "When and how to escalate, contact information",
+                "required": True,
+            },
+            {
+                "name": "Post-Incident",
+                "description": "Follow-up tasks, post-mortem template link",
+                "required": False,
+            },
         ],
         "best_practices": [
             "Write for the on-call engineer at 3 AM — be explicit and step-by-step",
@@ -272,9 +455,21 @@ _DOC_TYPES: dict[str, dict] = {
     },
     "changelog": {
         "sections": [
-            {"name": "Header", "description": "Project name, changelog format note, link conventions", "required": True},
-            {"name": "Unreleased", "description": "Changes not yet in a release", "required": True},
-            {"name": "Version Entry", "description": "Version number, date, grouped changes (Added/Changed/Deprecated/Removed/Fixed/Security)", "required": True},
+            {
+                "name": "Header",
+                "description": "Project name, changelog format note, link conventions",
+                "required": True,
+            },
+            {
+                "name": "Unreleased",
+                "description": "Changes not yet in a release",
+                "required": True,
+            },
+            {
+                "name": "Version Entry",
+                "description": "Version number, date, grouped changes (Added/Changed/Deprecated/Removed/Fixed/Security)",
+                "required": True,
+            },
         ],
         "best_practices": [
             "Follow Keep a Changelog format (keepachangelog.com)",
@@ -287,13 +482,41 @@ _DOC_TYPES: dict[str, dict] = {
     },
     "contributing": {
         "sections": [
-            {"name": "Welcome", "description": "Thank contributors, link to Code of Conduct", "required": True},
-            {"name": "Getting Started", "description": "Dev environment setup, fork/clone/branch workflow", "required": True},
-            {"name": "Development Workflow", "description": "Build, test, lint commands, pre-commit hooks", "required": True},
-            {"name": "Pull Request Process", "description": "PR requirements, review process, merge criteria", "required": True},
-            {"name": "Code Style", "description": "Formatting, naming conventions, linting rules", "required": True},
-            {"name": "Issue Guidelines", "description": "Bug report template, feature request process", "required": True},
-            {"name": "Community", "description": "Communication channels, meetings, decision process", "required": False},
+            {
+                "name": "Welcome",
+                "description": "Thank contributors, link to Code of Conduct",
+                "required": True,
+            },
+            {
+                "name": "Getting Started",
+                "description": "Dev environment setup, fork/clone/branch workflow",
+                "required": True,
+            },
+            {
+                "name": "Development Workflow",
+                "description": "Build, test, lint commands, pre-commit hooks",
+                "required": True,
+            },
+            {
+                "name": "Pull Request Process",
+                "description": "PR requirements, review process, merge criteria",
+                "required": True,
+            },
+            {
+                "name": "Code Style",
+                "description": "Formatting, naming conventions, linting rules",
+                "required": True,
+            },
+            {
+                "name": "Issue Guidelines",
+                "description": "Bug report template, feature request process",
+                "required": True,
+            },
+            {
+                "name": "Community",
+                "description": "Communication channels, meetings, decision process",
+                "required": False,
+            },
         ],
         "best_practices": [
             "Make the first contribution as easy as possible",
@@ -306,15 +529,51 @@ _DOC_TYPES: dict[str, dict] = {
     },
     "architecture": {
         "sections": [
-            {"name": "Overview", "description": "System purpose, high-level architecture diagram", "required": True},
-            {"name": "Design Principles", "description": "Core principles guiding architectural decisions", "required": True},
-            {"name": "System Components", "description": "Major components/services and their responsibilities", "required": True},
-            {"name": "Data Flow", "description": "How data moves through the system, data models", "required": True},
-            {"name": "Infrastructure", "description": "Deployment architecture, cloud services, networking", "required": True},
-            {"name": "Security", "description": "Auth, encryption, access control, threat model", "required": True},
-            {"name": "Scalability", "description": "Scaling strategy, bottlenecks, capacity planning", "required": False},
-            {"name": "Observability", "description": "Logging, metrics, tracing, alerting strategy", "required": False},
-            {"name": "Decision Log", "description": "Key architectural decisions with rationale (link to ADRs)", "required": False},
+            {
+                "name": "Overview",
+                "description": "System purpose, high-level architecture diagram",
+                "required": True,
+            },
+            {
+                "name": "Design Principles",
+                "description": "Core principles guiding architectural decisions",
+                "required": True,
+            },
+            {
+                "name": "System Components",
+                "description": "Major components/services and their responsibilities",
+                "required": True,
+            },
+            {
+                "name": "Data Flow",
+                "description": "How data moves through the system, data models",
+                "required": True,
+            },
+            {
+                "name": "Infrastructure",
+                "description": "Deployment architecture, cloud services, networking",
+                "required": True,
+            },
+            {
+                "name": "Security",
+                "description": "Auth, encryption, access control, threat model",
+                "required": True,
+            },
+            {
+                "name": "Scalability",
+                "description": "Scaling strategy, bottlenecks, capacity planning",
+                "required": False,
+            },
+            {
+                "name": "Observability",
+                "description": "Logging, metrics, tracing, alerting strategy",
+                "required": False,
+            },
+            {
+                "name": "Decision Log",
+                "description": "Key architectural decisions with rationale (link to ADRs)",
+                "required": False,
+            },
         ],
         "best_practices": [
             "Include a high-level diagram on the first page",
@@ -365,10 +624,16 @@ def _build_template(
     elif doc_type == "changelog":
         lines.append(f"# Changelog — {title}")
         lines.append("")
-        lines.append("All notable changes to this project will be documented in this file.")
+        lines.append(
+            "All notable changes to this project will be documented in this file."
+        )
         lines.append("")
-        lines.append("The format is based on [Keep a Changelog](https://keepachangelog.com/),")
-        lines.append("and this project adheres to [Semantic Versioning](https://semver.org/).")
+        lines.append(
+            "The format is based on [Keep a Changelog](https://keepachangelog.com/),"
+        )
+        lines.append(
+            "and this project adheres to [Semantic Versioning](https://semver.org/)."
+        )
         lines.append("")
 
     elif doc_type == "readme":

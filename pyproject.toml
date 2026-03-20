@@ -21,10 +21,12 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Text Processing :: Linguistic",
+    "Topic :: Utilities",
 ]
 dependencies = [
     "sqlparse>=0.5",
-    "jinja2>=3.1",
 ]
 
 [project.urls]
@@ -35,6 +37,7 @@ Repository = "https://github.com/claude-world/claude-101"
 [project.optional-dependencies]
 mcp = ["mcp[cli]>=1.0"]
 nlp = ["textblob>=0.18"]
+dev = ["pytest>=8.0", "ruff>=0.4"]
 all = ["mcp[cli]>=1.0", "textblob>=0.18"]
 
 [project.scripts]
@@ -43,6 +46,10 @@ claude-101-server = "claude_101.server:main"
 
 [dependency-groups]
 dev = ["pytest>=8.0", "ruff>=0.4"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/claude_101"]

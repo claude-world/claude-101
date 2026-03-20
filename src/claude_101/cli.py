@@ -16,12 +16,13 @@ from typing import Any, Callable
 # Tool registry
 # ---------------------------------------------------------------------------
 
+
 @dataclass
 class ToolEntry:
-    name: str          # CLI name (hyphen-case)
+    name: str  # CLI name (hyphen-case)
     func: Callable
     category: str
-    description: str   # first line of docstring
+    description: str  # first line of docstring
 
 
 def _build_registry() -> dict[str, ToolEntry]:
@@ -66,28 +67,24 @@ def _build_registry() -> dict[str, ToolEntry]:
         ("list_guides", list_guides, "meta"),
         ("get_guide", get_guide, "meta"),
         ("search_guides", search_guides, "meta"),
-
         ("draft_email", draft_email, "writing"),
         ("draft_blog_post", draft_blog_post, "writing"),
         ("parse_meeting_notes", parse_meeting_notes, "writing"),
         ("format_social_content", format_social_content, "writing"),
         ("scaffold_tech_doc", scaffold_tech_doc, "writing"),
         ("structure_story", structure_story, "writing"),
-
         ("analyze_data", analyze_data, "analysis"),
         ("summarize_document", summarize_document, "analysis"),
         ("build_comparison_matrix", build_comparison_matrix, "analysis"),
         ("analyze_survey", analyze_survey, "analysis"),
         ("analyze_financials", analyze_financials, "analysis"),
         ("review_legal_document", review_legal_document, "analysis"),
-
         ("scaffold_code", scaffold_code, "coding"),
         ("analyze_code", analyze_code, "coding"),
         ("process_sql", process_sql, "coding"),
         ("scaffold_api_doc", scaffold_api_doc, "coding"),
         ("generate_test_cases", generate_test_cases, "coding"),
         ("create_adr", create_adr, "coding"),
-
         ("plan_project", plan_project, "business"),
         ("prepare_interview", prepare_interview, "business"),
         ("scaffold_proposal", scaffold_proposal, "business"),
@@ -101,7 +98,9 @@ def _build_registry() -> dict[str, ToolEntry]:
         cli_name = func_name.replace("_", "-")
         doc = inspect.getdoc(func) or ""
         first_line = doc.split("\n")[0] if doc else func_name
-        entry = ToolEntry(name=cli_name, func=func, category=category, description=first_line)
+        entry = ToolEntry(
+            name=cli_name, func=func, category=category, description=first_line
+        )
         registry[cli_name] = entry
         # Also register underscore variant for convenience
         registry[func_name] = entry
@@ -112,6 +111,7 @@ def _build_registry() -> dict[str, ToolEntry]:
 # ---------------------------------------------------------------------------
 # Docstring parsing
 # ---------------------------------------------------------------------------
+
 
 def _parse_docstring_args(docstring: str | None) -> dict[str, str]:
     """Extract parameter descriptions from Google-style docstring Args section."""
@@ -137,7 +137,7 @@ def _parse_docstring_args(docstring: str | None) -> dict[str, str]:
                     break
 
             # New parameter line: "param_name: description"
-            m = re.match(r'^(\w+)\s*[:]\s*(.+)', stripped)
+            m = re.match(r"^(\w+)\s*[:]\s*(.+)", stripped)
             if m:
                 if current_param:
                     result[current_param] = current_desc.strip()
@@ -239,6 +239,7 @@ def _add_tool_subparser(
 # Command handlers
 # ---------------------------------------------------------------------------
 
+
 def _run_tool(entry: ToolEntry, args: argparse.Namespace, pretty: bool) -> int:
     """Execute a tool function and print JSON output."""
     sig = inspect.signature(entry.func)
@@ -258,7 +259,10 @@ def _run_tool(entry: ToolEntry, args: argparse.Namespace, pretty: bool) -> int:
         result = entry.func(**kwargs)
     except Exception as exc:
         err = {"error": str(exc), "tool": entry.name}
-        print(json.dumps(err, indent=2 if pretty else None, ensure_ascii=False), file=sys.stderr)
+        print(
+            json.dumps(err, indent=2 if pretty else None, ensure_ascii=False),
+            file=sys.stderr,
+        )
         return 1
 
     indent = 2 if pretty else None
@@ -299,7 +303,9 @@ def _run_list(registry: dict[str, ToolEntry], category: str, pretty: bool) -> in
         print("-" * len(header))
         for e in entries:
             print(f"{e.name:<{max_name}}  {e.category:<{max_cat}}  {e.description}")
-        print(f"\n{len(entries)} tools available. Use 'claude-101 <tool> --help' for details.")
+        print(
+            f"\n{len(entries)} tools available. Use 'claude-101 <tool> --help' for details."
+        )
 
     return 0
 
@@ -324,6 +330,7 @@ def _run_serve() -> int:
 # Main entry point
 # ---------------------------------------------------------------------------
 
+
 def main(argv: list[str] | None = None) -> int:
     """CLI entry point."""
     registry = _build_registry()
@@ -345,8 +352,12 @@ def main(argv: list[str] | None = None) -> int:
               echo "SELECT * FROM users" | claude-101 process-sql -
         """),
     )
-    parser.add_argument("--version", action="version", version=f"claude-101 {_get_version()}")
-    parser.add_argument("--pretty", action="store_true", help="Pretty-print JSON output (indent=2)")
+    parser.add_argument(
+        "--version", action="version", version=f"claude-101 {_get_version()}"
+    )
+    parser.add_argument(
+        "--pretty", action="store_true", help="Pretty-print JSON output (indent=2)"
+    )
 
     subparsers = parser.add_subparsers(dest="command")
 
@@ -356,7 +367,8 @@ def main(argv: list[str] | None = None) -> int:
     # list command
     list_parser = subparsers.add_parser("list", help="List all available tools")
     list_parser.add_argument(
-        "--category", "-c",
+        "--category",
+        "-c",
         choices=["writing", "analysis", "coding", "business", "meta"],
         default="",
         help="Filter by category",
@@ -397,6 +409,7 @@ def main(argv: list[str] | None = None) -> int:
 def _get_version() -> str:
     try:
         from . import __version__
+
         return __version__
     except ImportError:
         return "0.0.0"

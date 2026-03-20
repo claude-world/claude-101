@@ -724,36 +724,96 @@ _SECTION_TEMPLATES: dict[str, list[dict]] = {
 
 _OBJECTION_TEMPLATES: dict[str, list[dict]] = {
     "business": [
-        {"objection": "The cost is too high", "response_framework": "Reframe as investment: compare cost of inaction vs. cost of action. Show ROI timeline and break-even point."},
-        {"objection": "We do not have the resources", "response_framework": "Present a phased approach that starts small. Show how existing resources can be reallocated, or propose a pilot with minimal commitment."},
-        {"objection": "The timing is not right", "response_framework": "Quantify the cost of delay per month. Show competitive pressure or market window that makes now the optimal time."},
-        {"objection": "This has been tried before and failed", "response_framework": "Acknowledge the past attempt, then highlight what is different now: new technology, team, market conditions, or lessons learned."},
+        {
+            "objection": "The cost is too high",
+            "response_framework": "Reframe as investment: compare cost of inaction vs. cost of action. Show ROI timeline and break-even point.",
+        },
+        {
+            "objection": "We do not have the resources",
+            "response_framework": "Present a phased approach that starts small. Show how existing resources can be reallocated, or propose a pilot with minimal commitment.",
+        },
+        {
+            "objection": "The timing is not right",
+            "response_framework": "Quantify the cost of delay per month. Show competitive pressure or market window that makes now the optimal time.",
+        },
+        {
+            "objection": "This has been tried before and failed",
+            "response_framework": "Acknowledge the past attempt, then highlight what is different now: new technology, team, market conditions, or lessons learned.",
+        },
     ],
     "sales": [
-        {"objection": "Your price is higher than competitors", "response_framework": "Shift from price to total cost of ownership. Highlight unique value, support quality, and hidden costs of cheaper alternatives."},
-        {"objection": "We need to think about it", "response_framework": "Agree that it is an important decision. Offer a specific follow-up date and ask what information would help them decide."},
-        {"objection": "We are happy with our current vendor", "response_framework": "Respect the relationship. Ask what they would improve if they could, then show how your solution addresses those gaps."},
-        {"objection": "Can you do a pilot first?", "response_framework": "Embrace the pilot: define success criteria, timeline, and commitment from both sides. Make the pilot compelling enough to convert."},
+        {
+            "objection": "Your price is higher than competitors",
+            "response_framework": "Shift from price to total cost of ownership. Highlight unique value, support quality, and hidden costs of cheaper alternatives.",
+        },
+        {
+            "objection": "We need to think about it",
+            "response_framework": "Agree that it is an important decision. Offer a specific follow-up date and ask what information would help them decide.",
+        },
+        {
+            "objection": "We are happy with our current vendor",
+            "response_framework": "Respect the relationship. Ask what they would improve if they could, then show how your solution addresses those gaps.",
+        },
+        {
+            "objection": "Can you do a pilot first?",
+            "response_framework": "Embrace the pilot: define success criteria, timeline, and commitment from both sides. Make the pilot compelling enough to convert.",
+        },
     ],
     "grant": [
-        {"objection": "The methodology is not rigorous enough", "response_framework": "Strengthen with peer-reviewed references, established frameworks, and a detailed evaluation plan with measurable indicators."},
-        {"objection": "The budget is not justified", "response_framework": "Provide line-item justification with market-rate references. Show that each expense directly supports a project objective."},
-        {"objection": "The team lacks relevant experience", "response_framework": "Highlight transferable skills, advisory board strength, and plans for skill-building. Reference successful adjacent projects."},
+        {
+            "objection": "The methodology is not rigorous enough",
+            "response_framework": "Strengthen with peer-reviewed references, established frameworks, and a detailed evaluation plan with measurable indicators.",
+        },
+        {
+            "objection": "The budget is not justified",
+            "response_framework": "Provide line-item justification with market-rate references. Show that each expense directly supports a project objective.",
+        },
+        {
+            "objection": "The team lacks relevant experience",
+            "response_framework": "Highlight transferable skills, advisory board strength, and plans for skill-building. Reference successful adjacent projects.",
+        },
     ],
     "partnership": [
-        {"objection": "We do not see enough value for our side", "response_framework": "Quantify the specific benefits: market access, technology, revenue. Offer to adjust the partnership model to increase their share."},
-        {"objection": "The exclusivity terms are too restrictive", "response_framework": "Propose tiered exclusivity: full exclusivity in a narrow segment, non-exclusive in adjacent markets. Time-bound the terms."},
-        {"objection": "Our cultures may not be compatible", "response_framework": "Propose a cultural compatibility assessment in the pilot phase. Define shared values and working agreements upfront."},
+        {
+            "objection": "We do not see enough value for our side",
+            "response_framework": "Quantify the specific benefits: market access, technology, revenue. Offer to adjust the partnership model to increase their share.",
+        },
+        {
+            "objection": "The exclusivity terms are too restrictive",
+            "response_framework": "Propose tiered exclusivity: full exclusivity in a narrow segment, non-exclusive in adjacent markets. Time-bound the terms.",
+        },
+        {
+            "objection": "Our cultures may not be compatible",
+            "response_framework": "Propose a cultural compatibility assessment in the pilot phase. Define shared values and working agreements upfront.",
+        },
     ],
     "internal": [
-        {"objection": "This is not a priority right now", "response_framework": "Map the proposal to current OKRs. Show how delaying increases cost or risk. Propose a minimal viable version that fits current priorities."},
-        {"objection": "The ROI is uncertain", "response_framework": "Propose a time-boxed pilot with clear go/no-go criteria. Define the minimum success threshold for continuing."},
-        {"objection": "Other teams should own this", "response_framework": "Clarify ownership boundaries. Propose a cross-functional working group or show why your team is best positioned to lead."},
+        {
+            "objection": "This is not a priority right now",
+            "response_framework": "Map the proposal to current OKRs. Show how delaying increases cost or risk. Propose a minimal viable version that fits current priorities.",
+        },
+        {
+            "objection": "The ROI is uncertain",
+            "response_framework": "Propose a time-boxed pilot with clear go/no-go criteria. Define the minimum success threshold for continuing.",
+        },
+        {
+            "objection": "Other teams should own this",
+            "response_framework": "Clarify ownership boundaries. Propose a cross-functional working group or show why your team is best positioned to lead.",
+        },
     ],
     "technical": [
-        {"objection": "This adds too much complexity", "response_framework": "Show the complexity comparison: current state vs. proposed. Highlight how the new design reduces accidental complexity even if it adds essential complexity."},
-        {"objection": "The migration risk is too high", "response_framework": "Present the detailed rollback plan. Show how feature flags, canary deployments, and incremental rollout minimize risk."},
-        {"objection": "Why not use an existing solution?", "response_framework": "Present the build-vs-buy analysis. Show the specific gaps in existing solutions and the long-term cost of working around them."},
+        {
+            "objection": "This adds too much complexity",
+            "response_framework": "Show the complexity comparison: current state vs. proposed. Highlight how the new design reduces accidental complexity even if it adds essential complexity.",
+        },
+        {
+            "objection": "The migration risk is too high",
+            "response_framework": "Present the detailed rollback plan. Show how feature flags, canary deployments, and incremental rollout minimize risk.",
+        },
+        {
+            "objection": "Why not use an existing solution?",
+            "response_framework": "Present the build-vs-buy analysis. Show the specific gaps in existing solutions and the long-term cost of working around them.",
+        },
     ],
 }
 
@@ -784,25 +844,47 @@ def _score_argument_strength(text: str) -> dict:
 
     # Claims: declarative assertions
     claim_markers = [
-        "will", "should", "must", "need to", "is essential",
-        "is critical", "is important", "clearly", "obviously",
-        "without doubt", "certainly", "undeniably",
+        "will",
+        "should",
+        "must",
+        "need to",
+        "is essential",
+        "is critical",
+        "is important",
+        "clearly",
+        "obviously",
+        "without doubt",
+        "certainly",
+        "undeniably",
     ]
     # Evidence: data references, numbers, citations
     evidence_markers = [
-        "%", "$", "million", "billion", "study", "research",
-        "according to", "data shows", "survey", "report",
-        "statistics", "analysis", "evidence", "proven",
+        "%",
+        "$",
+        "million",
+        "billion",
+        "study",
+        "research",
+        "according to",
+        "data shows",
+        "survey",
+        "report",
+        "statistics",
+        "analysis",
+        "evidence",
+        "proven",
     ]
 
     claims = count_pattern_matches(text, claim_markers)
     evidence = count_pattern_matches(text, evidence_markers)
 
     # Also count raw numbers as evidence
-    number_count = len(re.findall(r'\b\d+(?:\.\d+)?(?:%|x|X)?\b', text))
+    number_count = len(re.findall(r"\b\d+(?:\.\d+)?(?:%|x|X)?\b", text))
     evidence += number_count
 
-    ratio = round(evidence / claims, 2) if claims > 0 else (1.0 if evidence > 0 else 0.0)
+    ratio = (
+        round(evidence / claims, 2) if claims > 0 else (1.0 if evidence > 0 else 0.0)
+    )
 
     if ratio >= 1.0:
         strength = "strong"
@@ -856,7 +938,12 @@ def _compute_roi(investment: float, annual_return: float, years: int = 3) -> dic
 
 def _score_aida_coverage(sections: list[dict], aida_mapping: dict[str, str]) -> dict:
     """Score word allocation across AIDA phases vs ideal distribution."""
-    phase_words: dict[str, int] = {"Attention": 0, "Interest": 0, "Desire": 0, "Action": 0}
+    phase_words: dict[str, int] = {
+        "Attention": 0,
+        "Interest": 0,
+        "Desire": 0,
+        "Action": 0,
+    }
     for sec in sections:
         phase = aida_mapping.get(sec["name"], "")
         if phase in phase_words:
@@ -881,6 +968,7 @@ def _score_aida_coverage(sections: list[dict], aida_mapping: dict[str, str]) -> 
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
+
 
 def scaffold_proposal(
     type: str,
@@ -926,13 +1014,15 @@ def scaffold_proposal(
 
     for sec in raw_sections:
         target_words = round(total_target_words * sec["word_pct"] / 100)
-        sections.append({
-            "name": sec["name"],
-            "description": sec["description"],
-            "target_words": target_words,
-            "required": sec["required"],
-            "template": sec["template"],
-        })
+        sections.append(
+            {
+                "name": sec["name"],
+                "description": sec["description"],
+                "target_words": target_words,
+                "required": sec["required"],
+                "template": sec["template"],
+            }
+        )
         aida_mapping[sec["name"]] = sec["aida"]
 
     # ── Persuasion framework ─────────────────────────────────────

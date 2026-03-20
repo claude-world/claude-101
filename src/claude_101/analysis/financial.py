@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from claude_101._utils import parse_csv
+from .._utils import parse_csv
 
 
 def _to_float(value: str) -> float | None:
@@ -21,7 +21,9 @@ def _growth_rates(values: list[float]) -> list[float | None]:
     rates: list[float | None] = []
     for i in range(1, len(values)):
         if values[i - 1] != 0:
-            rates.append(round((values[i] - values[i - 1]) / abs(values[i - 1]) * 100, 2))
+            rates.append(
+                round((values[i] - values[i - 1]) / abs(values[i - 1]) * 100, 2)
+            )
         else:
             rates.append(None)
     return rates
@@ -106,19 +108,39 @@ def analyze_financials(data: str, period: str = "quarterly") -> dict:
 
     # ── Identify key metrics ───────────────────────────────────
     revenue = _find_metric_row(
-        row_labels, rows_data, "revenue", "sales", "income", "total revenue",
+        row_labels,
+        rows_data,
+        "revenue",
+        "sales",
+        "income",
+        "total revenue",
     )
     cogs = _find_metric_row(
-        row_labels, rows_data, "cogs", "cost of goods", "cost of revenue",
-        "cost of sales", "direct costs",
+        row_labels,
+        rows_data,
+        "cogs",
+        "cost of goods",
+        "cost of revenue",
+        "cost of sales",
+        "direct costs",
     )
     opex = _find_metric_row(
-        row_labels, rows_data, "operating expenses", "opex", "operating costs",
-        "total expenses", "expenses",
+        row_labels,
+        rows_data,
+        "operating expenses",
+        "opex",
+        "operating costs",
+        "total expenses",
+        "expenses",
     )
     net_income = _find_metric_row(
-        row_labels, rows_data, "net income", "net profit", "profit",
-        "net earnings", "bottom line",
+        row_labels,
+        rows_data,
+        "net income",
+        "net profit",
+        "profit",
+        "net earnings",
+        "bottom line",
     )
 
     # ── Derived metrics ─────────────────────────────────────────
@@ -153,7 +175,7 @@ def analyze_financials(data: str, period: str = "quarterly") -> dict:
     # ── Growth rates ────────────────────────────────────────────
     revenue_growth = _growth_rates(revenue)
     cost_growth = _growth_rates(costs)
-    _growth_rates(net_income)  # computed for completeness
+    income_growth = _growth_rates(net_income)
 
     # ── Burn rate (applicable when costs > revenue) ─────────────
     burn_rate_result: dict = {}
@@ -207,6 +229,7 @@ def analyze_financials(data: str, period: str = "quarterly") -> dict:
             },
             "profit": {
                 "values": [round(v, 2) for v in net_income],
+                "growth_rates": income_growth,
                 "margins": profit_margins,
             },
         },

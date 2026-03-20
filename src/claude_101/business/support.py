@@ -12,34 +12,114 @@ from .._utils import flesch_score, count_pattern_matches
 
 _CATEGORY_KEYWORDS: dict[str, list[str]] = {
     "billing": [
-        "charge", "bill", "refund", "invoice", "payment", "subscription",
-        "cancel", "overcharge", "double charge", "credit card", "pricing",
-        "discount", "coupon", "receipt", "transaction", "renewal", "fee",
+        "charge",
+        "bill",
+        "refund",
+        "invoice",
+        "payment",
+        "subscription",
+        "cancel",
+        "overcharge",
+        "double charge",
+        "credit card",
+        "pricing",
+        "discount",
+        "coupon",
+        "receipt",
+        "transaction",
+        "renewal",
+        "fee",
     ],
     "technical": [
-        "error", "bug", "crash", "not working", "broken", "slow", "timeout",
-        "502", "503", "404", "login", "password", "reset", "install",
-        "update", "upgrade", "compatibility", "display", "loading", "freeze",
+        "error",
+        "bug",
+        "crash",
+        "not working",
+        "broken",
+        "slow",
+        "timeout",
+        "502",
+        "503",
+        "404",
+        "login",
+        "password",
+        "reset",
+        "install",
+        "update",
+        "upgrade",
+        "compatibility",
+        "display",
+        "loading",
+        "freeze",
     ],
     "complaint": [
-        "angry", "frustrated", "terrible", "worst", "unacceptable",
-        "disappointed", "disgusted", "horrible", "awful", "pathetic",
-        "outraged", "furious", "ridiculous", "incompetent", "lawsuit",
+        "angry",
+        "frustrated",
+        "terrible",
+        "worst",
+        "unacceptable",
+        "disappointed",
+        "disgusted",
+        "horrible",
+        "awful",
+        "pathetic",
+        "outraged",
+        "furious",
+        "ridiculous",
+        "incompetent",
+        "lawsuit",
     ],
     "feature_request": [
-        "feature", "suggestion", "would be nice", "wish", "could you add",
-        "request", "enhancement", "improve", "idea", "option to",
-        "ability to", "please add", "missing feature", "need support for",
+        "feature",
+        "suggestion",
+        "would be nice",
+        "wish",
+        "could you add",
+        "request",
+        "enhancement",
+        "improve",
+        "idea",
+        "option to",
+        "ability to",
+        "please add",
+        "missing feature",
+        "need support for",
     ],
     "account": [
-        "account", "profile", "settings", "delete account", "deactivate",
-        "merge", "transfer", "permissions", "role", "access", "locked out",
-        "verification", "two-factor", "2fa", "username", "email change",
+        "account",
+        "profile",
+        "settings",
+        "delete account",
+        "deactivate",
+        "merge",
+        "transfer",
+        "permissions",
+        "role",
+        "access",
+        "locked out",
+        "verification",
+        "two-factor",
+        "2fa",
+        "username",
+        "email change",
     ],
     "shipping": [
-        "shipping", "delivery", "tracking", "package", "order", "lost",
-        "damaged", "late", "estimated", "courier", "return", "exchange",
-        "warehouse", "dispatch", "customs", "address change",
+        "shipping",
+        "delivery",
+        "tracking",
+        "package",
+        "order",
+        "lost",
+        "damaged",
+        "late",
+        "estimated",
+        "courier",
+        "return",
+        "exchange",
+        "warehouse",
+        "dispatch",
+        "customs",
+        "address change",
     ],
 }
 
@@ -71,17 +151,44 @@ _SEVERITY_ESCALATORS: list[tuple[str, str]] = [
 
 _SENTIMENT_KEYWORDS: dict[str, list[str]] = {
     "positive": [
-        "love", "great", "amazing", "excellent", "thank", "appreciate",
-        "wonderful", "fantastic", "happy", "pleased", "impressed",
+        "love",
+        "great",
+        "amazing",
+        "excellent",
+        "thank",
+        "appreciate",
+        "wonderful",
+        "fantastic",
+        "happy",
+        "pleased",
+        "impressed",
     ],
     "negative": [
-        "bad", "poor", "disappointed", "unhappy", "not satisfied",
-        "problem", "issue", "trouble", "difficult", "confusing",
+        "bad",
+        "poor",
+        "disappointed",
+        "unhappy",
+        "not satisfied",
+        "problem",
+        "issue",
+        "trouble",
+        "difficult",
+        "confusing",
     ],
     "angry": [
-        "angry", "furious", "outraged", "disgusted", "terrible",
-        "worst", "unacceptable", "pathetic", "incompetent", "ridiculous",
-        "lawsuit", "never again", "scam",
+        "angry",
+        "furious",
+        "outraged",
+        "disgusted",
+        "terrible",
+        "worst",
+        "unacceptable",
+        "pathetic",
+        "incompetent",
+        "ridiculous",
+        "lawsuit",
+        "never again",
+        "scam",
     ],
 }
 
@@ -93,17 +200,34 @@ _SENTIMENT_KEYWORDS: dict[str, list[str]] = {
 _TONE_PROFILES: dict[str, dict] = {
     "empathetic": {
         "greeting_style": "warm",
-        "vocabulary": ["understand", "appreciate", "hear you", "important to us", "right away"],
+        "vocabulary": [
+            "understand",
+            "appreciate",
+            "hear you",
+            "important to us",
+            "right away",
+        ],
         "avoid": ["policy states", "unfortunately", "as per", "not possible"],
     },
     "professional": {
         "greeting_style": "formal",
-        "vocabulary": ["regarding", "pleased to assist", "at your convenience", "resolution"],
+        "vocabulary": [
+            "regarding",
+            "pleased to assist",
+            "at your convenience",
+            "resolution",
+        ],
         "avoid": ["hey", "no worries", "gonna", "stuff"],
     },
     "technical": {
         "greeting_style": "direct",
-        "vocabulary": ["diagnose", "root cause", "workaround", "reproduce", "resolution steps"],
+        "vocabulary": [
+            "diagnose",
+            "root cause",
+            "workaround",
+            "reproduce",
+            "resolution steps",
+        ],
         "avoid": ["feelings", "sorry to hear", "must be frustrating"],
     },
     "casual": {
@@ -202,6 +326,7 @@ _EMPATHY_PHRASES: dict[str, list[str]] = {
 # Classification functions
 # ---------------------------------------------------------------------------
 
+
 def _classify_category(issue: str) -> str:
     """Classify issue into a category based on keyword matching."""
     lower = issue.lower()
@@ -254,6 +379,7 @@ def _classify_sentiment(issue: str) -> str:
 # ---------------------------------------------------------------------------
 # Response builders
 # ---------------------------------------------------------------------------
+
 
 def _build_greeting(tone: str, channel: str, severity: str) -> str:
     """Build an appropriate greeting."""
@@ -506,14 +632,22 @@ def _build_follow_up_template(category: str, channel: str) -> str:
 
 
 def _compute_escalation_risk(
-    category: str, severity: str, sentiment: str, issue: str,
+    category: str,
+    severity: str,
+    sentiment: str,
+    issue: str,
 ) -> dict:
     """Compute escalation risk score (0-100) from multiple signals."""
     severity_weights = {"low": 10, "medium": 30, "high": 60, "critical": 90}
     sentiment_weights = {"positive": 0, "neutral": 10, "negative": 40, "angry": 70}
     category_weights = {
-        "billing": 30, "complaint": 40, "technical": 20,
-        "account": 25, "shipping": 20, "feature_request": 5, "general": 10,
+        "billing": 30,
+        "complaint": 40,
+        "technical": 20,
+        "account": 25,
+        "shipping": 20,
+        "feature_request": 5,
+        "general": 10,
     }
 
     sev_score = severity_weights.get(severity, 20) * 0.4
@@ -522,8 +656,18 @@ def _compute_escalation_risk(
 
     # Text signals (10%)
     escalation_phrases = [
-        "lawyer", "lawsuit", "legal", "attorney", "bbb", "social media",
-        "review", "never again", "cancel", "refund", "manager", "supervisor",
+        "lawyer",
+        "lawsuit",
+        "legal",
+        "attorney",
+        "bbb",
+        "social media",
+        "review",
+        "never again",
+        "cancel",
+        "refund",
+        "manager",
+        "supervisor",
     ]
     text_hits = count_pattern_matches(issue, escalation_phrases)
     text_score = min(10.0, text_hits * 3.0)
@@ -550,8 +694,15 @@ def _score_response_quality(response: str) -> dict:
 
     # Empathy markers (0-30)
     empathy_words = [
-        "understand", "sorry", "apologize", "appreciate", "hear you",
-        "frustrating", "inconvenience", "right away", "priority",
+        "understand",
+        "sorry",
+        "apologize",
+        "appreciate",
+        "hear you",
+        "frustrating",
+        "inconvenience",
+        "right away",
+        "priority",
     ]
     empathy_hits = count_pattern_matches(response, empathy_words)
     empathy = min(30, empathy_hits * 10)
@@ -562,8 +713,18 @@ def _score_response_quality(response: str) -> dict:
 
     # Actionability (0-30) — action verbs and concrete steps
     action_words = [
-        "will", "can", "here is", "step", "follow", "click",
-        "navigate", "contact", "send", "check", "update", "resolve",
+        "will",
+        "can",
+        "here is",
+        "step",
+        "follow",
+        "click",
+        "navigate",
+        "contact",
+        "send",
+        "check",
+        "update",
+        "resolve",
     ]
     action_hits = count_pattern_matches(response, action_words)
     actionability = min(30, action_hits * 5)
@@ -585,11 +746,19 @@ def _score_response_quality(response: str) -> dict:
 def _estimate_resolution_time(category: str, severity: str) -> dict:
     """Estimate resolution time based on category and severity."""
     base_hours = {
-        "billing": 4, "technical": 8, "complaint": 2, "feature_request": 0,
-        "account": 3, "shipping": 6, "general": 4,
+        "billing": 4,
+        "technical": 8,
+        "complaint": 2,
+        "feature_request": 0,
+        "account": 3,
+        "shipping": 6,
+        "general": 4,
     }
     severity_multiplier = {
-        "low": 0.5, "medium": 1.0, "high": 1.5, "critical": 2.0,
+        "low": 0.5,
+        "medium": 1.0,
+        "high": 1.5,
+        "critical": 2.0,
     }
     base = base_hours.get(category, 4)
     mult = severity_multiplier.get(severity, 1.0)
@@ -604,16 +773,33 @@ def _compute_customer_effort(issue: str) -> dict:
     length_score = min(30, len(words))  # longer = more effort already spent
 
     repeat_indicators = [
-        "again", "still", "already contacted", "second time", "third time",
-        "keep getting", "keeps happening", "multiple times", "follow up",
-        "following up", "last time", "previous",
+        "again",
+        "still",
+        "already contacted",
+        "second time",
+        "third time",
+        "keep getting",
+        "keeps happening",
+        "multiple times",
+        "follow up",
+        "following up",
+        "last time",
+        "previous",
     ]
     repeat_hits = count_pattern_matches(issue, repeat_indicators)
     repeat_score = min(40, repeat_hits * 15)
 
     frustration_words = [
-        "frustrated", "exhausted", "tired", "wasted", "hours",
-        "days", "weeks", "nobody", "no one", "impossible",
+        "frustrated",
+        "exhausted",
+        "tired",
+        "wasted",
+        "hours",
+        "days",
+        "weeks",
+        "nobody",
+        "no one",
+        "impossible",
     ]
     frust_hits = count_pattern_matches(issue, frustration_words)
     frust_score = min(30, frust_hits * 10)
@@ -625,6 +811,7 @@ def _compute_customer_effort(issue: str) -> dict:
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
+
 
 def build_support_response(
     issue: str,

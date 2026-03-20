@@ -72,6 +72,7 @@ def parse_meeting_notes(
 # Extraction helpers
 # ---------------------------------------------------------------------------
 
+
 def _extract_attendees(text: str) -> list[str]:
     """Extract attendee names from @mentions or 'Attendees:' line."""
     attendees: list[str] = []
@@ -80,31 +81,31 @@ def _extract_attendees(text: str) -> list[str]:
     # Pattern 1: "Attendees:" / "Participants:" / "Present:" line
     # First try a single-line match (most common: "Attendees: A, B, C")
     header_match = re.search(
-        r'(?:attendees|participants|present|people)\s*[:]\s*(.+)',
+        r"(?:attendees|participants|present|people)\s*[:]\s*(.+)",
         text,
         re.IGNORECASE,
     )
     if not header_match:
         # Try multi-line list (one name per line under the header)
         header_match = re.search(
-            r'(?:attendees|participants|present|people)\s*[:]\s*\n((?:\s*[\-\*]?\s*.+\n?)+)',
+            r"(?:attendees|participants|present|people)\s*[:]\s*\n((?:\s*[\-\*]?\s*.+\n?)+)",
             text,
             re.IGNORECASE,
         )
     if header_match:
         line = header_match.group(1)
         # Split by comma, semicolon, newline, or " and "
-        names = re.split(r'[,;\n]|\band\b', line)
+        names = re.split(r"[,;\n]|\band\b", line)
         for name in names:
-            name = name.strip().strip('-').strip('*').strip()
+            name = name.strip().strip("-").strip("*").strip()
             # Remove common prefixes
-            name = re.sub(r'^[@\-\*\d\.\)]+\s*', '', name).strip()
+            name = re.sub(r"^[@\-\*\d\.\)]+\s*", "", name).strip()
             if name and len(name) > 1 and name.lower() not in seen:
                 seen.add(name.lower())
                 attendees.append(name)
 
     # Pattern 2: @mentions throughout the text
-    mentions = re.findall(r'@(\w[\w.]*)', text)
+    mentions = re.findall(r"@(\w[\w.]*)", text)
     for m in mentions:
         if m.lower() not in seen:
             seen.add(m.lower())
@@ -120,13 +121,13 @@ def _extract_action_items(text: str) -> list[dict]:
     # Patterns that signal action items
     patterns = [
         # TODO: ... @owner ... by date
-        r'(?:TODO|ACTION|TASK|AI)\s*[:]\s*(.+)',
+        r"(?:TODO|ACTION|TASK|AI)\s*[:]\s*(.+)",
         # - [ ] checkbox items
-        r'\[\s*\]\s*(.+)',
+        r"\[\s*\]\s*(.+)",
         # "needs to", "should", "will" + verb phrases
-        r'(\S+)\s+(?:needs?\s+to|should|will|must)\s+(.+?)(?:\.|$)',
+        r"(\S+)\s+(?:needs?\s+to|should|will|must)\s+(.+?)(?:\.|$)",
         # "assigned to @person: task"
-        r'(?:assigned?\s+to)\s+@?(\w+)\s*[:]\s*(.+)',
+        r"(?:assigned?\s+to)\s+@?(\w+)\s*[:]\s*(.+)",
     ]
 
     for pattern in patterns:
@@ -150,15 +151,15 @@ def _parse_action_item(raw: str) -> dict:
     deadline = "not specified"
 
     # Extract owner from @mention
-    owner_match = re.search(r'@(\w+)', task)
+    owner_match = re.search(r"@(\w+)", task)
     if owner_match:
         owner = f"@{owner_match.group(1)}"
 
     # Extract deadline patterns
     deadline_patterns = [
-        r'(?:by|before|due|deadline)\s*[:\-]?\s*(\d{1,2}[/\-]\d{1,2}(?:[/\-]\d{2,4})?)',
-        r'(?:by|before|due|deadline)\s*[:\-]?\s*(\w+\s+\d{1,2}(?:,?\s+\d{4})?)',
-        r'(?:by|before|due)\s+(EOD|end of day|end of week|EOW|tomorrow|next\s+\w+|monday|tuesday|wednesday|thursday|friday)',
+        r"(?:by|before|due|deadline)\s*[:\-]?\s*(\d{1,2}[/\-]\d{1,2}(?:[/\-]\d{2,4})?)",
+        r"(?:by|before|due|deadline)\s*[:\-]?\s*(\w+\s+\d{1,2}(?:,?\s+\d{4})?)",
+        r"(?:by|before|due)\s+(EOD|end of day|end of week|EOW|tomorrow|next\s+\w+|monday|tuesday|wednesday|thursday|friday)",
     ]
     for dp in deadline_patterns:
         dm = re.search(dp, task, re.IGNORECASE)
@@ -167,9 +168,14 @@ def _parse_action_item(raw: str) -> dict:
             break
 
     # Clean the task text (remove owner/deadline markers)
-    task = re.sub(r'@\w+', '', task).strip()
-    task = re.sub(r'(?:by|before|due|deadline)\s*[:\-]?\s*\S+(?:\s+\S+)?', '', task, flags=re.IGNORECASE).strip()
-    task = re.sub(r'\s{2,}', ' ', task).strip().rstrip(",;:")
+    task = re.sub(r"@\w+", "", task).strip()
+    task = re.sub(
+        r"(?:by|before|due|deadline)\s*[:\-]?\s*\S+(?:\s+\S+)?",
+        "",
+        task,
+        flags=re.IGNORECASE,
+    ).strip()
+    task = re.sub(r"\s{2,}", " ", task).strip().rstrip(",;:")
 
     return {"task": task, "owner": owner, "deadline": deadline}
 
@@ -177,21 +183,28 @@ def _parse_action_item(raw: str) -> dict:
 def _extract_decisions(text: str) -> list[str]:
     """Extract decisions — lines containing decision-related keywords."""
     decisions: list[str] = []
-    keywords = r'\b(?:decided|agreed|approved|confirmed|resolved|concluded|will\s+go\s+with|chose|selected|finalized)\b'
+    keywords = r"\b(?:decided|agreed|approved|confirmed|resolved|concluded|will\s+go\s+with|chose|selected|finalized)\b"
 
-    for line in text.split('\n'):
+    for line in text.split("\n"):
         line = line.strip()
         if not line or len(line) < 10:
             continue
         if re.search(keywords, line, re.IGNORECASE):
             # Also check for explicit markers
-            clean = re.sub(r'^[\-\*\d\.\)]+\s*', '', line).strip()
-            clean = re.sub(r'^(?:DECISION|AGREED|RESOLVED)\s*[:]\s*', '', clean, flags=re.IGNORECASE).strip()
+            clean = re.sub(r"^[\-\*\d\.\)]+\s*", "", line).strip()
+            clean = re.sub(
+                r"^(?:DECISION|AGREED|RESOLVED)\s*[:]\s*",
+                "",
+                clean,
+                flags=re.IGNORECASE,
+            ).strip()
             if clean and clean not in decisions:
                 decisions.append(clean)
 
     # Also look for DECISION: prefix lines
-    explicit = re.findall(r'(?:DECISION|AGREED|RESOLVED)\s*[:]\s*(.+)', text, re.IGNORECASE)
+    explicit = re.findall(
+        r"(?:DECISION|AGREED|RESOLVED)\s*[:]\s*(.+)", text, re.IGNORECASE
+    )
     for d in explicit:
         d = d.strip().rstrip(".")
         if d and d not in decisions:
@@ -206,21 +219,23 @@ def _extract_topics(text: str) -> list[str]:
     seen: set[str] = set()
 
     # Markdown headers
-    for m in re.finditer(r'^#{1,3}\s+(.+)', text, re.MULTILINE):
+    for m in re.finditer(r"^#{1,3}\s+(.+)", text, re.MULTILINE):
         topic = m.group(1).strip()
         if topic.lower() not in seen:
             seen.add(topic.lower())
             topics.append(topic)
 
     # Bold markers **topic** or __topic__
-    for m in re.finditer(r'\*\*(.+?)\*\*|__(.+?)__', text):
+    for m in re.finditer(r"\*\*(.+?)\*\*|__(.+?)__", text):
         topic = (m.group(1) or m.group(2)).strip()
         if len(topic) > 3 and topic.lower() not in seen:
             seen.add(topic.lower())
             topics.append(topic)
 
     # Lines starting with "Topic:", "Discussion:", "Agenda:"
-    for m in re.finditer(r'(?:topic|discussion|agenda\s*item)\s*[:]\s*(.+)', text, re.IGNORECASE):
+    for m in re.finditer(
+        r"(?:topic|discussion|agenda\s*item)\s*[:]\s*(.+)", text, re.IGNORECASE
+    ):
         topic = m.group(1).strip()
         if topic.lower() not in seen:
             seen.add(topic.lower())
@@ -228,9 +243,9 @@ def _extract_topics(text: str) -> list[str]:
 
     # If no explicit topics found, extract from first words of substantial paragraphs
     if not topics:
-        for line in text.split('\n'):
+        for line in text.split("\n"):
             line = line.strip()
-            if len(line.split()) >= 5 and not line.startswith(('-', '*', '#', '[')):
+            if len(line.split()) >= 5 and not line.startswith(("-", "*", "#", "[")):
                 summary = " ".join(line.split()[:6])
                 if summary.lower() not in seen:
                     seen.add(summary.lower())
@@ -243,7 +258,7 @@ def _extract_topics(text: str) -> list[str]:
 
 def _extract_timestamps(text: str) -> list[str]:
     """Extract HH:MM or HH:MM:SS patterns from text."""
-    raw = re.findall(r'\b(\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AaPp][Mm])?)\b', text)
+    raw = re.findall(r"\b(\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AaPp][Mm])?)\b", text)
     # Deduplicate while preserving order
     seen: set[str] = set()
     result: list[str] = []
@@ -258,9 +273,9 @@ def _extract_timestamps(text: str) -> list[str]:
 def _extract_duration(text: str) -> str | None:
     """Extract meeting duration from text."""
     patterns = [
-        r'(?:duration|length|lasted)\s*[:\-]?\s*(\d+\s*(?:min(?:ute)?s?|hours?|hrs?))',
-        r'(\d+\s*(?:min(?:ute)?s?|hours?|hrs?))\s+(?:meeting|call|session)',
-        r'(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})',
+        r"(?:duration|length|lasted)\s*[:\-]?\s*(\d+\s*(?:min(?:ute)?s?|hours?|hrs?))",
+        r"(\d+\s*(?:min(?:ute)?s?|hours?|hrs?))\s+(?:meeting|call|session)",
+        r"(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})",
     ]
     for p in patterns:
         m = re.search(p, text, re.IGNORECASE)

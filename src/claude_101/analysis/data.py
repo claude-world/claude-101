@@ -5,7 +5,7 @@ from __future__ import annotations
 import math
 from collections import Counter
 
-from claude_101._utils import (
+from .._utils import (
     basic_stats,
     infer_column_type,
     parse_csv,
@@ -122,16 +122,20 @@ def analyze_data(
                 min_len = min(len(vals_a), len(vals_b))
                 if min_len >= 3:
                     r = _pearson_correlation(vals_a[:min_len], vals_b[:min_len])
-                    correlations.append({
-                        "column_a": col_a,
-                        "column_b": col_b,
-                        "pearson_r": r,
-                        "strength": (
-                            "strong" if abs(r) >= 0.7
-                            else "moderate" if abs(r) >= 0.4
-                            else "weak"
-                        ),
-                    })
+                    correlations.append(
+                        {
+                            "column_a": col_a,
+                            "column_b": col_b,
+                            "pearson_r": r,
+                            "strength": (
+                                "strong"
+                                if abs(r) >= 0.7
+                                else "moderate"
+                                if abs(r) >= 0.4
+                                else "weak"
+                            ),
+                        }
+                    )
     result["correlations"] = correlations
 
     # ── Outliers ────────────────────────────────────────────────

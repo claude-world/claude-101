@@ -9,7 +9,11 @@ try:
 except ImportError:
     raise ImportError("Install mcp extra: pip install 'claude-101[mcp]'")
 
-from ._guides import list_guides as _list_guides, get_guide as _get_guide, search_guides as _search_guides
+from ._guides import (
+    list_guides as _list_guides,
+    get_guide as _get_guide,
+    search_guides as _search_guides,
+)
 
 # Writing tools
 from .writing.email import draft_email as _draft_email
@@ -206,7 +210,7 @@ async def structure_story(
     """Create a story structure with beats, tension curve, and character arcs.
 
     Args:
-        genre: Story genre: general, fantasy, sci-fi, mystery, romance, thriller, horror, literary.
+        genre: Story genre: general, fantasy, sci-fi, mystery, romance, thriller, horror, literary, comedy.
         elements: Story elements (e.g. "protagonist: detective, setting: 1920s Chicago, conflict: murder mystery").
         structure: Narrative structure: three-act, heros-journey, five-act.
         text: Optional existing story text to analyze for pacing, dialogue, and transitions.
@@ -514,7 +518,9 @@ async def scaffold_proposal(
     Returns:
         JSON with sections, word targets, AIDA framework, objection templates, and optional analysis.
     """
-    return _json(_scaffold_proposal(type, title, audience, content, investment, annual_return))
+    return _json(
+        _scaffold_proposal(type, title, audience, content, investment, annual_return)
+    )
 
 
 @mcp.tool()

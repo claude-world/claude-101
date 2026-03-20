@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 
-
 # ---------------------------------------------------------------------------
 # Phase templates
 # ---------------------------------------------------------------------------
@@ -19,14 +18,20 @@ _DEFAULT_PHASES = [
 _DOMAIN_TASKS: dict[str, dict[str, list[dict]]] = {
     "web": {
         "Planning": [
-            {"name": "Define site map and information architecture", "priority": "high"},
+            {
+                "name": "Define site map and information architecture",
+                "priority": "high",
+            },
             {"name": "Gather content requirements", "priority": "high"},
             {"name": "Identify third-party integrations", "priority": "medium"},
         ],
         "Design": [
             {"name": "Create wireframes for key pages", "priority": "high"},
             {"name": "Design responsive layouts", "priority": "high"},
-            {"name": "Define component library and design system", "priority": "medium"},
+            {
+                "name": "Define component library and design system",
+                "priority": "medium",
+            },
             {"name": "Design navigation and user flows", "priority": "medium"},
         ],
         "Implementation": [
@@ -53,7 +58,10 @@ _DOMAIN_TASKS: dict[str, dict[str, list[dict]]] = {
         "Planning": [
             {"name": "Define API endpoints and resource model", "priority": "high"},
             {"name": "Write OpenAPI specification", "priority": "high"},
-            {"name": "Plan authentication and authorization strategy", "priority": "high"},
+            {
+                "name": "Plan authentication and authorization strategy",
+                "priority": "high",
+            },
         ],
         "Design": [
             {"name": "Design database schema", "priority": "high"},
@@ -84,13 +92,19 @@ _DOMAIN_TASKS: dict[str, dict[str, list[dict]]] = {
     "mobile": {
         "Planning": [
             {"name": "Define target platforms (iOS/Android)", "priority": "high"},
-            {"name": "Gather feature requirements and user stories", "priority": "high"},
+            {
+                "name": "Gather feature requirements and user stories",
+                "priority": "high",
+            },
             {"name": "Plan offline capabilities", "priority": "medium"},
         ],
         "Design": [
             {"name": "Create UI mockups for key screens", "priority": "high"},
             {"name": "Design navigation patterns", "priority": "high"},
-            {"name": "Define platform-specific design guidelines", "priority": "medium"},
+            {
+                "name": "Define platform-specific design guidelines",
+                "priority": "medium",
+            },
             {"name": "Design onboarding flow", "priority": "medium"},
         ],
         "Implementation": [
@@ -130,13 +144,19 @@ _DOMAIN_TASKS: dict[str, dict[str, list[dict]]] = {
             {"name": "Build data ingestion pipelines", "priority": "high"},
             {"name": "Implement data transformations", "priority": "high"},
             {"name": "Build dashboards and visualizations", "priority": "medium"},
-            {"name": "Implement automated data quality monitoring", "priority": "medium"},
+            {
+                "name": "Implement automated data quality monitoring",
+                "priority": "medium",
+            },
             {"name": "Set up alerting for pipeline failures", "priority": "low"},
         ],
         "Testing": [
             {"name": "Validate data accuracy against source", "priority": "high"},
             {"name": "Test pipeline fault tolerance", "priority": "high"},
-            {"name": "Performance testing with production-scale data", "priority": "medium"},
+            {
+                "name": "Performance testing with production-scale data",
+                "priority": "medium",
+            },
             {"name": "User acceptance testing for dashboards", "priority": "medium"},
         ],
         "Launch": [
@@ -148,14 +168,20 @@ _DOMAIN_TASKS: dict[str, dict[str, list[dict]]] = {
     "generic": {
         "Planning": [
             {"name": "Define project scope and objectives", "priority": "high"},
-            {"name": "Identify stakeholders and communication plan", "priority": "high"},
+            {
+                "name": "Identify stakeholders and communication plan",
+                "priority": "high",
+            },
             {"name": "Gather and prioritize requirements", "priority": "high"},
         ],
         "Design": [
             {"name": "Create system architecture diagram", "priority": "high"},
             {"name": "Design user interface mockups", "priority": "high"},
             {"name": "Define technical specifications", "priority": "medium"},
-            {"name": "Plan infrastructure and deployment strategy", "priority": "medium"},
+            {
+                "name": "Plan infrastructure and deployment strategy",
+                "priority": "medium",
+            },
         ],
         "Implementation": [
             {"name": "Set up development environment", "priority": "high"},
@@ -181,29 +207,89 @@ _DOMAIN_TASKS: dict[str, dict[str, list[dict]]] = {
 
 _DOMAIN_RISKS: dict[str, list[dict]] = {
     "web": [
-        {"risk": "Browser compatibility issues causing layout breaks", "impact": "medium", "mitigation": "Test on top 5 browsers early and use progressive enhancement"},
-        {"risk": "Third-party API changes breaking integrations", "impact": "high", "mitigation": "Abstract API calls behind adapter layer with fallback handling"},
-        {"risk": "Poor performance on mobile devices", "impact": "high", "mitigation": "Set performance budgets and test on low-end devices weekly"},
+        {
+            "risk": "Browser compatibility issues causing layout breaks",
+            "impact": "medium",
+            "mitigation": "Test on top 5 browsers early and use progressive enhancement",
+        },
+        {
+            "risk": "Third-party API changes breaking integrations",
+            "impact": "high",
+            "mitigation": "Abstract API calls behind adapter layer with fallback handling",
+        },
+        {
+            "risk": "Poor performance on mobile devices",
+            "impact": "high",
+            "mitigation": "Set performance budgets and test on low-end devices weekly",
+        },
     ],
     "api": [
-        {"risk": "Security vulnerabilities in authentication flow", "impact": "high", "mitigation": "Use battle-tested auth libraries and conduct security review before launch"},
-        {"risk": "Database schema changes causing downtime", "impact": "high", "mitigation": "Use reversible migrations and blue-green deployment strategy"},
-        {"risk": "API breaking changes affecting consumers", "impact": "medium", "mitigation": "Version the API from day one and maintain backward compatibility"},
+        {
+            "risk": "Security vulnerabilities in authentication flow",
+            "impact": "high",
+            "mitigation": "Use battle-tested auth libraries and conduct security review before launch",
+        },
+        {
+            "risk": "Database schema changes causing downtime",
+            "impact": "high",
+            "mitigation": "Use reversible migrations and blue-green deployment strategy",
+        },
+        {
+            "risk": "API breaking changes affecting consumers",
+            "impact": "medium",
+            "mitigation": "Version the API from day one and maintain backward compatibility",
+        },
     ],
     "mobile": [
-        {"risk": "App store rejection delaying launch", "impact": "high", "mitigation": "Review store guidelines early and submit a pre-release for feedback"},
-        {"risk": "Device fragmentation causing inconsistent behavior", "impact": "medium", "mitigation": "Define supported device matrix and test on physical devices"},
-        {"risk": "Poor offline experience frustrating users", "impact": "medium", "mitigation": "Design offline-first with clear sync status indicators"},
+        {
+            "risk": "App store rejection delaying launch",
+            "impact": "high",
+            "mitigation": "Review store guidelines early and submit a pre-release for feedback",
+        },
+        {
+            "risk": "Device fragmentation causing inconsistent behavior",
+            "impact": "medium",
+            "mitigation": "Define supported device matrix and test on physical devices",
+        },
+        {
+            "risk": "Poor offline experience frustrating users",
+            "impact": "medium",
+            "mitigation": "Design offline-first with clear sync status indicators",
+        },
     ],
     "data": [
-        {"risk": "Data quality issues leading to incorrect insights", "impact": "high", "mitigation": "Implement automated data validation at each pipeline stage"},
-        {"risk": "Pipeline failures during peak data volume", "impact": "high", "mitigation": "Load test with 2x expected volume and implement circuit breakers"},
-        {"risk": "Regulatory non-compliance with data privacy laws", "impact": "high", "mitigation": "Conduct privacy impact assessment and implement data anonymization"},
+        {
+            "risk": "Data quality issues leading to incorrect insights",
+            "impact": "high",
+            "mitigation": "Implement automated data validation at each pipeline stage",
+        },
+        {
+            "risk": "Pipeline failures during peak data volume",
+            "impact": "high",
+            "mitigation": "Load test with 2x expected volume and implement circuit breakers",
+        },
+        {
+            "risk": "Regulatory non-compliance with data privacy laws",
+            "impact": "high",
+            "mitigation": "Conduct privacy impact assessment and implement data anonymization",
+        },
     ],
     "generic": [
-        {"risk": "Scope creep extending timeline beyond budget", "impact": "high", "mitigation": "Freeze scope at design phase and use change request process"},
-        {"risk": "Key team member unavailability", "impact": "medium", "mitigation": "Document knowledge in shared wiki and cross-train team members"},
-        {"risk": "Integration issues between components discovered late", "impact": "high", "mitigation": "Run integration tests in CI from week 2 onward"},
+        {
+            "risk": "Scope creep extending timeline beyond budget",
+            "impact": "high",
+            "mitigation": "Freeze scope at design phase and use change request process",
+        },
+        {
+            "risk": "Key team member unavailability",
+            "impact": "medium",
+            "mitigation": "Document knowledge in shared wiki and cross-train team members",
+        },
+        {
+            "risk": "Integration issues between components discovered late",
+            "impact": "high",
+            "mitigation": "Run integration tests in CI from week 2 onward",
+        },
     ],
 }
 
@@ -212,21 +298,69 @@ _DOMAIN_RISKS: dict[str, list[dict]] = {
 # Domain detection
 # ---------------------------------------------------------------------------
 
+
 def _detect_domain(description: str) -> str:
     """Detect project domain from description keywords."""
     lower = description.lower()
 
     domain_keywords = {
-        "web": ["website", "web app", "webapp", "landing page", "frontend",
-                "html", "css", "react", "vue", "angular", "next.js", "nuxt",
-                "astro", "wordpress", "shopify", "ecommerce", "e-commerce"],
-        "api": ["api", "rest", "graphql", "backend", "microservice",
-                "endpoint", "server", "webhook", "grpc", "service layer"],
-        "mobile": ["mobile", "ios", "android", "react native", "flutter",
-                   "swift", "kotlin", "app store", "play store", "cordova"],
-        "data": ["data", "analytics", "dashboard", "etl", "pipeline",
-                 "machine learning", "ml", "ai model", "warehouse",
-                 "visualization", "bi", "reporting"],
+        "web": [
+            "website",
+            "web app",
+            "webapp",
+            "landing page",
+            "frontend",
+            "html",
+            "css",
+            "react",
+            "vue",
+            "angular",
+            "next.js",
+            "nuxt",
+            "astro",
+            "wordpress",
+            "shopify",
+            "ecommerce",
+            "e-commerce",
+        ],
+        "api": [
+            "api",
+            "rest",
+            "graphql",
+            "backend",
+            "microservice",
+            "endpoint",
+            "server",
+            "webhook",
+            "grpc",
+            "service layer",
+        ],
+        "mobile": [
+            "mobile",
+            "ios",
+            "android",
+            "react native",
+            "flutter",
+            "swift",
+            "kotlin",
+            "app store",
+            "play store",
+            "cordova",
+        ],
+        "data": [
+            "data",
+            "analytics",
+            "dashboard",
+            "etl",
+            "pipeline",
+            "machine learning",
+            "ml",
+            "ai model",
+            "warehouse",
+            "visualization",
+            "bi",
+            "reporting",
+        ],
     }
 
     scores: dict[str, int] = {}
@@ -243,6 +377,7 @@ def _detect_domain(description: str) -> str:
 # Task hour estimation
 # ---------------------------------------------------------------------------
 
+
 def _estimate_hours(
     task_count: int,
     phase_hours: float,
@@ -255,7 +390,9 @@ def _estimate_hours(
     if task_count == 0:
         return []
     # Give first task ~30% more than average, last task ~30% less
-    weights = [1.0 + 0.3 * (1 - 2 * i / max(task_count - 1, 1)) for i in range(task_count)]
+    weights = [
+        1.0 + 0.3 * (1 - 2 * i / max(task_count - 1, 1)) for i in range(task_count)
+    ]
     total_weight = sum(weights)
     hours = [round(w / total_weight * phase_hours, 1) for w in weights]
     return hours
@@ -264,6 +401,7 @@ def _estimate_hours(
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
+
 
 def plan_project(
     description: str,
@@ -307,19 +445,23 @@ def plan_project(
         for idx, tmpl in enumerate(tasks_templates):
             # Dependencies: each task depends on previous task in same phase
             deps = [tasks_templates[idx - 1]["name"]] if idx > 0 else []
-            tasks.append({
-                "name": tmpl["name"],
-                "estimated_hours": task_hours[idx] if idx < len(task_hours) else 0,
-                "priority": tmpl["priority"],
-                "dependencies": deps,
-            })
+            tasks.append(
+                {
+                    "name": tmpl["name"],
+                    "estimated_hours": task_hours[idx] if idx < len(task_hours) else 0,
+                    "priority": tmpl["priority"],
+                    "dependencies": deps,
+                }
+            )
 
-        phases.append({
-            "name": phase_def["name"],
-            "percentage": pct,
-            "duration_weeks": phase_weeks,
-            "tasks": tasks,
-        })
+        phases.append(
+            {
+                "name": phase_def["name"],
+                "percentage": pct,
+                "duration_weeks": phase_weeks,
+                "tasks": tasks,
+            }
+        )
         cumulative_weeks += phase_weeks
 
     # ── Milestones ───────────────────────────────────────────────
@@ -334,11 +476,13 @@ def plan_project(
     ]
     for phase, (m_name, m_deliverable) in zip(phases, milestone_defs):
         week_cursor += phase["duration_weeks"]
-        milestones.append({
-            "name": m_name,
-            "week": round(week_cursor, 1),
-            "deliverable": m_deliverable,
-        })
+        milestones.append(
+            {
+                "name": m_name,
+                "week": round(week_cursor, 1),
+                "deliverable": m_deliverable,
+            }
+        )
 
     # ── Critical path ────────────────────────────────────────────
     # The critical path follows the highest-priority task in each phase
@@ -355,26 +499,32 @@ def plan_project(
 
     # Add team-size-specific risks
     if team_size == 1:
-        risks.append({
-            "risk": "Single point of failure — no backup if developer is unavailable",
-            "impact": "high",
-            "mitigation": "Document decisions and maintain clear commit history for hand-off",
-        })
+        risks.append(
+            {
+                "risk": "Single point of failure — no backup if developer is unavailable",
+                "impact": "high",
+                "mitigation": "Document decisions and maintain clear commit history for hand-off",
+            }
+        )
     elif team_size > 4:
-        risks.append({
-            "risk": "Communication overhead increasing with team size",
-            "impact": "medium",
-            "mitigation": "Use daily standups, clear ownership, and async updates",
-        })
+        risks.append(
+            {
+                "risk": "Communication overhead increasing with team size",
+                "impact": "medium",
+                "mitigation": "Use daily standups, clear ownership, and async updates",
+            }
+        )
 
     # Add tight-timeline risk
     hours_per_person_per_week = available_hours / (team_size * duration_weeks)
     if hours_per_person_per_week > 30:
-        risks.append({
-            "risk": "Aggressive timeline may lead to burnout and quality shortcuts",
-            "impact": "high",
-            "mitigation": "Prioritize ruthlessly and cut scope before cutting quality",
-        })
+        risks.append(
+            {
+                "risk": "Aggressive timeline may lead to burnout and quality shortcuts",
+                "impact": "high",
+                "mitigation": "Prioritize ruthlessly and cut scope before cutting quality",
+            }
+        )
 
     # ── Resource allocation ──────────────────────────────────────
     resource_allocation = {

@@ -5,8 +5,6 @@ from __future__ import annotations
 import re
 
 
-
-
 def draft_blog_post(
     topic: str,
     target_words: int = 1500,
@@ -74,12 +72,60 @@ _STYLE_PROFILES: dict[str, dict] = {
         "sentence_length": "Mix short (8-12 words) and medium (15-20 words) sentences. Avoid long compound sentences.",
         "examples_per_section": 2,
         "section_templates": [
-            ("Introduction", 10, ["Hook the reader with a relatable problem", "State what they will learn", "Preview the key takeaways"]),
-            ("Background & Context", 15, ["Define key terms", "Explain why this topic matters", "Provide necessary background"]),
-            ("Core Concept 1", 20, ["Explain the first major idea", "Provide a concrete example", "Connect to the reader's experience"]),
-            ("Core Concept 2", 20, ["Build on the previous section", "Introduce the next key idea", "Include a real-world application"]),
-            ("Practical Application", 15, ["Show how to apply the concepts", "Step-by-step walkthrough", "Common mistakes to avoid"]),
-            ("Conclusion", 20, ["Summarize the key takeaways", "Provide next steps for the reader", "End with a thought-provoking question or CTA"]),
+            (
+                "Introduction",
+                10,
+                [
+                    "Hook the reader with a relatable problem",
+                    "State what they will learn",
+                    "Preview the key takeaways",
+                ],
+            ),
+            (
+                "Background & Context",
+                15,
+                [
+                    "Define key terms",
+                    "Explain why this topic matters",
+                    "Provide necessary background",
+                ],
+            ),
+            (
+                "Core Concept 1",
+                20,
+                [
+                    "Explain the first major idea",
+                    "Provide a concrete example",
+                    "Connect to the reader's experience",
+                ],
+            ),
+            (
+                "Core Concept 2",
+                20,
+                [
+                    "Build on the previous section",
+                    "Introduce the next key idea",
+                    "Include a real-world application",
+                ],
+            ),
+            (
+                "Practical Application",
+                15,
+                [
+                    "Show how to apply the concepts",
+                    "Step-by-step walkthrough",
+                    "Common mistakes to avoid",
+                ],
+            ),
+            (
+                "Conclusion",
+                20,
+                [
+                    "Summarize the key takeaways",
+                    "Provide next steps for the reader",
+                    "End with a thought-provoking question or CTA",
+                ],
+            ),
         ],
     },
     "opinion": {
@@ -87,12 +133,60 @@ _STYLE_PROFILES: dict[str, dict] = {
         "sentence_length": "Vary between punchy short sentences and longer persuasive ones. Use rhetorical questions.",
         "examples_per_section": 1,
         "section_templates": [
-            ("Introduction", 10, ["Open with a bold statement or controversial take", "State your thesis clearly", "Preview your argument"]),
-            ("The Current State", 15, ["Describe the status quo", "Identify what most people believe", "Set up the contrast with your view"]),
-            ("My Argument", 25, ["Present your main argument with evidence", "Address the strongest counter-argument", "Provide supporting data or examples"]),
-            ("Why This Matters", 20, ["Explain the stakes", "Show real-world consequences", "Connect to the reader's interests"]),
-            ("What Should Change", 10, ["Propose concrete actions", "Call readers to reconsider their stance", "End with a memorable closing thought"]),
-            ("Conclusion", 20, ["Restate thesis in a new way", "Final call to action", "Leave the reader thinking"]),
+            (
+                "Introduction",
+                10,
+                [
+                    "Open with a bold statement or controversial take",
+                    "State your thesis clearly",
+                    "Preview your argument",
+                ],
+            ),
+            (
+                "The Current State",
+                15,
+                [
+                    "Describe the status quo",
+                    "Identify what most people believe",
+                    "Set up the contrast with your view",
+                ],
+            ),
+            (
+                "My Argument",
+                25,
+                [
+                    "Present your main argument with evidence",
+                    "Address the strongest counter-argument",
+                    "Provide supporting data or examples",
+                ],
+            ),
+            (
+                "Why This Matters",
+                20,
+                [
+                    "Explain the stakes",
+                    "Show real-world consequences",
+                    "Connect to the reader's interests",
+                ],
+            ),
+            (
+                "What Should Change",
+                10,
+                [
+                    "Propose concrete actions",
+                    "Call readers to reconsider their stance",
+                    "End with a memorable closing thought",
+                ],
+            ),
+            (
+                "Conclusion",
+                20,
+                [
+                    "Restate thesis in a new way",
+                    "Final call to action",
+                    "Leave the reader thinking",
+                ],
+            ),
         ],
     },
     "tutorial": {
@@ -100,12 +194,60 @@ _STYLE_PROFILES: dict[str, dict] = {
         "sentence_length": "Short and direct (8-15 words). Use imperative mood for instructions.",
         "examples_per_section": 3,
         "section_templates": [
-            ("Introduction", 8, ["State what the reader will build or achieve", "List prerequisites", "Estimate time to complete"]),
-            ("Setup & Prerequisites", 12, ["List required tools and versions", "Installation commands", "Verify setup is working"]),
-            ("Step 1: Foundation", 20, ["Walk through the first major step", "Include code/commands", "Show expected output"]),
-            ("Step 2: Core Implementation", 25, ["Build the main functionality", "Explain each decision", "Include code/commands"]),
-            ("Step 3: Polish & Edge Cases", 15, ["Handle errors and edge cases", "Add finishing touches", "Test the result"]),
-            ("Conclusion & Next Steps", 20, ["Summarize what was built", "Suggest extensions and improvements", "Link to further resources"]),
+            (
+                "Introduction",
+                8,
+                [
+                    "State what the reader will build or achieve",
+                    "List prerequisites",
+                    "Estimate time to complete",
+                ],
+            ),
+            (
+                "Setup & Prerequisites",
+                12,
+                [
+                    "List required tools and versions",
+                    "Installation commands",
+                    "Verify setup is working",
+                ],
+            ),
+            (
+                "Step 1: Foundation",
+                20,
+                [
+                    "Walk through the first major step",
+                    "Include code/commands",
+                    "Show expected output",
+                ],
+            ),
+            (
+                "Step 2: Core Implementation",
+                25,
+                [
+                    "Build the main functionality",
+                    "Explain each decision",
+                    "Include code/commands",
+                ],
+            ),
+            (
+                "Step 3: Polish & Edge Cases",
+                15,
+                [
+                    "Handle errors and edge cases",
+                    "Add finishing touches",
+                    "Test the result",
+                ],
+            ),
+            (
+                "Conclusion & Next Steps",
+                20,
+                [
+                    "Summarize what was built",
+                    "Suggest extensions and improvements",
+                    "Link to further resources",
+                ],
+            ),
         ],
     },
     "listicle": {
@@ -113,12 +255,59 @@ _STYLE_PROFILES: dict[str, dict] = {
         "sentence_length": "Short and punchy (8-12 words). Each item should stand alone.",
         "examples_per_section": 1,
         "section_templates": [
-            ("Introduction", 8, ["Hook with a compelling statistic or question", "Explain why this list matters", "Preview the number of items"]),
-            ("Items 1-3", 20, ["Present items with clear subheadings", "One key insight per item", "Include a quick tip or example"]),
-            ("Items 4-6", 20, ["Continue the list with variety", "Mix formats: tip, tool, technique", "Keep each item self-contained"]),
-            ("Items 7-10", 25, ["Present the remaining items", "Save a strong one for the end", "Vary the depth per item"]),
-            ("Bonus Tips", 7, ["Add 1-2 unexpected extras", "Make the reader feel they got more than expected"]),
-            ("Conclusion", 20, ["Summarize the top 3 picks", "Invite the reader to share their own", "End with a CTA"]),
+            (
+                "Introduction",
+                8,
+                [
+                    "Hook with a compelling statistic or question",
+                    "Explain why this list matters",
+                    "Preview the number of items",
+                ],
+            ),
+            (
+                "Items 1-3",
+                20,
+                [
+                    "Present items with clear subheadings",
+                    "One key insight per item",
+                    "Include a quick tip or example",
+                ],
+            ),
+            (
+                "Items 4-6",
+                20,
+                [
+                    "Continue the list with variety",
+                    "Mix formats: tip, tool, technique",
+                    "Keep each item self-contained",
+                ],
+            ),
+            (
+                "Items 7-10",
+                25,
+                [
+                    "Present the remaining items",
+                    "Save a strong one for the end",
+                    "Vary the depth per item",
+                ],
+            ),
+            (
+                "Bonus Tips",
+                7,
+                [
+                    "Add 1-2 unexpected extras",
+                    "Make the reader feel they got more than expected",
+                ],
+            ),
+            (
+                "Conclusion",
+                20,
+                [
+                    "Summarize the top 3 picks",
+                    "Invite the reader to share their own",
+                    "End with a CTA",
+                ],
+            ),
         ],
     },
     "case-study": {
@@ -126,12 +315,56 @@ _STYLE_PROFILES: dict[str, dict] = {
         "sentence_length": "Medium (12-18 words). Use precise language and avoid hedging.",
         "examples_per_section": 2,
         "section_templates": [
-            ("Introduction", 8, ["Introduce the company or scenario", "State the challenge", "Preview the result"]),
-            ("Background & Challenge", 15, ["Detail the context and constraints", "Quantify the problem", "Explain previous attempts"]),
-            ("Approach & Solution", 25, ["Describe the strategy chosen", "Explain why this approach was selected", "Detail the implementation steps"]),
-            ("Results & Metrics", 25, ["Present quantified outcomes", "Before vs. after comparison", "Include supporting data"]),
-            ("Lessons Learned", 10, ["What worked well", "What could be improved", "Unexpected findings"]),
-            ("Conclusion & Takeaways", 17, ["Summarize the key results", "Generalize lessons for the reader", "CTA or next steps"]),
+            (
+                "Introduction",
+                8,
+                [
+                    "Introduce the company or scenario",
+                    "State the challenge",
+                    "Preview the result",
+                ],
+            ),
+            (
+                "Background & Challenge",
+                15,
+                [
+                    "Detail the context and constraints",
+                    "Quantify the problem",
+                    "Explain previous attempts",
+                ],
+            ),
+            (
+                "Approach & Solution",
+                25,
+                [
+                    "Describe the strategy chosen",
+                    "Explain why this approach was selected",
+                    "Detail the implementation steps",
+                ],
+            ),
+            (
+                "Results & Metrics",
+                25,
+                [
+                    "Present quantified outcomes",
+                    "Before vs. after comparison",
+                    "Include supporting data",
+                ],
+            ),
+            (
+                "Lessons Learned",
+                10,
+                ["What worked well", "What could be improved", "Unexpected findings"],
+            ),
+            (
+                "Conclusion & Takeaways",
+                17,
+                [
+                    "Summarize the key results",
+                    "Generalize lessons for the reader",
+                    "CTA or next steps",
+                ],
+            ),
         ],
     },
 }
@@ -158,12 +391,14 @@ def _build_sections(
         name = _personalize_section_name(name_template, topic, style)
         section_words = round(target_words * pct / total_pct)
         actual_pct = round(pct / total_pct * 100)
-        sections.append({
-            "section": name,
-            "target_words": section_words,
-            "percentage": actual_pct,
-            "key_points": key_points,
-        })
+        sections.append(
+            {
+                "section": name,
+                "target_words": section_words,
+                "percentage": actual_pct,
+                "key_points": key_points,
+            }
+        )
     return sections
 
 
@@ -202,8 +437,19 @@ def _build_heading_hierarchy(topic: str, sections: list[dict]) -> list[str]:
 
 def _extract_topic_keywords(topic: str) -> dict:
     """Extract keywords and bigrams from the topic."""
-    words = re.findall(r'\b[a-zA-Z]{3,}\b', topic.lower())
-    stopwords = {"the", "and", "for", "with", "from", "into", "about", "that", "this", "how"}
+    words = re.findall(r"\b[a-zA-Z]{3,}\b", topic.lower())
+    stopwords = {
+        "the",
+        "and",
+        "for",
+        "with",
+        "from",
+        "into",
+        "about",
+        "that",
+        "this",
+        "how",
+    }
     filtered = [w for w in words if w not in stopwords]
 
     # Unigrams
@@ -212,7 +458,7 @@ def _extract_topic_keywords(topic: str) -> dict:
     # Bigrams from the topic
     bigrams: list[str] = []
     for i in range(len(filtered) - 1):
-        bigrams.append(f"{filtered[i]} {filtered[i+1]}")
+        bigrams.append(f"{filtered[i]} {filtered[i + 1]}")
 
     return {
         "primary_keywords": unigrams[:5],
@@ -280,9 +526,20 @@ def _analyze_content_gaps(topic: str, style: str) -> list[str]:
 
     # Style-specific expected subtopics
     style_expectations = {
-        "educational": ["definition", "example", "comparison", "best practice", "common mistake"],
+        "educational": [
+            "definition",
+            "example",
+            "comparison",
+            "best practice",
+            "common mistake",
+        ],
         "opinion": ["counter-argument", "evidence", "data", "personal experience"],
-        "tutorial": ["prerequisites", "step-by-step", "expected output", "troubleshooting"],
+        "tutorial": [
+            "prerequisites",
+            "step-by-step",
+            "expected output",
+            "troubleshooting",
+        ],
         "listicle": ["ranking criteria", "pro/con for each item", "recommendation"],
         "case-study": ["baseline metrics", "methodology", "results", "lessons learned"],
     }
@@ -307,9 +564,9 @@ def _build_seo_fields(topic: str, style: str) -> dict:
         focus_keyword = topic.lower()
 
     # Slug
-    slug = re.sub(r'[^a-z0-9]+', '-', topic.lower()).strip('-')
+    slug = re.sub(r"[^a-z0-9]+", "-", topic.lower()).strip("-")
     if len(slug) > 60:
-        slug = slug[:60].rsplit('-', 1)[0]
+        slug = slug[:60].rsplit("-", 1)[0]
 
     # Title tag (50-60 chars)
     title_tag = topic
@@ -325,7 +582,9 @@ def _build_seo_fields(topic: str, style: str) -> dict:
         "case-study": f"How {topic.lower()} drove real results.",
     }
     meta_base = style_intros.get(style, f"Explore {topic.lower()}.")
-    meta_description = f"{meta_base} Practical insights, examples, and actionable takeaways."
+    meta_description = (
+        f"{meta_base} Practical insights, examples, and actionable takeaways."
+    )
     if len(meta_description) > 160:
         meta_description = meta_description[:157] + "..."
 

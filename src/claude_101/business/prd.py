@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 
-
 # ---------------------------------------------------------------------------
 # PRD section templates
 # ---------------------------------------------------------------------------
@@ -125,10 +124,7 @@ _PRD_SECTIONS: list[dict] = [
     {
         "name": "Success Metrics",
         "description": "How product success will be measured",
-        "template": (
-            "## 8. Success Metrics\n\n"
-            "{success_metrics}"
-        ),
+        "template": ("## 8. Success Metrics\n\n{success_metrics}"),
     },
     {
         "name": "Timeline",
@@ -165,59 +161,135 @@ _PRD_SECTIONS: list[dict] = [
 
 _PROBLEM_KEYWORDS: dict[str, list[dict]] = {
     "search": [
-        {"action": "search for items using keywords", "benefit": "I can quickly find what I need"},
-        {"action": "filter search results by category", "benefit": "I can narrow down results efficiently"},
-        {"action": "save my search queries", "benefit": "I can re-run frequent searches without retyping"},
+        {
+            "action": "search for items using keywords",
+            "benefit": "I can quickly find what I need",
+        },
+        {
+            "action": "filter search results by category",
+            "benefit": "I can narrow down results efficiently",
+        },
+        {
+            "action": "save my search queries",
+            "benefit": "I can re-run frequent searches without retyping",
+        },
     ],
     "auth": [
-        {"action": "create an account with my email", "benefit": "I can access personalized features"},
+        {
+            "action": "create an account with my email",
+            "benefit": "I can access personalized features",
+        },
         {"action": "log in securely", "benefit": "my data is protected"},
-        {"action": "reset my password", "benefit": "I can regain access if I forget my credentials"},
+        {
+            "action": "reset my password",
+            "benefit": "I can regain access if I forget my credentials",
+        },
     ],
     "payment": [
-        {"action": "add items to a shopping cart", "benefit": "I can purchase multiple items at once"},
-        {"action": "check out with my preferred payment method", "benefit": "the purchase process is convenient"},
+        {
+            "action": "add items to a shopping cart",
+            "benefit": "I can purchase multiple items at once",
+        },
+        {
+            "action": "check out with my preferred payment method",
+            "benefit": "the purchase process is convenient",
+        },
         {"action": "view my order history", "benefit": "I can track my past purchases"},
     ],
     "dashboard": [
-        {"action": "view key metrics on a single dashboard", "benefit": "I can quickly assess performance"},
-        {"action": "customize which metrics are displayed", "benefit": "I see the most relevant data for my role"},
-        {"action": "export dashboard data", "benefit": "I can share reports with stakeholders"},
+        {
+            "action": "view key metrics on a single dashboard",
+            "benefit": "I can quickly assess performance",
+        },
+        {
+            "action": "customize which metrics are displayed",
+            "benefit": "I see the most relevant data for my role",
+        },
+        {
+            "action": "export dashboard data",
+            "benefit": "I can share reports with stakeholders",
+        },
     ],
     "collaboration": [
-        {"action": "share documents with my team", "benefit": "we can collaborate in real time"},
-        {"action": "leave comments on shared items", "benefit": "I can provide feedback asynchronously"},
-        {"action": "track changes made by team members", "benefit": "I know who changed what and when"},
+        {
+            "action": "share documents with my team",
+            "benefit": "we can collaborate in real time",
+        },
+        {
+            "action": "leave comments on shared items",
+            "benefit": "I can provide feedback asynchronously",
+        },
+        {
+            "action": "track changes made by team members",
+            "benefit": "I know who changed what and when",
+        },
     ],
     "notification": [
-        {"action": "receive notifications for important events", "benefit": "I stay informed without checking constantly"},
-        {"action": "customize my notification preferences", "benefit": "I only receive relevant alerts"},
-        {"action": "view a history of past notifications", "benefit": "I can catch up on missed updates"},
+        {
+            "action": "receive notifications for important events",
+            "benefit": "I stay informed without checking constantly",
+        },
+        {
+            "action": "customize my notification preferences",
+            "benefit": "I only receive relevant alerts",
+        },
+        {
+            "action": "view a history of past notifications",
+            "benefit": "I can catch up on missed updates",
+        },
     ],
     "content": [
-        {"action": "create and publish content", "benefit": "I can share information with my audience"},
-        {"action": "edit content with a rich text editor", "benefit": "my content looks professional"},
-        {"action": "schedule content for future publication", "benefit": "I can plan my content calendar"},
+        {
+            "action": "create and publish content",
+            "benefit": "I can share information with my audience",
+        },
+        {
+            "action": "edit content with a rich text editor",
+            "benefit": "my content looks professional",
+        },
+        {
+            "action": "schedule content for future publication",
+            "benefit": "I can plan my content calendar",
+        },
     ],
     "profile": [
-        {"action": "update my profile information", "benefit": "my account reflects my current details"},
+        {
+            "action": "update my profile information",
+            "benefit": "my account reflects my current details",
+        },
         {"action": "upload a profile picture", "benefit": "others can recognize me"},
-        {"action": "manage my privacy settings", "benefit": "I control what others can see about me"},
+        {
+            "action": "manage my privacy settings",
+            "benefit": "I control what others can see about me",
+        },
     ],
 }
 
 _DEFAULT_STORIES = [
-    {"action": "complete the primary workflow", "benefit": "I achieve my main goal efficiently"},
+    {
+        "action": "complete the primary workflow",
+        "benefit": "I achieve my main goal efficiently",
+    },
     {"action": "undo my last action", "benefit": "I can recover from mistakes"},
-    {"action": "access the product on my mobile device", "benefit": "I can use it on the go"},
-    {"action": "get help when I am stuck", "benefit": "I can resolve issues without external support"},
-    {"action": "customize my experience", "benefit": "the product fits my personal workflow"},
+    {
+        "action": "access the product on my mobile device",
+        "benefit": "I can use it on the go",
+    },
+    {
+        "action": "get help when I am stuck",
+        "benefit": "I can resolve issues without external support",
+    },
+    {
+        "action": "customize my experience",
+        "benefit": "the product fits my personal workflow",
+    },
 ]
 
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _parse_target_users(target_users: str) -> list[str]:
     """Parse target users from comma-separated string."""
@@ -233,13 +305,70 @@ def _detect_problem_domains(problem: str) -> list[str]:
 
     domain_detection: dict[str, list[str]] = {
         "search": ["search", "find", "discover", "browse", "lookup", "filter", "query"],
-        "auth": ["login", "sign up", "register", "authenticate", "password", "account", "sso"],
-        "payment": ["pay", "purchase", "buy", "checkout", "cart", "order", "billing", "subscription"],
-        "dashboard": ["dashboard", "analytics", "metrics", "report", "kpi", "monitor", "visualize"],
-        "collaboration": ["collaborate", "team", "share", "comment", "review", "real-time", "workspace"],
-        "notification": ["notify", "alert", "notification", "remind", "update", "email", "push"],
-        "content": ["content", "publish", "blog", "article", "cms", "editor", "post", "write"],
-        "profile": ["profile", "settings", "preferences", "customize", "personal", "avatar"],
+        "auth": [
+            "login",
+            "sign up",
+            "register",
+            "authenticate",
+            "password",
+            "account",
+            "sso",
+        ],
+        "payment": [
+            "pay",
+            "purchase",
+            "buy",
+            "checkout",
+            "cart",
+            "order",
+            "billing",
+            "subscription",
+        ],
+        "dashboard": [
+            "dashboard",
+            "analytics",
+            "metrics",
+            "report",
+            "kpi",
+            "monitor",
+            "visualize",
+        ],
+        "collaboration": [
+            "collaborate",
+            "team",
+            "share",
+            "comment",
+            "review",
+            "real-time",
+            "workspace",
+        ],
+        "notification": [
+            "notify",
+            "alert",
+            "notification",
+            "remind",
+            "update",
+            "email",
+            "push",
+        ],
+        "content": [
+            "content",
+            "publish",
+            "blog",
+            "article",
+            "cms",
+            "editor",
+            "post",
+            "write",
+        ],
+        "profile": [
+            "profile",
+            "settings",
+            "preferences",
+            "customize",
+            "personal",
+            "avatar",
+        ],
     }
 
     for domain, keywords in domain_detection.items():
@@ -331,39 +460,52 @@ def _generate_success_metrics(problem: str, personas: list[str]) -> list[dict]:
     lower = problem.lower()
 
     if any(w in lower for w in ["slow", "performance", "speed", "fast", "efficient"]):
-        base_metrics.append({
-            "metric": "Time to Complete Primary Task",
-            "target": "50% reduction from current baseline",
-            "measurement": "Average time from task start to completion, measured via event tracking",
-        })
+        base_metrics.append(
+            {
+                "metric": "Time to Complete Primary Task",
+                "target": "50% reduction from current baseline",
+                "measurement": "Average time from task start to completion, measured via event tracking",
+            }
+        )
 
     if any(w in lower for w in ["error", "bug", "reliable", "crash", "fail"]):
-        base_metrics.append({
-            "metric": "Error Rate",
-            "target": "Less than 1% of user sessions encounter an error",
-            "measurement": "Error logging and monitoring dashboard",
-        })
+        base_metrics.append(
+            {
+                "metric": "Error Rate",
+                "target": "Less than 1% of user sessions encounter an error",
+                "measurement": "Error logging and monitoring dashboard",
+            }
+        )
 
     if any(w in lower for w in ["engage", "retention", "return", "daily", "active"]):
-        base_metrics.append({
-            "metric": "Weekly Active Users (WAU) / Monthly Active Users (MAU)",
-            "target": "WAU/MAU ratio above 40%",
-            "measurement": "Analytics dashboard tracking unique active users per period",
-        })
+        base_metrics.append(
+            {
+                "metric": "Weekly Active Users (WAU) / Monthly Active Users (MAU)",
+                "target": "WAU/MAU ratio above 40%",
+                "measurement": "Analytics dashboard tracking unique active users per period",
+            }
+        )
 
-    if any(w in lower for w in ["revenue", "monetize", "conversion", "purchase", "subscribe"]):
-        base_metrics.append({
-            "metric": "Conversion Rate",
-            "target": "3% free-to-paid conversion within 30 days",
-            "measurement": "Funnel analysis from sign-up to first purchase/subscription",
-        })
+    if any(
+        w in lower
+        for w in ["revenue", "monetize", "conversion", "purchase", "subscribe"]
+    ):
+        base_metrics.append(
+            {
+                "metric": "Conversion Rate",
+                "target": "3% free-to-paid conversion within 30 days",
+                "measurement": "Funnel analysis from sign-up to first purchase/subscription",
+            }
+        )
 
     if any(w in lower for w in ["support", "help", "ticket", "complaint"]):
-        base_metrics.append({
-            "metric": "Support Ticket Reduction",
-            "target": "30% reduction in support tickets related to this problem area",
-            "measurement": "Compare ticket volume before and after launch, filtered by category",
-        })
+        base_metrics.append(
+            {
+                "metric": "Support Ticket Reduction",
+                "target": "30% reduction in support tickets related to this problem area",
+                "measurement": "Compare ticket volume before and after launch, filtered by category",
+            }
+        )
 
     return base_metrics
 
@@ -394,7 +536,9 @@ def _build_persona_sections(personas: list[str], problem: str) -> str:
 
 
 def _check_requirements_completeness(
-    problem: str, personas: list[str], stories: list[dict],
+    problem: str,
+    personas: list[str],
+    stories: list[dict],
 ) -> dict:
     """Check requirements completeness with gap analysis."""
     issues: list[str] = []
@@ -404,7 +548,10 @@ def _check_requirements_completeness(
     if len(problem.split()) < 10:
         issues.append("Problem statement is too brief — aim for 2+ sentences")
         score -= 15
-    if not any(w in problem.lower() for w in ["need", "struggle", "lack", "cannot", "difficult", "slow", "no way"]):
+    if not any(
+        w in problem.lower()
+        for w in ["need", "struggle", "lack", "cannot", "difficult", "slow", "no way"]
+    ):
         issues.append("Problem statement lacks pain language — quantify the user pain")
         score -= 10
 
@@ -415,7 +562,9 @@ def _check_requirements_completeness(
 
     # Check story coverage
     if len(stories) < 3:
-        issues.append(f"Only {len(stories)} user stories — aim for 5+ to cover core workflows")
+        issues.append(
+            f"Only {len(stories)} user stories — aim for 5+ to cover core workflows"
+        )
         score -= 10
 
     # Check if all personas have stories
@@ -426,9 +575,20 @@ def _check_requirements_completeness(
             score -= 5
 
     # Check for measurable goals
-    measurable_words = ["increase", "decrease", "reduce", "improve", "achieve", "%", "number", "rate"]
+    measurable_words = [
+        "increase",
+        "decrease",
+        "reduce",
+        "improve",
+        "achieve",
+        "%",
+        "number",
+        "rate",
+    ]
     if not any(w in problem.lower() for w in measurable_words):
-        issues.append("No measurable goals detected — add quantifiable success criteria")
+        issues.append(
+            "No measurable goals detected — add quantifiable success criteria"
+        )
         score -= 10
 
     return {"score": max(0, score), "issues": issues}
@@ -463,16 +623,36 @@ def _validate_user_story_quality(stories: list[dict]) -> dict:
             story_score -= 20
 
         # Check for acceptance-criteria-ready language
-        if not any(w in action.lower() for w in ["create", "view", "update", "delete", "search", "filter", "submit", "select", "upload", "download", "share", "export"]):
-            issues.append("Action may be hard to turn into acceptance criteria — use specific verbs")
+        if not any(
+            w in action.lower()
+            for w in [
+                "create",
+                "view",
+                "update",
+                "delete",
+                "search",
+                "filter",
+                "submit",
+                "select",
+                "upload",
+                "download",
+                "share",
+                "export",
+            ]
+        ):
+            issues.append(
+                "Action may be hard to turn into acceptance criteria — use specific verbs"
+            )
             story_score -= 10
 
         total_score += max(0, story_score)
-        results.append({
-            "story": story.get("format", ""),
-            "score": max(0, story_score),
-            "issues": issues,
-        })
+        results.append(
+            {
+                "story": story.get("format", ""),
+                "score": max(0, story_score),
+                "issues": issues,
+            }
+        )
 
     avg = round(total_score / len(stories), 1) if stories else 0
     return {"stories": results, "average_score": avg}
@@ -482,12 +662,34 @@ def _detect_feature_dependencies(stories: list[dict]) -> list[dict]:
     """Detect likely dependencies between user stories based on domain rules."""
     dependency_rules = {
         "auth": {
-            "keywords": ["log in", "sign up", "register", "authenticate", "account", "password"],
-            "blocks": ["payment", "dashboard", "profile", "settings", "share", "collaborate"],
+            "keywords": [
+                "log in",
+                "sign up",
+                "register",
+                "authenticate",
+                "account",
+                "password",
+            ],
+            "blocks": [
+                "payment",
+                "dashboard",
+                "profile",
+                "settings",
+                "share",
+                "collaborate",
+            ],
         },
         "data_model": {
             "keywords": ["create", "add", "define", "set up"],
-            "blocks": ["view", "filter", "search", "export", "report", "dashboard", "analytics"],
+            "blocks": [
+                "view",
+                "filter",
+                "search",
+                "export",
+                "report",
+                "dashboard",
+                "analytics",
+            ],
         },
         "profile": {
             "keywords": ["profile", "account", "settings"],
@@ -509,11 +711,13 @@ def _detect_feature_dependencies(stories: list[dict]) -> list[dict]:
         for dep in dependent_stories:
             for pre in prereq_stories:
                 if dep != pre:
-                    dependencies.append({
-                        "rule": rule_name,
-                        "prerequisite": f"US-{pre + 1}",
-                        "dependent": f"US-{dep + 1}",
-                    })
+                    dependencies.append(
+                        {
+                            "rule": rule_name,
+                            "prerequisite": f"US-{pre + 1}",
+                            "dependent": f"US-{dep + 1}",
+                        }
+                    )
 
     return dependencies
 
@@ -529,7 +733,10 @@ def _compute_moscow_scores(stories: list[dict], domains: list[str]) -> dict:
         action = story.get("action", "").lower()
         label = f"US-{i + 1}: {story.get('action', '')}"
 
-        if any(kw in action for kw in ["log in", "sign up", "create", "search", "pay", "checkout"]):
+        if any(
+            kw in action
+            for kw in ["log in", "sign up", "create", "search", "pay", "checkout"]
+        ):
             must_have.append(label)
         elif any(kw in action for kw in ["filter", "view", "track", "update"]):
             should_have.append(label)
@@ -549,6 +756,7 @@ def _compute_moscow_scores(stories: list[dict], domains: list[str]) -> dict:
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
+
 
 def scaffold_prd(
     product_name: str,
@@ -573,13 +781,10 @@ def scaffold_prd(
 
     # ── Format user stories for template ─────────────────────────
     stories_text = "\n\n".join(
-        f"**US-{i+1}:** {s['format']}"
-        for i, s in enumerate(user_stories)
+        f"**US-{i + 1}:** {s['format']}" for i, s in enumerate(user_stories)
     )
 
-    ac_examples_text = "\n".join(
-        f"- {ex}" for ex in acceptance_criteria["examples"]
-    )
+    ac_examples_text = "\n".join(f"- {ex}" for ex in acceptance_criteria["examples"])
     ac_text = (
         f"**Template:** {acceptance_criteria['template']}\n\n"
         f"**Examples:**\n{ac_examples_text}"
@@ -587,8 +792,7 @@ def scaffold_prd(
 
     # ── Format success metrics for template ──────────────────────
     metrics_text = (
-        "| Metric | Target | Measurement |\n"
-        "|--------|--------|-------------|\n"
+        "| Metric | Target | Measurement |\n|--------|--------|-------------|\n"
     )
     for m in success_metrics:
         metrics_text += f"| {m['metric']} | {m['target']} | {m['measurement']} |\n"
@@ -609,11 +813,13 @@ def scaffold_prd(
         template = template.replace("{acceptance_criteria}", ac_text)
         template = template.replace("{success_metrics}", metrics_text)
 
-        sections.append({
-            "name": sec["name"],
-            "description": sec["description"],
-            "template": template,
-        })
+        sections.append(
+            {
+                "name": sec["name"],
+                "description": sec["description"],
+                "template": template,
+            }
+        )
 
     # ── MoSCoW prioritization (computed) ─────────────────────────
     domains = _detect_problem_domains(problem)

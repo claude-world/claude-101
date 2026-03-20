@@ -5,7 +5,7 @@ from __future__ import annotations
 import statistics
 from collections import Counter
 
-from claude_101._utils import parse_csv
+from .._utils import parse_csv
 
 
 def _to_int(value: str) -> int | None:
@@ -94,12 +94,10 @@ def analyze_survey(data: str, scale_max: int = 5) -> dict:
 
     # Detect and skip ID column
     col_values = {
-        i: [row[i] if i < len(row) else "" for row in rows]
-        for i in range(len(headers))
+        i: [row[i] if i < len(row) else "" for row in rows] for i in range(len(headers))
     }
     question_indices = [
-        i for i in range(len(headers))
-        if not _is_id_column(headers[i], col_values[i])
+        i for i in range(len(headers)) if not _is_id_column(headers[i], col_values[i])
     ]
 
     response_count = len(rows)
@@ -134,12 +132,14 @@ def analyze_survey(data: str, scale_max: int = 5) -> dict:
         above_mid = sum(1 for v in int_values if v > midpoint)
         satisfaction_pct = round(above_mid / len(int_values) * 100, 1)
 
-        questions_result.append({
-            "question": question_name,
-            "stats": {"mean": mean, "median": median, "stdev": stdev},
-            "distribution": distribution,
-            "satisfaction_pct": satisfaction_pct,
-        })
+        questions_result.append(
+            {
+                "question": question_name,
+                "stats": {"mean": mean, "median": median, "stdev": stdev},
+                "distribution": distribution,
+                "satisfaction_pct": satisfaction_pct,
+            }
+        )
 
     # ── NPS ─────────────────────────────────────────────────────
     nps = _compute_nps(all_scores, scale_max)

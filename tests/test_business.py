@@ -68,25 +68,35 @@ class TestBuildSupportResponse:
         assert len(r["empathy_phrases"]) >= 1
 
     def test_technical(self):
-        r = build_support_response("The app crashes when I try to upload files", channel="chat")
+        r = build_support_response(
+            "The app crashes when I try to upload files", channel="chat"
+        )
         assert r["issue_classification"]["category"] in ("technical", "bug")
 
     def test_complaint(self):
-        r = build_support_response("I am extremely frustrated with your terrible service")
+        r = build_support_response(
+            "I am extremely frustrated with your terrible service"
+        )
         assert r["issue_classification"]["severity"] in ("medium", "high", "critical")
         assert r["issue_classification"]["sentiment"] in ("negative", "angry")
 
 
 class TestScaffoldPrd:
     def test_basic(self):
-        r = scaffold_prd("TaskFlow", "Teams struggle to track project progress across tools")
+        r = scaffold_prd(
+            "TaskFlow", "Teams struggle to track project progress across tools"
+        )
         assert r["product_name"] == "TaskFlow"
         assert len(r["sections"]) >= 5
         assert len(r["user_stories"]) >= 1
         assert "prioritization" in r
 
     def test_with_users(self):
-        r = scaffold_prd("ChatBot", "Customer support is too slow", target_users="small business owners, support agents")
+        r = scaffold_prd(
+            "ChatBot",
+            "Customer support is too slow",
+            target_users="small business owners, support agents",
+        )
         assert len(r["target_users"]) >= 2
 
     def test_success_metrics(self):
@@ -133,6 +143,7 @@ class TestEvaluateDecision:
 # New: Support response risk scoring tests
 # ---------------------------------------------------------------------------
 
+
 class TestSupportResponseRiskScoring:
     def test_escalation_risk_present(self):
         r = build_support_response("I was charged twice for my subscription")
@@ -141,17 +152,24 @@ class TestSupportResponseRiskScoring:
         assert r["escalation_risk"]["level"] in ("low", "medium", "high", "critical")
 
     def test_high_escalation_risk(self):
-        r = build_support_response("I am furious and will contact my lawyer about this refund")
+        r = build_support_response(
+            "I am furious and will contact my lawyer about this refund"
+        )
         assert r["escalation_risk"]["level"] in ("high", "critical")
 
     def test_resolution_estimate(self):
         r = build_support_response("My app keeps crashing", channel="chat")
         assert "resolution_estimate" in r
         assert r["resolution_estimate"]["min_hours"] >= 0
-        assert r["resolution_estimate"]["max_hours"] > r["resolution_estimate"]["min_hours"]
+        assert (
+            r["resolution_estimate"]["max_hours"]
+            > r["resolution_estimate"]["min_hours"]
+        )
 
     def test_customer_effort(self):
-        r = build_support_response("I already contacted you about this issue twice and it's still broken")
+        r = build_support_response(
+            "I already contacted you about this issue twice and it's still broken"
+        )
         assert "customer_effort" in r
         assert r["customer_effort"]["repeat_contact_signals"] is True
 
@@ -172,6 +190,7 @@ class TestSupportResponseRiskScoring:
 # ---------------------------------------------------------------------------
 # New: Interview skill extraction & STAR validation tests
 # ---------------------------------------------------------------------------
+
 
 class TestInterviewAnalysis:
     def test_difficulty_distribution(self):
@@ -220,9 +239,12 @@ class TestInterviewAnalysis:
 # New: PRD requirements analysis tests
 # ---------------------------------------------------------------------------
 
+
 class TestPrdRequirementsAnalysis:
     def test_requirements_analysis_present(self):
-        r = scaffold_prd("TaskFlow", "Teams struggle to track project progress across tools")
+        r = scaffold_prd(
+            "TaskFlow", "Teams struggle to track project progress across tools"
+        )
         assert "requirements_analysis" in r
         ra = r["requirements_analysis"]
         assert "completeness" in ra
@@ -230,17 +252,26 @@ class TestPrdRequirementsAnalysis:
         assert "dependencies" in ra
 
     def test_completeness_score(self):
-        r = scaffold_prd("TaskFlow", "Teams need a way to search, filter, and collaborate on tasks in real time")
+        r = scaffold_prd(
+            "TaskFlow",
+            "Teams need a way to search, filter, and collaborate on tasks in real time",
+        )
         assert r["requirements_analysis"]["completeness"]["score"] > 0
 
     def test_moscow_populated(self):
-        r = scaffold_prd("Shop", "Users need to search products and checkout with payment")
+        r = scaffold_prd(
+            "Shop", "Users need to search products and checkout with payment"
+        )
         cats = r["prioritization"]["categories"]
         total_items = sum(len(v) for v in cats.values())
         assert total_items > 0
 
     def test_story_quality_scores(self):
-        r = scaffold_prd("App", "Users need to search and filter items", target_users="Developer, Designer")
+        r = scaffold_prd(
+            "App",
+            "Users need to search and filter items",
+            target_users="Developer, Designer",
+        )
         sq = r["requirements_analysis"]["story_quality"]
         assert sq["average_score"] > 0
         assert len(sq["stories"]) >= 1
@@ -249,6 +280,7 @@ class TestPrdRequirementsAnalysis:
 # ---------------------------------------------------------------------------
 # New: Proposal analysis tests
 # ---------------------------------------------------------------------------
+
 
 class TestProposalAnalysis:
     def test_aida_coverage(self):
@@ -262,14 +294,21 @@ class TestProposalAnalysis:
         r = scaffold_proposal("business", "Cloud Migration", content=content)
         assert "argument_analysis" in r
         assert r["argument_analysis"]["evidence"] > 0
-        assert r["argument_analysis"]["strength"] in ("strong", "moderate", "weak", "unsupported")
+        assert r["argument_analysis"]["strength"] in (
+            "strong",
+            "moderate",
+            "weak",
+            "unsupported",
+        )
 
     def test_no_argument_without_content(self):
         r = scaffold_proposal("business", "Test")
         assert "argument_analysis" not in r
 
     def test_roi_analysis(self):
-        r = scaffold_proposal("business", "New Tool", investment=100000, annual_return=50000)
+        r = scaffold_proposal(
+            "business", "New Tool", investment=100000, annual_return=50000
+        )
         assert "roi_analysis" in r
         roi = r["roi_analysis"]
         assert roi["roi_percent"] == 50.0

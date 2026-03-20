@@ -527,8 +527,13 @@ def list_guides(category: str | None = None) -> list[dict]:
     if category:
         result = [g for g in result if g["category"] == category]
     return [
-        {"id": g["id"], "title": g["title"], "category": g["category"],
-         "difficulty": g["difficulty"], "tool": g["tool"]}
+        {
+            "id": g["id"],
+            "title": g["title"],
+            "category": g["category"],
+            "difficulty": g["difficulty"],
+            "tool": g["tool"],
+        }
         for g in result
     ]
 
@@ -542,9 +547,14 @@ def search_guides(query: str, category: str | None = None) -> list[dict]:
             continue
         searchable = f"{g['title']} {g['description']} {' '.join(g['tags'])}".lower()
         if query_lower in searchable:
-            results.append({
-                "id": g["id"], "title": g["title"], "category": g["category"],
-                "difficulty": g["difficulty"], "tool": g["tool"],
-                "description": g["description"],
-            })
+            results.append(
+                {
+                    "id": g["id"],
+                    "title": g["title"],
+                    "category": g["category"],
+                    "difficulty": g["difficulty"],
+                    "tool": g["tool"],
+                    "description": g["description"],
+                }
+            )
     return results

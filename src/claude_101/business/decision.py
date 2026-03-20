@@ -2,26 +2,19 @@
 
 from __future__ import annotations
 
+from .._utils import _normalize_weights
 
 
-def _normalize_weights(raw: list[float]) -> list[float]:
-    """Normalize a list of weights so they sum to 1.0."""
-    total = sum(raw)
-    if total == 0:
-        n = len(raw)
-        return [round(1.0 / n, 4)] * n if n else []
-    return [round(w / total, 4) for w in raw]
-
-
-def _parse_scores(scores_str: str, options: list[str], criteria: list[str]) -> dict[str, dict[str, float]]:
+def _parse_scores(
+    scores_str: str, options: list[str], criteria: list[str]
+) -> dict[str, dict[str, float]]:
     """Parse scores from format: 'opt1:c1=8,c2=7;opt2:c1=6,c2=9'.
 
     Returns a nested dict: {option: {criterion: score}}.
     Missing entries get None.
     """
     result: dict[str, dict[str, float | None]] = {
-        opt: {crit: None for crit in criteria}
-        for opt in options
+        opt: {crit: None for crit in criteria} for opt in options
     }
 
     if not scores_str.strip():
@@ -120,9 +113,7 @@ def _compute_rankings(
     """Rank options by weighted score (descending)."""
     # Filter out options with no score
     scorable = [
-        (opt, score)
-        for opt, score in weighted_scores.items()
-        if score is not None
+        (opt, score) for opt, score in weighted_scores.items() if score is not None
     ]
 
     if not scorable:
@@ -133,11 +124,13 @@ def _compute_rankings(
 
     rankings: list[dict] = []
     for rank, (opt, score) in enumerate(sorted_opts, 1):
-        rankings.append({
-            "option": opt,
-            "weighted_score": score,
-            "rank": rank,
-        })
+        rankings.append(
+            {
+                "option": opt,
+                "weighted_score": score,
+                "rank": rank,
+            }
+        )
 
     return rankings
 
@@ -185,9 +178,14 @@ def _sensitivity_analysis(
     # Check if any scores are missing
     for c in criteria:
         if first_scores.get(c) is None or second_scores.get(c) is None:
-            return [{"criterion": c, "weight_change_to_flip": None,
-                     "description": "Cannot compute — scores are missing"}
-                    for c in criteria]
+            return [
+                {
+                    "criterion": c,
+                    "weight_change_to_flip": None,
+                    "description": "Cannot compute — scores are missing",
+                }
+                for c in criteria
+            ]
 
     analysis: list[dict] = []
 
@@ -196,11 +194,13 @@ def _sensitivity_analysis(
 
         if score_diff == 0:
             # This criterion doesn't differentiate the top two
-            analysis.append({
-                "criterion": crit,
-                "weight_change_to_flip": None,
-                "description": f"Both options score equally on '{crit}' — changing its weight has no effect on the ranking",
-            })
+            analysis.append(
+                {
+                    "criterion": crit,
+                    "weight_change_to_flip": None,
+                    "description": f"Both options score equally on '{crit}' — changing its weight has no effect on the ranking",
+                }
+            )
             continue
 
         # Current weighted advantage of first over second
@@ -234,15 +234,15 @@ def _sensitivity_analysis(
                 f"'{first['option']}' and '{second['option']}'"
             )
         else:
-            description = (
-                f"Weight is currently 0; would need to set it to {delta_needed:.4f} to flip the ranking"
-            )
+            description = f"Weight is currently 0; would need to set it to {delta_needed:.4f} to flip the ranking"
 
-        analysis.append({
-            "criterion": crit,
-            "weight_change_to_flip": delta_needed,
-            "description": description,
-        })
+        analysis.append(
+            {
+                "criterion": crit,
+                "weight_change_to_flip": delta_needed,
+                "description": description,
+            }
+        )
 
     return analysis
 
@@ -250,6 +250,7 @@ def _sensitivity_analysis(
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
+
 
 def evaluate_decision(
     options: str,
@@ -290,7 +291,7 @@ def evaluate_decision(
         # Pad or truncate
         while len(raw_weights) < len(criteria_list):
             raw_weights.append(1.0)
-        raw_weights = raw_weights[:len(criteria_list)]
+        raw_weights = raw_weights[: len(criteria_list)]
     else:
         raw_weights = [1.0] * len(criteria_list)
 

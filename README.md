@@ -1,56 +1,44 @@
 # claude-101
 
-> 27 practical AI tools — MCP server + CLI. Real computation, zero API cost.
+> 27 AI tools as MCP server + CLI + Skill. Just talk to Claude — it handles the rest.
 
 [![PyPI](https://img.shields.io/pypi/v/claude-101.svg)](https://pypi.org/project/claude-101/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![Tests](https://github.com/claude-world/claude-101/actions/workflows/ci.yml/badge.svg)](https://github.com/claude-world/claude-101/actions/workflows/ci.yml)
 
-**[English](README.md) | [繁體中文](README.zh-TW.md)**
+**[English](README.md) | [繁體中文](README.zh-TW.md) | [日本語](README.ja.md)**
 
 ## What is this?
 
-Claude 101 gives Claude (or any LLM) **27 structured tools** that do real local computation — statistics, parsing, scoring, validation, text analysis — and return structured JSON.
+Install once, get 24 superpowers. Claude 101 is an MCP server that gives Claude **real computation abilities** — statistics, code analysis, SQL parsing, financial math, and more — things LLMs cannot do reliably on their own.
 
-**Why?** LLMs are great at generating text but unreliable at math, counting, and structured analysis. These tools handle the computation so the LLM can focus on reasoning.
+**How it works:**
 
-**Two interfaces:**
-- **MCP Server** — Claude Code connects via MCP protocol
-- **CLI** — Run any tool from your terminal: `claude-101 analyze-code "def foo(): pass"`
-
-**Zero cost.** No paid APIs. All processing is local Python.
-
-## Quick Start
-
-```bash
-# Install
-pip install "claude-101[mcp]"
-
-# Install the Skill (teaches Claude how to use all 24 tools)
-mkdir -p ~/.claude/skills
-curl -sL https://raw.githubusercontent.com/claude-world/claude-101/main/skills/claude-101-mastery.md \
-  -o ~/.claude/skills/claude-101-mastery.md
-
-# CLI — try a tool
-claude-101 list
-claude-101 draft-email "follow-up about Q3 budget" --tone friendly
-claude-101 analyze-code "def fib(n): return n if n<2 else fib(n-1)+fib(n-2)"
-claude-101 --pretty process-sql "SELECT * FROM users WHERE active = true"
-
-# MCP Server — for Claude Code
-claude-101 serve
+```
+You: "Compare React, Vue, and Svelte for our project"
+  ↓
+Skill tells Claude to call build_comparison_matrix
+  ↓
+MCP tool computes: Vue 8.1 > React 7.9 > Svelte 7.5 (weighted scoring)
+  ↓
+Claude writes: "Vue leads by 0.2 points. The result is sensitive to
+               the DX weight — if you value Ecosystem more, React wins."
 ```
 
-### Connect to Claude Code
+**Without claude-101:** Claude guesses at numbers and rankings.
+**With claude-101:** Claude uses precise computation, then reasons about the results.
 
-Add to your `.mcp.json`:
+## Setup (2 minutes)
+
+### Step 1: Add MCP Server
+
+Add to your `.mcp.json` (project root or `~/.claude/.mcp.json`):
 
 ```json
 {
   "mcpServers": {
     "claude-101": {
-      "type": "stdio",
       "command": "uvx",
       "args": ["--from", "claude-101[mcp]", "claude-101-server"]
     }
@@ -58,91 +46,84 @@ Add to your `.mcp.json`:
 }
 ```
 
-Or for local development:
+### Step 2: Install Skill
 
-```json
-{
-  "mcpServers": {
-    "claude-101": {
-      "type": "stdio",
-      "command": "python",
-      "args": ["-m", "claude_101.server"],
-      "cwd": "/path/to/claude-101"
-    }
-  }
-}
+The Skill teaches Claude *when* to call each tool and *how* to use every field in the result:
+
+```bash
+mkdir -p ~/.claude/skills
+curl -sL https://raw.githubusercontent.com/claude-world/claude-101/main/skills/claude-101-mastery.md \
+  -o ~/.claude/skills/claude-101-mastery.md
 ```
 
-## All 27 Tools
+**Done.** Start a new Claude Code session and just talk naturally.
 
-### Writing & Communication (6)
+## 24 Use Cases
 
-| Tool | What it computes |
-|------|-----------------|
-| `draft-email` | Formality score, Flesch readability, tone analysis, email structure validation, pre-send checklist |
-| `draft-blog-post` | Topic keyword extraction, heading hierarchy validation, readability targets, content gap analysis, SEO fields |
-| `parse-meeting-notes` | Regex extraction of attendees, action items (owner + deadline), decisions, topics, timestamps |
-| `format-social-content` | Platform-aware chunking, hashtag extraction, engagement signal detection (question/CTA/hook strength) |
-| `scaffold-tech-doc` | 8 doc types with effort estimation; optional code structure parsing and README completeness scoring |
-| `structure-story` | Tension curve interpolation, word targets; optional pacing analysis, dialogue ratio, scene transition detection |
+After setup, you can simply ask Claude to do any of these — the Skill handles the rest:
 
-### Analysis & Research (6)
+### Writing & Communication
 
-| Tool | What it computes |
-|------|-----------------|
-| `analyze-data` | Per-column statistics (mean/median/stdev), Pearson correlation, IQR outlier detection |
-| `summarize-document` | Extractive summarization via sentence scoring, Flesch readability, keyword frequency |
-| `build-comparison-matrix` | Weight normalization, critical weight identification, sensitivity framework |
-| `analyze-survey` | Per-question distributions, NPS calculation (promoter/passive/detractor), satisfaction scores |
-| `analyze-financials` | Gross/operating/net margins, period-over-period growth, burn rate, cash runway |
-| `review-legal-document` | 18+ clause pattern matching, risk levels, missing clause alerts, complexity score |
+| # | You say... | Claude calls | What you get |
+|---|-----------|-------------|-------------|
+| 1 | "Write a follow-up email to the client" | `draft_email` | Email with computed formality score, Flesch readability, tone analysis, pre-send checklist |
+| 2 | "Plan a blog post about FastAPI" | `draft_blog_post` | Outline with word targets per section, SEO fields, keyword analysis, heading validation |
+| 3 | "Organize these meeting notes" | `parse_meeting_notes` | Extracted attendees, action items with owners + deadlines, decisions, topics |
+| 4 | "Create a Threads post for this launch" | `format_social_content` | Platform-formatted text, character count check, hashtags, engagement signals |
+| 5 | "Write a README for this project" | `scaffold_tech_doc` | Template + code structure analysis, completeness scoring, effort estimate |
+| 6 | "Help me structure this novel" | `structure_story` | Story beats with word targets, tension curve, pacing/dialogue/transition analysis |
 
-### Coding & Technical (6)
+### Analysis & Research
 
-| Tool | What it computes |
-|------|-----------------|
-| `scaffold-code` | Code templates for 6 languages x 8 design patterns |
-| `analyze-code` | Language detection, cyclomatic complexity, nesting depth, issue detection, quality grade A-F |
-| `process-sql` | SQL parsing/formatting via sqlparse, dialect detection, structure extraction |
-| `scaffold-api-doc` | Endpoint parsing, OpenAPI/Markdown generation, API consistency check, auth pattern detection |
-| `generate-test-cases` | Function signature parsing, happy/edge/boundary test generation, coverage analysis |
-| `create-adr` | Architecture Decision Records with trade-off matrix |
+| # | You say... | Claude calls | What you get |
+|---|-----------|-------------|-------------|
+| 7 | "Analyze this CSV data" | `analyze_data` | Per-column statistics, Pearson correlations, IQR outlier detection |
+| 8 | "Summarize this 10-page report" | `summarize_document` | Key sentences (algorithmically scored), Flesch readability, keyword frequency |
+| 9 | "Compare these 3 frameworks" | `build_comparison_matrix` | Weighted ranking with scores, winner + margin, sensitivity analysis |
+| 10 | "Analyze our survey results" | `analyze_survey` | Per-question stats, NPS score (promoter/passive/detractor), satisfaction % |
+| 11 | "Review this quarter's financials" | `analyze_financials` | Gross/operating/net margins, growth rates, burn rate, cash runway |
+| 12 | "Check this contract for issues" | `review_legal_document` | 18+ clause detection, missing clause alerts, complexity score, risk levels |
 
-### Business & Productivity (6)
+### Coding & Technical
 
-| Tool | What it computes |
-|------|-----------------|
-| `plan-project` | WBS decomposition, milestones, critical path, risk identification, effort estimation |
-| `prepare-interview` | Role/level-based question curation, difficulty balancing, time allocation; optional JD skill extraction, STAR validation |
-| `scaffold-proposal` | AIDA coverage scoring; optional argument strength analysis (claims vs evidence), ROI/NPV calculation |
-| `build-support-response` | Issue classification, escalation risk 0-100, resolution time estimate, customer effort score; optional response quality scoring |
-| `scaffold-prd` | MoSCoW auto-prioritization, requirements completeness scoring, user story quality validation, dependency detection |
-| `evaluate-decision` | Weighted scoring, ranking, sensitivity analysis (+-10% weight simulation) |
+| # | You say... | Claude calls | What you get |
+|---|-----------|-------------|-------------|
+| 13 | "Scaffold a UserService class" | `scaffold_code` | Description-aware code (CRUD/API/auth patterns), 6 languages x 8 patterns |
+| 14 | "Review this code for issues" | `analyze_code` | Cyclomatic complexity, nesting depth, magic numbers, quality grade A-F |
+| 15 | "Explain and optimize this SQL" | `process_sql` | Formatted query, execution plan, performance hints (SELECT *, index usage) |
+| 16 | "Generate API docs for these endpoints" | `scaffold_api_doc` | OpenAPI YAML/Markdown, consistency check, auth detection from code |
+| 17 | "Write tests for this function" | `generate_test_cases` | Signature parsing, happy/edge/boundary cases, coverage analysis |
+| 18 | "Should we use Kafka or SQS?" | `create_adr` | ADR with tech knowledge base (28 technologies), differentiated trade-offs |
 
-### Meta (3)
+### Business & Productivity
 
-| Tool | What it does |
-|------|-------------|
-| `list-guides` | Browse 24 use-case guides by category |
-| `get-guide` | Get full guide with tips and steps |
-| `search-guides` | Full-text search across guides |
+| # | You say... | Claude calls | What you get |
+|---|-----------|-------------|-------------|
+| 19 | "Plan this 8-week project" | `plan_project` | WBS with hours, milestones, critical path, risks, resource allocation |
+| 20 | "Prepare me for this interview" | `prepare_interview` | Role-specific questions, STAR validation, JD skill extraction, time allocation |
+| 21 | "Write a business proposal" | `scaffold_proposal` | AIDA framework, ROI/NPV calculation, argument strength analysis |
+| 22 | "Handle this angry customer" | `build_support_response` | Issue classification, escalation risk 0-100, resolution estimate, quality scoring |
+| 23 | "Create a PRD for this feature" | `scaffold_prd` | User stories, MoSCoW prioritization, completeness scoring, dependency detection |
+| 24 | "Help me decide between these options" | `evaluate_decision` | Weighted scoring matrix, rankings, sensitivity analysis |
 
 ## CLI Usage
 
+Also works as a standalone command-line tool:
+
 ```bash
+# Install
+pip install "claude-101[mcp]"
+
 # List all tools
 claude-101 list
 claude-101 list --category analysis
 
-# Run a tool (positional args + optional flags)
-claude-101 draft-email "meeting follow-up" --tone assertive --format brief
-claude-101 scaffold-prd "TaskFlow" "Teams need better task tracking" --target-users "PM, Engineer"
+# Run any tool directly
+claude-101 draft-email "meeting follow-up" --tone assertive
+claude-101 --pretty analyze-data "name,score\nAlice,95\nBob,87"
 claude-101 scaffold-proposal business "Cloud Migration" --investment 100000 --annual-return 50000
 
-# Pretty JSON output
-claude-101 --pretty analyze-data "name,score\nAlice,95\nBob,87" --format csv
-
-# Read from stdin
+# Pipe from stdin
 echo "SELECT * FROM users" | claude-101 process-sql -
 cat mycode.py | claude-101 analyze-code -
 
@@ -153,73 +134,35 @@ claude-101 draft-email --help
 ## Python Library
 
 ```python
-from claude_101.writing.email import draft_email
 from claude_101.analysis.data import analyze_data
-from claude_101.coding.review import analyze_code
 from claude_101.business.decision import evaluate_decision
 
-# Every function returns a dict
-result = draft_email("proposal to investor", tone="professional")
-result["text_analysis"]["formality_score"]  # 73.5
-result["text_analysis"]["readability"]["flesch_grade"]  # "Standard (8th-9th grade)"
-```
+result = analyze_data("name,score\nAlice,95\nBob,87", output_format="csv", operations="all")
+result["correlations"]  # [{"column_a": "score", "column_b": "hours", "pearson_r": 0.94}]
 
-## Development
-
-```bash
-git clone https://github.com/claude-world/claude-101.git
-cd claude-101
-pip install -e ".[all]"
-pip install pytest ruff
-
-# Run tests (160 tests)
-pytest
-
-# Lint
-ruff check src/
-
-# Start MCP server locally
-python -m claude_101.server
+result = evaluate_decision("A,B", "Speed,Cost", "0.6,0.4", "A:Speed=9,Cost=5;B:Speed=6,Cost=9")
+result["winner"]  # {"option": "A", "score": 7.4, "margin": 0.2}
 ```
 
 ## Architecture
 
 ```
-src/claude_101/
-    __init__.py         # Package version
-    _utils.py           # 14 shared utilities (stats, text analysis, scoring)
+claude-101/
+  src/claude_101/
+    server.py           # MCP server (27 tools via FastMCP)
+    cli.py              # CLI (auto-generated from function signatures)
+    _utils.py           # 14 shared computation functions
     _guides.py          # 24 embedded use-case guides
-    server.py           # MCP server (FastMCP wrapper)
-    cli.py              # CLI interface (argparse, auto-generated from signatures)
-    writing/            # 6 writing tools
-    analysis/           # 6 analysis tools
-    coding/             # 6 coding tools
-    business/           # 6 business tools
-tests/
-    test_writing.py     # 48 tests
-    test_business.py    # 40 tests
-    test_coding.py      # 25 tests
-    test_analysis.py    # 11 tests
-    test_cli.py         # 24 tests
-    test_server.py      # 12 tests
+    writing/            # 6 tools: email, blog, meeting, social, techdoc, story
+    analysis/           # 6 tools: data, summary, comparison, survey, financial, legal
+    coding/             # 6 tools: codegen, review, sql, apidoc, testgen, adr
+    business/           # 6 tools: planning, interview, proposal, support, prd, decision
+  skills/
+    claude-101-mastery.md  # Skill file (teaches Claude how to use all 24 tools)
+  tests/                   # 157 tests across 6 files
 ```
 
-**Dependencies:** Only `sqlparse` (stdlib for everything else). MCP is optional.
-
-## Skill System
-
-The `skills/claude-101-mastery.md` file teaches Claude the optimal workflow for all 24 use cases. Install it once:
-
-```bash
-mkdir -p ~/.claude/skills
-cp skills/claude-101-mastery.md ~/.claude/skills/
-```
-
-**What the Skill does:**
-- Maps user intents to the right MCP tool
-- Tells Claude which result fields to use and how
-- Ensures Claude produces high-quality output informed by real computation
-- Without the skill: Claude uses the tools. With the skill: Claude **masters** the tools.
+**Dependencies:** Only `sqlparse` (everything else is stdlib). MCP is optional.
 
 ## Contributing
 

@@ -1,50 +1,39 @@
 # claude-101
 
-> 27 個實用 AI 工具 — MCP 伺服器 + CLI。真實計算，零 API 費用。
+> 27 個 AI 工具：MCP 伺服器 + CLI + Skill。直接跟 Claude 對話，它會搞定一切。
 
 [![PyPI](https://img.shields.io/pypi/v/claude-101.svg)](https://pypi.org/project/claude-101/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![Tests](https://github.com/claude-world/claude-101/actions/workflows/ci.yml/badge.svg)](https://github.com/claude-world/claude-101/actions/workflows/ci.yml)
 
-**[English](README.md) | [繁體中文](README.zh-TW.md)**
+**[English](README.md) | [繁體中文](README.zh-TW.md) | [日本語](README.ja.md)**
 
 ## 這是什麼？
 
-Claude 101 提供 **27 個結構化工具**，執行真正的本地計算 — 統計分析、文字解析、評分驗證、文本分析 — 回傳結構化 JSON。
+安裝一次，獲得 24 種超能力。Claude 101 是 MCP 伺服器，給 Claude **真正的計算能力** — 統計分析、程式碼分析、SQL 解析、財務計算 — 這些都是 LLM 無法可靠完成的。
 
-**為什麼需要？** LLM 擅長生成文字，但數學運算、計數和結構化分析不可靠。這些工具負責計算，讓 LLM 專注推理。
+**運作原理：**
 
-**兩種介面：**
-- **MCP 伺服器** — Claude Code 透過 MCP 協定連接
-- **CLI 命令列** — 終端機直接呼叫：`claude-101 analyze-code "def foo(): pass"`
-
-**零費用。** 不需要付費 API，所有運算都在本地 Python 完成。
-
-## 快速開始
-
-```bash
-# 安裝
-pip install "claude-101[mcp]"
-
-# 安裝 Skill（教 Claude 如何使用全部 24 個工具）
-mkdir -p ~/.claude/skills
-curl -sL https://raw.githubusercontent.com/claude-world/claude-101/main/skills/claude-101-mastery.md \
-  -o ~/.claude/skills/claude-101-mastery.md
-
-# CLI — 試試看
-claude-101 list
-claude-101 draft-email "Q3 預算會議跟進" --tone friendly
-claude-101 analyze-code "def fib(n): return n if n<2 else fib(n-1)+fib(n-2)"
-claude-101 --pretty process-sql "SELECT * FROM users WHERE active = true"
-
-# MCP 伺服器 — 給 Claude Code 使用
-claude-101 serve
+```
+你：「比較 React、Vue 和 Svelte」
+  ↓
+Skill 指導 Claude 呼叫 build_comparison_matrix
+  ↓
+MCP 工具計算：Vue 8.1 > React 7.9 > Svelte 7.5（加權評分）
+  ↓
+Claude 回答：「Vue 以 0.2 分領先。此結果對 DX 權重敏感 —
+            如果你更重視 Ecosystem，React 會勝出。」
 ```
 
-### 連接 Claude Code
+**沒有 claude-101：** Claude 猜數字和排名。
+**有了 claude-101：** Claude 使用精確計算，再針對結果進行推理。
 
-在 `.mcp.json` 加入一段設定即可：
+## 安裝（2 分鐘）
+
+### 步驟一：加入 MCP 伺服器
+
+在 `.mcp.json`（專案根目錄或 `~/.claude/.mcp.json`）加入：
 
 ```json
 {
@@ -57,88 +46,82 @@ claude-101 serve
 }
 ```
 
-本地開發模式：
+### 步驟二：安裝 Skill
 
-```json
-{
-  "mcpServers": {
-    "claude-101": {
-      "command": "python",
-      "args": ["-m", "claude_101.server"],
-      "cwd": "/path/to/claude-101"
-    }
-  }
-}
+Skill 教 Claude *何時*呼叫每個工具，以及*如何*使用回傳的每個欄位：
+
+```bash
+mkdir -p ~/.claude/skills
+curl -sL https://raw.githubusercontent.com/claude-world/claude-101/main/skills/claude-101-mastery.md \
+  -o ~/.claude/skills/claude-101-mastery.md
 ```
 
-## 全部 27 個工具
+**完成。** 開啟新的 Claude Code session，自然對話即可。
 
-### 寫作與溝通（6 個）
+## 24 種用法
 
-| 工具 | 計算內容 |
-|------|---------|
-| `draft-email` | 正式度評分、Flesch 可讀性、語調分析、郵件結構驗證、發送前檢查清單 |
-| `draft-blog-post` | 主題關鍵詞抽取、標題層級驗證、可讀性目標、內容缺口分析、SEO 欄位 |
-| `parse-meeting-notes` | 正則抽取：與會者、行動項目（負責人 + 截止日）、決議、討論主題、時間戳 |
-| `format-social-content` | 平台感知分段、Hashtag 抽取、互動信號偵測（提問/CTA/hook 強度） |
-| `scaffold-tech-doc` | 8 種文件模板 + 工時估算；可選：程式碼結構解析、README 完整度評分 |
-| `structure-story` | 張力曲線插值、字數目標；可選：節奏分析、對話比例、場景轉場偵測 |
+安裝後，直接跟 Claude 說就好 — Skill 會自動處理：
 
-### 分析與研究（6 個）
+### 寫作與溝通
 
-| 工具 | 計算內容 |
-|------|---------|
-| `analyze-data` | 逐欄統計（mean/median/stdev）、Pearson 相關係數、IQR 離群值偵測 |
-| `summarize-document` | 萃取式摘要（句子評分）、Flesch 可讀性、關鍵詞頻率 |
-| `build-comparison-matrix` | 權重正規化、關鍵權重識別、敏感度分析框架 |
-| `analyze-survey` | 逐題分佈、NPS 計算（推薦者/被動者/批評者）、滿意度分數 |
-| `analyze-financials` | 毛利率/營業利率/淨利率、期間成長率、Burn rate、Cash runway |
-| `review-legal-document` | 18+ 條款模式比對、風險等級、缺失條款警示、複雜度分數 |
+| # | 你說... | Claude 呼叫 | 你得到 |
+|---|--------|-----------|-------|
+| 1 | 「幫我寫封跟進客戶的 email」 | `draft_email` | 含計算的正式度分數、Flesch 可讀性、語調分析、發送前檢查清單 |
+| 2 | 「規劃一篇關於 FastAPI 的文章」 | `draft_blog_post` | 每段字數目標的大綱、SEO 欄位、關鍵詞分析、標題驗證 |
+| 3 | 「整理這些會議記錄」 | `parse_meeting_notes` | 抽取與會者、行動項目（含負責人 + 截止日）、決議、討論主題 |
+| 4 | 「幫這次發布寫個 Threads 貼文」 | `format_social_content` | 平台格式化文字、字數檢查、hashtag、互動信號 |
+| 5 | 「幫這個專案寫 README」 | `scaffold_tech_doc` | 模板 + 程式碼結構分析、完整度評分、工時估算 |
+| 6 | 「幫我規劃這本小說的結構」 | `structure_story` | 故事節拍 + 字數目標、張力曲線、節奏/對話/轉場分析 |
 
-### 程式與技術（6 個）
+### 分析與研究
 
-| 工具 | 計算內容 |
-|------|---------|
-| `scaffold-code` | 6 種語言 x 8 種設計模式的程式碼模板 |
-| `analyze-code` | 語言偵測、圈複雜度、巢狀深度、問題偵測、品質等級 A-F |
-| `process-sql` | SQL 解析/格式化（sqlparse）、方言偵測、結構抽取 |
-| `scaffold-api-doc` | 端點解析、OpenAPI/Markdown 生成、API 一致性檢查、認證模式偵測 |
-| `generate-test-cases` | 函式簽名解析、happy/edge/boundary 測試生成、覆蓋率分析 |
-| `create-adr` | 架構決策紀錄 + 權衡矩陣 |
+| # | 你說... | Claude 呼叫 | 你得到 |
+|---|--------|-----------|-------|
+| 7 | 「分析這份 CSV 數據」 | `analyze_data` | 逐欄統計、Pearson 相關係數、IQR 離群值偵測 |
+| 8 | 「幫我摘要這份 10 頁報告」 | `summarize_document` | 關鍵句（演算法評分）、Flesch 可讀性、關鍵詞頻率 |
+| 9 | 「比較這三個框架」 | `build_comparison_matrix` | 加權排名 + 分數、贏家 + 差距、敏感度分析 |
+| 10 | 「分析問卷結果」 | `analyze_survey` | 逐題統計、NPS（推薦者/被動者/批評者）、滿意度 % |
+| 11 | 「看看這季財報」 | `analyze_financials` | 毛利/營業/淨利率、成長率、Burn rate、Cash runway |
+| 12 | 「檢查這份合約有沒有問題」 | `review_legal_document` | 18+ 條款偵測、缺失條款警示、複雜度分數、風險等級 |
 
-### 商業與生產力（6 個）
+### 程式與技術
 
-| 工具 | 計算內容 |
-|------|---------|
-| `plan-project` | WBS 分解、里程碑、關鍵路徑、風險識別、工時估算 |
-| `prepare-interview` | 角色/級別題庫策展、難度平衡、時間分配；可選：JD 技能抽取、STAR 回答驗證 |
-| `scaffold-proposal` | AIDA 覆蓋評分；可選：論證強度分析（主張 vs 證據）、ROI/NPV 計算 |
-| `build-support-response` | Issue 分類、升級風險 0-100、解決時間估算、客戶投入度；可選：回應品質評分 |
-| `scaffold-prd` | MoSCoW 自動排序、需求完整度評分、User Story 品質驗證、功能依賴偵測 |
-| `evaluate-decision` | 加權評分、排名、敏感度分析（+-10% 權重模擬） |
+| # | 你說... | Claude 呼叫 | 你得到 |
+|---|--------|-----------|-------|
+| 13 | 「建立一個 UserService class」 | `scaffold_code` | 依描述生成 code（CRUD/API/auth 模式）、6 語言 x 8 模式 |
+| 14 | 「review 這段 code」 | `analyze_code` | 圈複雜度、巢狀深度、magic number、品質等級 A-F |
+| 15 | 「解釋並優化這個 SQL」 | `process_sql` | 格式化查詢、執行計劃、效能提示（SELECT *、index 使用） |
+| 16 | 「生成這些 endpoint 的 API 文件」 | `scaffold_api_doc` | OpenAPI YAML/Markdown、一致性檢查、程式碼認證偵測 |
+| 17 | 「幫這個函式寫測試」 | `generate_test_cases` | 簽名解析、happy/edge/boundary 測試、覆蓋率分析 |
+| 18 | 「該用 Kafka 還是 SQS？」 | `create_adr` | ADR + 技術知識庫（28 種技術）、差異化 trade-off |
 
-### Meta（3 個）
+### 商業與生產力
 
-| 工具 | 功能 |
-|------|------|
-| `list-guides` | 瀏覽 24 個使用案例指南 |
-| `get-guide` | 取得完整指南（含提示和步驟） |
-| `search-guides` | 全文搜尋指南 |
+| # | 你說... | Claude 呼叫 | 你得到 |
+|---|--------|-----------|-------|
+| 19 | 「規劃這個 8 週專案」 | `plan_project` | WBS + 工時、里程碑、關鍵路徑、風險、資源分配 |
+| 20 | 「幫我準備明天的面試」 | `prepare_interview` | 角色專屬題庫、STAR 驗證、JD 技能抽取、時間分配 |
+| 21 | 「寫個投資提案」 | `scaffold_proposal` | AIDA 框架、ROI/NPV 計算、論證強度分析 |
+| 22 | 「處理這個客訴」 | `build_support_response` | Issue 分類、升級風險 0-100、解決時間估算、品質評分 |
+| 23 | 「寫這個功能的 PRD」 | `scaffold_prd` | User Stories、MoSCoW 排序、完整度評分、依賴偵測 |
+| 24 | 「幫我做決策分析」 | `evaluate_decision` | 加權評分矩陣、排名、敏感度分析 |
 
 ## CLI 使用方式
 
+也可以作為獨立命令列工具：
+
 ```bash
+# 安裝
+pip install "claude-101[mcp]"
+
 # 列出所有工具
 claude-101 list
 claude-101 list --category analysis
 
-# 執行工具（位置參數 + 可選旗標）
-claude-101 draft-email "會議跟進" --tone assertive --format brief
-claude-101 scaffold-prd "TaskFlow" "團隊需要更好的任務追蹤" --target-users "PM, Engineer"
+# 直接執行任何工具
+claude-101 draft-email "會議跟進" --tone assertive
+claude-101 --pretty analyze-data "name,score\nAlice,95\nBob,87"
 claude-101 scaffold-proposal business "雲端遷移" --investment 100000 --annual-return 50000
-
-# 美化 JSON 輸出
-claude-101 --pretty analyze-data "name,score\nAlice,95\nBob,87" --format csv
 
 # 從 stdin 讀取
 echo "SELECT * FROM users" | claude-101 process-sql -
@@ -151,73 +134,35 @@ claude-101 draft-email --help
 ## Python 函式庫
 
 ```python
-from claude_101.writing.email import draft_email
 from claude_101.analysis.data import analyze_data
-from claude_101.coding.review import analyze_code
 from claude_101.business.decision import evaluate_decision
 
-# 所有函式回傳 dict
-result = draft_email("投資提案", tone="professional")
-result["text_analysis"]["formality_score"]  # 73.5
-result["text_analysis"]["readability"]["flesch_grade"]  # "Standard (8th-9th grade)"
-```
+result = analyze_data("name,score\nAlice,95\nBob,87", output_format="csv", operations="all")
+result["correlations"]  # [{"column_a": "score", "column_b": "hours", "pearson_r": 0.94}]
 
-## 開發
-
-```bash
-git clone https://github.com/claude-world/claude-101.git
-cd claude-101
-pip install -e ".[all]"
-pip install pytest ruff
-
-# 跑測試（160 個）
-pytest
-
-# Lint 檢查
-ruff check src/
-
-# 本地啟動 MCP 伺服器
-python -m claude_101.server
+result = evaluate_decision("A,B", "Speed,Cost", "0.6,0.4", "A:Speed=9,Cost=5;B:Speed=6,Cost=9")
+result["winner"]  # {"option": "A", "score": 7.4, "margin": 0.2}
 ```
 
 ## 架構
 
 ```
-src/claude_101/
-    __init__.py         # 套件版本
-    _utils.py           # 14 個共用工具（統計、文本分析、評分）
+claude-101/
+  src/claude_101/
+    server.py           # MCP 伺服器（27 個工具，FastMCP）
+    cli.py              # CLI（從函式簽名自動生成）
+    _utils.py           # 14 個共用計算函式
     _guides.py          # 24 個內建使用指南
-    server.py           # MCP 伺服器（FastMCP 包裝層）
-    cli.py              # CLI 介面（argparse，從函式簽名自動生成）
-    writing/            # 6 個寫作工具
-    analysis/           # 6 個分析工具
-    coding/             # 6 個程式工具
-    business/           # 6 個商業工具
-tests/
-    test_writing.py     # 48 個測試
-    test_business.py    # 40 個測試
-    test_coding.py      # 25 個測試
-    test_analysis.py    # 11 個測試
-    test_cli.py         # 24 個測試
-    test_server.py      # 12 個測試
+    writing/            # 6 個工具：email、blog、meeting、social、techdoc、story
+    analysis/           # 6 個工具：data、summary、comparison、survey、financial、legal
+    coding/             # 6 個工具：codegen、review、sql、apidoc、testgen、adr
+    business/           # 6 個工具：planning、interview、proposal、support、prd、decision
+  skills/
+    claude-101-mastery.md  # Skill 檔案（教 Claude 如何使用全部 24 個工具）
+  tests/                   # 157 個測試，6 個測試檔
 ```
 
-**依賴：** 僅 `sqlparse`（其餘皆用標準函式庫）。MCP 為可選依賴。
-
-## Skill 系統
-
-`skills/claude-101-mastery.md` 教 Claude 如何完美執行所有 24 種用法。安裝一次即可：
-
-```bash
-mkdir -p ~/.claude/skills
-cp skills/claude-101-mastery.md ~/.claude/skills/
-```
-
-**Skill 做什麼：**
-- 將用戶意圖對應到正確的 MCP 工具
-- 告訴 Claude 要使用哪些回傳欄位、怎麼用
-- 確保 Claude 產出以真實計算為基礎的高品質結果
-- 沒有 Skill：Claude 會用工具。有了 Skill：Claude **精通**工具。
+**依賴：** 僅 `sqlparse`（其餘皆標準函式庫）。MCP 為可選依賴。
 
 ## 貢獻
 

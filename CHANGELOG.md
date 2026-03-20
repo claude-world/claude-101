@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.2.1] - 2026-03-20
+
+### Added
+
+- Complete trilingual documentation: English, Traditional Chinese (繁體中文), Japanese (日本語)
+- Full 24 use-case table in all READMEs showing "You say → Claude calls → You get"
+- Improved setup guide (2-step: MCP + Skill)
+
+### Changed
+
+- README rewritten with user-centric focus (what users say, not tool internals)
+- Clearer architecture section
+
 ## [0.2.0] - 2026-03-20
 
 ### Added
@@ -36,5 +49,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - CI/CD: GitHub Actions for testing (Python 3.10-3.13) and PyPI publishing via trusted publishing
 - Documentation: README (EN + zh-TW), CONTRIBUTING (EN + zh-TW), SECURITY (EN + zh-TW)
 
+[0.2.1]: https://github.com/claude-world/claude-101/releases/tag/v0.2.1
 [0.2.0]: https://github.com/claude-world/claude-101/releases/tag/v0.2.0
 [0.1.0]: https://github.com/claude-world/claude-101/releases/tag/v0.1.0

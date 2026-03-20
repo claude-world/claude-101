@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "claude-101"
-version = "0.2.0"
+version = "0.2.1"
 description = "27 practical AI tools (MCP server + CLI) — structured frameworks, data processing, and real computation for writing, analysis, coding, and business tasks."
 readme = "README.md"
 license = "MIT"

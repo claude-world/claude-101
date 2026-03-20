@@ -11,20 +11,20 @@ from claude_101.analysis.legal import review_legal_document
 class TestAnalyzeData:
     def test_csv_basic(self):
         data = "name,score,age\nAlice,95,25\nBob,87,30\nCharlie,92,28"
-        r = analyze_data(data, format="csv")
+        r = analyze_data(data, output_format="csv")
         assert r["row_count"] == 3
         assert r["column_count"] == 3
 
     def test_numeric_stats(self):
         data = "value\n10\n20\n30\n40\n50"
-        r = analyze_data(data, format="csv")
+        r = analyze_data(data, output_format="csv")
         numeric_cols = [c for c in r["columns"] if c["type"] == "numeric"]
         assert len(numeric_cols) >= 1
         assert "mean" in numeric_cols[0]["stats"]
 
     def test_json_format(self):
         data = '[{"name": "Alice", "score": 95}, {"name": "Bob", "score": 87}]'
-        r = analyze_data(data, format="json")
+        r = analyze_data(data, output_format="json")
         assert r["row_count"] == 2
 
 

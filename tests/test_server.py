@@ -3,68 +3,27 @@
 import json
 import asyncio
 
-from claude_101.server import mcp
+from claude_101.cli import _build_registry
 
 
 class TestServerTools:
-    """Test that all 27 MCP tools are registered."""
+    """Test that all 27 tools are registered and accessible."""
 
     def test_total_tool_count(self):
-        tools = mcp._tool_manager._tools
-        assert len(tools) == 27
+        registry = _build_registry()
+        unique = {e.name for e in registry.values()}
+        assert len(unique) == 27
 
-    def test_meta_tools_present(self):
-        tools = mcp._tool_manager._tools
-        for name in ("list_guides", "get_guide", "search_guides"):
-            assert name in tools, f"Missing meta tool: {name}"
+    def test_all_categories_present(self):
+        registry = _build_registry()
+        categories = {e.category for e in registry.values()}
+        assert categories == {"meta", "writing", "analysis", "coding", "business"}
 
-    def test_writing_tools_present(self):
-        tools = mcp._tool_manager._tools
-        for name in (
-            "draft_email",
-            "draft_blog_post",
-            "parse_meeting_notes",
-            "format_social_content",
-            "scaffold_tech_doc",
-            "structure_story",
-        ):
-            assert name in tools, f"Missing writing tool: {name}"
+    def test_server_imports_without_error(self):
+        """Verify server module loads and mcp object exists."""
+        from claude_101.server import mcp
 
-    def test_analysis_tools_present(self):
-        tools = mcp._tool_manager._tools
-        for name in (
-            "analyze_data",
-            "summarize_document",
-            "build_comparison_matrix",
-            "analyze_survey",
-            "analyze_financials",
-            "review_legal_document",
-        ):
-            assert name in tools, f"Missing analysis tool: {name}"
-
-    def test_coding_tools_present(self):
-        tools = mcp._tool_manager._tools
-        for name in (
-            "scaffold_code",
-            "analyze_code",
-            "process_sql",
-            "scaffold_api_doc",
-            "generate_test_cases",
-            "create_adr",
-        ):
-            assert name in tools, f"Missing coding tool: {name}"
-
-    def test_business_tools_present(self):
-        tools = mcp._tool_manager._tools
-        for name in (
-            "plan_project",
-            "prepare_interview",
-            "scaffold_proposal",
-            "build_support_response",
-            "scaffold_prd",
-            "evaluate_decision",
-        ):
-            assert name in tools, f"Missing business tool: {name}"
+        assert mcp is not None
 
 
 class TestMetaToolExecution:

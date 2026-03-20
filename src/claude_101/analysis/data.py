@@ -38,14 +38,14 @@ def _to_float(value: str) -> float | None:
 
 def analyze_data(
     data: str,
-    format: str = "csv",
+    output_format: str = "csv",
     operations: str = "summary",
 ) -> dict:
     """Analyze CSV or JSON data with real statistics.
 
     Args:
         data: Raw data string (CSV or JSON).
-        format: Data format — "csv" or "json".
+        output_format: Data format — "csv" or "json".
         operations: Comma-separated list of operations:
             "summary" (default), "correlations", "outliers", "all".
 
@@ -57,7 +57,7 @@ def analyze_data(
         ops = {"summary", "correlations", "outliers"}
 
     # ── Parse data ──────────────────────────────────────────────
-    if format.lower() == "json":
+    if output_format.lower() == "json":
         records = parse_json_data(data)
         if not records:
             return {"format": "json", "row_count": 0, "column_count": 0, "columns": []}
@@ -103,7 +103,7 @@ def analyze_data(
         columns_info.append(col_info)
 
     result: dict = {
-        "format": format.lower(),
+        "format": output_format.lower(),
         "row_count": row_count,
         "column_count": col_count,
         "columns": columns_info,

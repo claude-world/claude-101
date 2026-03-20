@@ -474,7 +474,7 @@ def _generate_example_bodies(endpoints: list[dict[str, Any]]) -> dict[str, dict]
 def scaffold_api_doc(
     endpoints: str,
     title: str = "API Reference",
-    format: str = "openapi",
+    output_format: str = "openapi",
     code: str = "",
 ) -> dict:
     """Generate an API documentation skeleton from endpoint definitions.
@@ -483,14 +483,14 @@ def scaffold_api_doc(
         endpoints: Endpoint definitions as a string, e.g.
             "GET /users - List users, POST /users - Create user".
         title: Document title.
-        format: Output format — "openapi" (YAML) or "markdown".
+        output_format: Output format — "openapi" (YAML) or "markdown".
         code: Optional source code to extract routes and detect auth patterns.
 
     Returns:
         Dictionary with parsed endpoints and the generated document.
     """
     parsed_endpoints = _parse_endpoints(endpoints)
-    fmt = format.lower()
+    fmt = output_format.lower()
 
     if fmt == "markdown" or fmt == "md":
         document = _generate_markdown(title, parsed_endpoints)

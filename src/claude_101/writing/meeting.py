@@ -7,18 +7,18 @@ import re
 
 def parse_meeting_notes(
     raw_notes: str,
-    format: str = "structured",
+    output_format: str = "structured",
 ) -> dict:
     """Extract attendees, action items, decisions, and topics from raw notes.
 
     Args:
         raw_notes: Free-form meeting notes text.
-        format: One of structured (full), brief (summary only),
+        output_format: One of structured (full), brief (summary only),
                 action-only (just action items).
     """
-    format = format.lower().strip()
-    if format not in ("structured", "brief", "action-only"):
-        format = "structured"
+    output_format = output_format.lower().strip()
+    if output_format not in ("structured", "brief", "action-only"):
+        output_format = "structured"
 
     attendees = _extract_attendees(raw_notes)
     action_items = _extract_action_items(raw_notes)
@@ -34,7 +34,7 @@ def parse_meeting_notes(
         "attendee_count": len(attendees),
     }
 
-    if format == "action-only":
+    if output_format == "action-only":
         return {
             "attendees": attendees,
             "action_items": action_items,
@@ -42,10 +42,10 @@ def parse_meeting_notes(
             "topics_discussed": [],
             "timestamps": [],
             "metrics": metrics,
-            "format": format,
+            "format": output_format,
         }
 
-    if format == "brief":
+    if output_format == "brief":
         return {
             "attendees": attendees,
             "action_items": action_items[:3],
@@ -53,7 +53,7 @@ def parse_meeting_notes(
             "topics_discussed": topics[:5],
             "timestamps": [],
             "metrics": metrics,
-            "format": format,
+            "format": output_format,
         }
 
     # structured — full output
@@ -64,7 +64,7 @@ def parse_meeting_notes(
         "topics_discussed": topics,
         "timestamps": timestamps,
         "metrics": metrics,
-        "format": format,
+        "format": output_format,
     }
 
 

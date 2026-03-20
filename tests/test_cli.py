@@ -121,7 +121,7 @@ class TestToolDispatch:
                 "thanks for help",
                 "--tone",
                 "friendly",
-                "--format",
+                "--output-format",
                 "brief",
             ]
         )

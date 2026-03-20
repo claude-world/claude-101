@@ -111,7 +111,7 @@ class TestScaffoldApiDoc:
         assert len(path_params) >= 1
 
     def test_markdown_format(self):
-        r = scaffold_api_doc("GET /health - Health check", format="markdown")
+        r = scaffold_api_doc("GET /health - Health check", output_format="markdown")
         assert r["format"] == "markdown"
 
 

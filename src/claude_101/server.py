@@ -109,19 +109,19 @@ async def search_guides(query: str, category: str = "") -> str:
 async def draft_email(
     context: str,
     tone: str = "professional",
-    format: str = "standard",
+    output_format: str = "standard",
 ) -> str:
     """Draft a professional email scaffold with sections and tone guidance.
 
     Args:
         context: Email context — who, what, why (e.g. "follow-up to client meeting about Q3 proposal").
         tone: Tone style: professional, friendly, assertive, apologetic, congratulatory.
-        format: Length format: standard, brief, detailed.
+        output_format: Length format: standard, brief, detailed.
 
     Returns:
         JSON with subject suggestions, sectioned draft, tone guide, and pre-send checklist.
     """
-    return _json(_draft_email(context, tone, format))
+    return _json(_draft_email(context, tone, output_format))
 
 
 @mcp.tool()
@@ -146,18 +146,18 @@ async def draft_blog_post(
 @mcp.tool()
 async def parse_meeting_notes(
     raw_notes: str,
-    format: str = "structured",
+    output_format: str = "structured",
 ) -> str:
     """Extract action items, decisions, and attendees from meeting notes.
 
     Args:
         raw_notes: Raw meeting notes or transcript text.
-        format: Output format: structured (full), brief (summary), action-only (just action items).
+        output_format: Output format: structured (full), brief (summary), action-only (just action items).
 
     Returns:
         JSON with attendees, action items, decisions, topics, and metrics.
     """
-    return _json(_parse_meeting_notes(raw_notes, format))
+    return _json(_parse_meeting_notes(raw_notes, output_format))
 
 
 @mcp.tool()
@@ -227,20 +227,20 @@ async def structure_story(
 @mcp.tool()
 async def analyze_data(
     data: str,
-    format: str = "csv",
+    output_format: str = "csv",
     operations: str = "summary",
 ) -> str:
     """Analyze CSV or JSON data with statistics, outlier detection, and correlations.
 
     Args:
         data: Raw data as CSV or JSON string.
-        format: Data format: csv, json.
+        output_format: Data format: csv, json.
         operations: What to compute: summary, correlations, outliers, all.
 
     Returns:
         JSON with column stats, types, outliers, and correlations.
     """
-    return _json(_analyze_data(data, format, operations))
+    return _json(_analyze_data(data, output_format, operations))
 
 
 @mcp.tool()
@@ -394,7 +394,7 @@ async def process_sql(
 async def scaffold_api_doc(
     endpoints: str,
     title: str = "API Reference",
-    format: str = "openapi",
+    output_format: str = "openapi",
     code: str = "",
 ) -> str:
     """Generate API documentation from endpoint definitions.
@@ -402,13 +402,13 @@ async def scaffold_api_doc(
     Args:
         endpoints: Endpoint definitions (e.g. "GET /users - List users, POST /users - Create user").
         title: API documentation title.
-        format: Output format: openapi (YAML), markdown.
+        output_format: Output format: openapi (YAML), markdown.
         code: Optional source code to extract routes and detect auth patterns.
 
     Returns:
         JSON with parsed endpoints, parameters, full document, consistency check, and optional code analysis.
     """
-    return _json(_scaffold_api_doc(endpoints, title, format, code))
+    return _json(_scaffold_api_doc(endpoints, title, output_format, code))
 
 
 @mcp.tool()

@@ -28,7 +28,7 @@ class TestDraftEmail:
         assert r["tone_guide"]["formality"] in ("low", "medium")
 
     def test_format_brief(self):
-        r = draft_email("quick update", format="brief")
+        r = draft_email("quick update", output_format="brief")
         assert "sections" in r
 
     def test_pre_send_checklist(self):
@@ -74,7 +74,7 @@ class TestParseMeetingNotes:
 
     def test_action_only_format(self):
         notes = "TODO: Alice to review PR\nACTION: Bob to deploy"
-        r = parse_meeting_notes(notes, format="action-only")
+        r = parse_meeting_notes(notes, output_format="action-only")
         assert len(r["action_items"]) >= 1
 
 

@@ -18,7 +18,7 @@ from .._utils import (
 def draft_email(
     context: str,
     tone: str = "professional",
-    format: str = "standard",
+    output_format: str = "standard",
 ) -> dict:
     """Parse context and scaffold a structured email draft.
 
@@ -27,15 +27,15 @@ def draft_email(
                  recipient, and key points.
         tone: One of professional, friendly, assertive, apologetic,
               congratulatory.
-        format: One of standard, brief, detailed.
+        output_format: One of standard, brief, detailed.
     """
     tone = tone.lower().strip()
-    format = format.lower().strip()
+    output_format = output_format.lower().strip()
 
     if tone not in _TONE_PROFILES:
         tone = "professional"
-    if format not in ("standard", "brief", "detailed"):
-        format = "standard"
+    if output_format not in ("standard", "brief", "detailed"):
+        output_format = "standard"
 
     profile = _TONE_PROFILES[tone]
 
@@ -56,7 +56,7 @@ def draft_email(
 
     # --- Section content ---
     opening = _build_opening(tone, recipient_label, purpose_label)
-    body = _build_body(tone, purpose_label, key_points, format)
+    body = _build_body(tone, purpose_label, key_points, output_format)
     closing = _build_closing(tone)
     cta = _build_cta(tone, purpose_label)
 

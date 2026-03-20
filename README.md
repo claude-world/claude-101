@@ -27,6 +27,11 @@ Claude 101 gives Claude (or any LLM) **27 structured tools** that do real local 
 # Install
 pip install "claude-101[mcp]"
 
+# Install the Skill (teaches Claude how to use all 24 tools)
+mkdir -p ~/.claude/skills
+curl -sL https://raw.githubusercontent.com/claude-world/claude-101/main/skills/claude-101-mastery.md \
+  -o ~/.claude/skills/claude-101-mastery.md
+
 # CLI — try a tool
 claude-101 list
 claude-101 draft-email "follow-up about Q3 budget" --tone friendly
@@ -200,6 +205,21 @@ tests/
 ```
 
 **Dependencies:** Only `sqlparse` (stdlib for everything else). MCP is optional.
+
+## Skill System
+
+The `skills/claude-101-mastery.md` file teaches Claude the optimal workflow for all 24 use cases. Install it once:
+
+```bash
+mkdir -p ~/.claude/skills
+cp skills/claude-101-mastery.md ~/.claude/skills/
+```
+
+**What the Skill does:**
+- Maps user intents to the right MCP tool
+- Tells Claude which result fields to use and how
+- Ensures Claude produces high-quality output informed by real computation
+- Without the skill: Claude uses the tools. With the skill: Claude **masters** the tools.
 
 ## Contributing
 

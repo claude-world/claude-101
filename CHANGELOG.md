@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.2.0] - 2026-03-20
+
+### Added
+
+- **Skill system**: `skills/claude-101-mastery.md` — teaches Claude the optimal workflow for all 24 use cases (when to call which tool, how to use every result field, how to produce the final output)
+- `create_adr`: technology knowledge base with 28 real profiles (databases, message queues, frameworks, cloud providers) for differentiated trade-off values
+- `scaffold_code`: description-aware code generation — recognizes CRUD, API, auth, cache, queue patterns and generates relevant methods
+- `build_comparison_matrix`: `scores` parameter for weighted ranking computation
+- `process_sql`: 6 performance hints (SELECT *, cartesian join, subquery in WHERE, leading wildcard, ORDER BY without LIMIT, HAVING without aggregation)
+
+### Fixed
+
+- `parse_meeting_notes`: extract owner names from "Bob to update" patterns (was always "unassigned")
+- `summarize_document`: improved sentence scoring with median threshold (was selecting 86% of sentences)
+- `analyze_survey`: NPS calculated from single recommend column instead of summing across all questions
+- `process_sql`: suppress "Missing semicolon" warning for single-statement queries
+
 ## [0.1.0] - 2026-03-20
 
 ### Added
@@ -19,4 +36,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - CI/CD: GitHub Actions for testing (Python 3.10-3.13) and PyPI publishing via trusted publishing
 - Documentation: README (EN + zh-TW), CONTRIBUTING (EN + zh-TW), SECURITY (EN + zh-TW)
 
+[0.2.0]: https://github.com/claude-world/claude-101/releases/tag/v0.2.0
 [0.1.0]: https://github.com/claude-world/claude-101/releases/tag/v0.1.0

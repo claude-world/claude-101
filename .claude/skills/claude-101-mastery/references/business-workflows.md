@@ -86,7 +86,7 @@
 **Call:** `evaluate_decision(options, criteria, weights, scores)`
 
 **Workflow:**
-1. Ask the user for: options, criteria, weights, and scores (if not provided)
+1. If options, criteria, weights, or scores are missing, infer reasonable defaults from context or use equal weights
 2. Present `rankings` weighted ranking
 3. Highlight `winner` with margin of victory
 4. Explain `sensitivity_analysis` — which criteria could flip the result

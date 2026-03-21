@@ -51,9 +51,14 @@ Claude 回答：「Vue 以 0.2 分領先。此結果對 DX 權重敏感 —
 Skill 教 Claude *何時*呼叫每個工具，以及*如何*使用回傳的每個欄位：
 
 ```bash
-mkdir -p ~/.claude/skills
-curl -sL https://raw.githubusercontent.com/claude-world/claude-101/main/skills/claude-101-mastery.md \
-  -o ~/.claude/skills/claude-101-mastery.md
+mkdir -p ~/.claude/skills/claude-101-mastery/references
+cd ~/.claude/skills/claude-101-mastery
+BASE=https://raw.githubusercontent.com/claude-world/claude-101/main/skills/claude-101-mastery
+curl -sLO $BASE/SKILL.md
+curl -sLO $BASE/references/writing-workflows.md   --output-dir references
+curl -sLO $BASE/references/analysis-workflows.md   --output-dir references
+curl -sLO $BASE/references/coding-workflows.md     --output-dir references
+curl -sLO $BASE/references/business-workflows.md   --output-dir references
 ```
 
 **完成。** 開啟新的 Claude Code session，自然對話即可。

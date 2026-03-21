@@ -76,4 +76,4 @@ class TestVersion:
     def test_version(self):
         from claude_101 import __version__
 
-        assert __version__ == "0.2.1"
+        assert __version__ == "0.2.2"

@@ -51,9 +51,14 @@ Add to your `.mcp.json` (project root or `~/.claude/.mcp.json`):
 The Skill teaches Claude *when* to call each tool and *how* to use every field in the result:
 
 ```bash
-mkdir -p ~/.claude/skills
-curl -sL https://raw.githubusercontent.com/claude-world/claude-101/main/skills/claude-101-mastery.md \
-  -o ~/.claude/skills/claude-101-mastery.md
+mkdir -p ~/.claude/skills/claude-101-mastery/references
+cd ~/.claude/skills/claude-101-mastery
+BASE=https://raw.githubusercontent.com/claude-world/claude-101/main/skills/claude-101-mastery
+curl -sLO $BASE/SKILL.md
+curl -sLO $BASE/references/writing-workflows.md   --output-dir references
+curl -sLO $BASE/references/analysis-workflows.md   --output-dir references
+curl -sLO $BASE/references/coding-workflows.md     --output-dir references
+curl -sLO $BASE/references/business-workflows.md   --output-dir references
 ```
 
 **Done.** Start a new Claude Code session and just talk naturally.

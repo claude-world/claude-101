@@ -51,9 +51,14 @@ Claudeの回答：「Vueが0.2ポイント差でリード。この結果はDXの
 Skillは、Claudeに各ツールを*いつ*呼び出すか、結果の各フィールドを*どう*使うかを教えます：
 
 ```bash
-mkdir -p ~/.claude/skills
-curl -sL https://raw.githubusercontent.com/claude-world/claude-101/main/skills/claude-101-mastery.md \
-  -o ~/.claude/skills/claude-101-mastery.md
+mkdir -p ~/.claude/skills/claude-101-mastery/references
+cd ~/.claude/skills/claude-101-mastery
+BASE=https://raw.githubusercontent.com/claude-world/claude-101/main/skills/claude-101-mastery
+curl -sLO $BASE/SKILL.md
+curl -sLO $BASE/references/writing-workflows.md   --output-dir references
+curl -sLO $BASE/references/analysis-workflows.md   --output-dir references
+curl -sLO $BASE/references/coding-workflows.md     --output-dir references
+curl -sLO $BASE/references/business-workflows.md   --output-dir references
 ```
 
 **完了。** 新しいClaude Codeセッションを開始して、自然に話しかけてください。

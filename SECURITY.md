@@ -4,7 +4,8 @@
 
 | Version | Supported          |
 |---------|--------------------|
-| 0.1.x   | :white_check_mark: |
+| 0.3.x   | :white_check_mark: |
+| < 0.3   | :x:                |
 
 ## Reporting a Vulnerability
 
@@ -26,7 +27,7 @@ This project processes user-provided text locally. Key areas of concern:
 
 - **Input validation:** All tool inputs are strings/numbers — no file system access, no network calls
 - **Regex DoS:** Complex regex patterns could cause slowdowns with crafted input
-- **Dependency chain:** Only `sqlparse` and `jinja2` as runtime dependencies
+- **Dependency chain:** Only `sqlparse` (>= 0.6, which fixes several parser DoS advisories) as a runtime dependency; the optional `mcp` extra adds the MCP Python SDK 2.x for the server
 
 ## Security Design
 

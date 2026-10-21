@@ -29,11 +29,24 @@ Claude 回答：「Vue 以 0.2 分領先。此結果對 DX 權重敏感 —
 **沒有 claude-101：** Claude 猜數字和排名。
 **有了 claude-101：** Claude 使用精確計算，再針對結果進行推理。
 
+## 系統需求
+
+- Python 3.10 – 3.15
+- [uv](https://docs.astral.sh/uv/)（下方 `uvx` 安裝方式需要；也可改用 `pip` 安裝）
+- MCP 客戶端：以 [Claude Code](https://code.claude.com/docs) 為主，任何支援 stdio 的 MCP 客戶端皆可使用
+- MCP 伺服器需要 `mcp` extra，會安裝 MCP Python SDK 2.x（`mcp>=2.3`）
+
 ## 安裝（2 分鐘）
 
 ### 步驟一：加入 MCP 伺服器
 
-在 `.mcp.json`（專案根目錄或 `~/.claude/.mcp.json`）加入：
+為所有專案向 Claude Code 註冊伺服器：
+
+```bash
+claude mcp add --scope user claude-101 -- uvx --from "claude-101[mcp]" claude-101-server
+```
+
+或加入專案根目錄的 `.mcp.json`，與團隊共用：
 
 ```json
 {
@@ -62,6 +75,8 @@ curl -sLO $BASE/references/business-workflows.md   --output-dir references
 ```
 
 **完成。** 開啟新的 Claude Code session，自然對話即可。
+
+> **從 0.2.x 升級？** claude-101 0.2.x 無法搭配 MCP Python SDK 2.x 啟動，會出現 `ImportError: Install mcp extra`。0.3.0 已修正此問題。請重新啟動 MCP 客戶端，讓 `uvx` 取得新版（在 `uvx` 參數加上 `--refresh` 可強制更新），或執行 `pip install -U "claude-101[mcp]"`。
 
 ## 24 種用法
 
@@ -116,8 +131,8 @@ curl -sLO $BASE/references/business-workflows.md   --output-dir references
 也可以作為獨立命令列工具：
 
 ```bash
-# 安裝
-pip install "claude-101[mcp]"
+# 安裝（CLI 不需要 extra；MCP 伺服器請加上 [mcp]）
+pip install claude-101
 
 # 列出所有工具
 claude-101 list
@@ -125,7 +140,7 @@ claude-101 list --category analysis
 
 # 直接執行任何工具
 claude-101 draft-email "會議跟進" --tone assertive
-claude-101 --pretty analyze-data "name,score\nAlice,95\nBob,87"
+printf 'name,score\nAlice,95\nBob,87\n' | claude-101 --pretty analyze-data -
 claude-101 scaffold-proposal business "雲端遷移" --investment 100000 --annual-return 50000
 
 # 從 stdin 讀取
@@ -142,8 +157,8 @@ claude-101 draft-email --help
 from claude_101.analysis.data import analyze_data
 from claude_101.business.decision import evaluate_decision
 
-result = analyze_data("name,score\nAlice,95\nBob,87", output_format="csv", operations="all")
-result["correlations"]  # [{"column_a": "score", "column_b": "hours", "pearson_r": 0.94}]
+result = analyze_data("name,score,hours\nAlice,95,10\nBob,87,8\nCharlie,92,9", output_format="csv", operations="all")
+result["correlations"]  # [{"column_a": "score", "column_b": "hours", "pearson_r": 0.9897, "strength": "strong"}]
 
 result = evaluate_decision("A,B", "Speed,Cost", "0.6,0.4", "A:Speed=9,Cost=5;B:Speed=6,Cost=9")
 result["winner"]  # {"option": "A", "score": 7.4, "margin": 0.2}
@@ -154,7 +169,7 @@ result["winner"]  # {"option": "A", "score": 7.4, "margin": 0.2}
 ```
 claude-101/
   src/claude_101/
-    server.py           # MCP 伺服器（27 個工具，FastMCP）
+    server.py           # MCP 伺服器（27 個唯讀工具，MCP Python SDK 2.x 的 MCPServer）
     cli.py              # CLI（從函式簽名自動生成）
     _utils.py           # 14 個共用計算函式
     _guides.py          # 24 個內建使用指南
@@ -163,11 +178,11 @@ claude-101/
     coding/             # 6 個工具：codegen、review、sql、apidoc、testgen、adr
     business/           # 6 個工具：planning、interview、proposal、support、prd、decision
   skills/
-    claude-101-mastery.md  # Skill 檔案（教 Claude 如何使用全部 24 個工具）
-  tests/                   # 157 個測試，6 個測試檔
+    claude-101-mastery/    # Skill：SKILL.md + 4 個參考檔（教 Claude 如何使用全部 24 個工具）
+  tests/                   # 162 個測試，6 個測試檔
 ```
 
-**依賴：** 僅 `sqlparse`（其餘皆標準函式庫）。MCP 為可選依賴。
+**依賴：** 僅 `sqlparse`（其餘皆標準函式庫）。MCP（`mcp>=2.3`）為可選依賴，僅伺服器需要。
 
 ## 貢獻
 

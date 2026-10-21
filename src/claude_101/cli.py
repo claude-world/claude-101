@@ -316,8 +316,8 @@ def _run_serve() -> int:
         from .server import main as server_main
     except ImportError:
         print(
-            "Error: MCP dependency not installed.\n"
-            "Install it with: pip install 'claude-101[mcp]'",
+            "Error: MCP dependency (mcp>=2.3) not installed.\n"
+            "Install it with: pip install -U 'claude-101[mcp]'",
             file=sys.stderr,
         )
         return 1
@@ -347,7 +347,7 @@ def main(argv: list[str] | None = None) -> int:
 
             examples:
               claude-101 draft-email "follow-up to client meeting about Q3"
-              claude-101 analyze-code --language python < myfile.py
+              claude-101 analyze-code --language python - < myfile.py
               claude-101 scaffold-prd "TaskFlow" "Teams need better task tracking"
               echo "SELECT * FROM users" | claude-101 process-sql -
         """),

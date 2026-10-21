@@ -7,8 +7,7 @@
 ```bash
 git clone https://github.com/claude-world/claude-101.git
 cd claude-101
-pip install -e ".[all]"
-pip install pytest ruff
+pip install -e ".[all,dev]"
 ```
 
 ## 執行測試
@@ -26,7 +25,7 @@ pytest tests/test_cli.py::TestToolDispatch::test_draft_email -v
 
 ## 程式碼風格
 
-- **Linter：** `ruff check src/`
+- **Lint 與格式：** `ruff check src/ tests/` 和 `ruff format --check src/ tests/`（CI 兩者都會執行）
 - **型別標註：** 所有公開函式必須有完整 type hints
 - **文件字串：** Google 風格，包含 `Args:` 和 `Returns:` 區段
 - **無新依賴** — 除非絕對必要，優先使用標準函式庫
@@ -38,7 +37,7 @@ pytest tests/test_cli.py::TestToolDispatch::test_draft_email -v
    - 接受有型別標註的參數，回傳 `dict`
    - 執行**真實計算**（不只是回傳模板）
    - Google 風格文件字串，含 `Args:` 和 `Returns:`
-3. 在 `server.py` 用 `@mcp.tool()` 註冊包裝函式
+3. 在 `server.py` 以 `@_tool` 裝飾 async 包裝函式完成註冊（唯讀、回傳 JSON 文字的 MCP 工具）
 4. 在 `cli.py` 的 `_build_registry()` 中加入登錄
 5. 在對應測試檔新增測試
 6. 更新 `README.md` 和 `README.zh-TW.md` 的工具數量
@@ -48,7 +47,7 @@ pytest tests/test_cli.py::TestToolDispatch::test_draft_email -v
 1. Fork 此 repo，從 `main` 建立功能分支
 2. 實作變更並加入測試
 3. 確認所有測試通過：`pytest`
-4. 確認 lint 通過：`ruff check src/`
+4. 確認 lint 與格式檢查通過：`ruff check src/ tests/` 和 `ruff format --check src/ tests/`
 5. 對 `main` 開 PR，附上清楚的描述
 
 ## Commit 訊息格式

@@ -29,11 +29,24 @@ Claude writes: "Vue leads by 0.2 points. The result is sensitive to
 **Without claude-101:** Claude guesses at numbers and rankings.
 **With claude-101:** Claude uses precise computation, then reasons about the results.
 
+## Requirements
+
+- Python 3.10 – 3.15
+- [uv](https://docs.astral.sh/uv/) for the `uvx` setup below (or install with `pip`)
+- An MCP client: [Claude Code](https://code.claude.com/docs) is the primary target, but any stdio MCP client works
+- The MCP server needs the `mcp` extra, which installs the MCP Python SDK 2.x (`mcp>=2.3`)
+
 ## Setup (2 minutes)
 
 ### Step 1: Add MCP Server
 
-Add to your `.mcp.json` (project root or `~/.claude/.mcp.json`):
+Register the server with Claude Code for all your projects:
+
+```bash
+claude mcp add --scope user claude-101 -- uvx --from "claude-101[mcp]" claude-101-server
+```
+
+Or share it with your team by adding it to `.mcp.json` in your project root:
 
 ```json
 {
@@ -62,6 +75,8 @@ curl -sLO $BASE/references/business-workflows.md   --output-dir references
 ```
 
 **Done.** Start a new Claude Code session and just talk naturally.
+
+> **Upgrading from 0.2.x?** claude-101 0.2.x cannot start with the MCP Python SDK 2.x and fails with `ImportError: Install mcp extra`. Version 0.3.0 fixes this. Restart your MCP client so `uvx` picks up the new release (add `--refresh` to the `uvx` arguments to force it), or run `pip install -U "claude-101[mcp]"`.
 
 ## 24 Use Cases
 
@@ -116,8 +131,8 @@ After setup, you can simply ask Claude to do any of these — the Skill handles 
 Also works as a standalone command-line tool:
 
 ```bash
-# Install
-pip install "claude-101[mcp]"
+# Install (the CLI needs no extras; add [mcp] for the MCP server)
+pip install claude-101
 
 # List all tools
 claude-101 list
@@ -125,7 +140,7 @@ claude-101 list --category analysis
 
 # Run any tool directly
 claude-101 draft-email "meeting follow-up" --tone assertive
-claude-101 --pretty analyze-data "name,score\nAlice,95\nBob,87"
+printf 'name,score\nAlice,95\nBob,87\n' | claude-101 --pretty analyze-data -
 claude-101 scaffold-proposal business "Cloud Migration" --investment 100000 --annual-return 50000
 
 # Pipe from stdin
@@ -142,8 +157,8 @@ claude-101 draft-email --help
 from claude_101.analysis.data import analyze_data
 from claude_101.business.decision import evaluate_decision
 
-result = analyze_data("name,score\nAlice,95\nBob,87", output_format="csv", operations="all")
-result["correlations"]  # [{"column_a": "score", "column_b": "hours", "pearson_r": 0.94}]
+result = analyze_data("name,score,hours\nAlice,95,10\nBob,87,8\nCharlie,92,9", output_format="csv", operations="all")
+result["correlations"]  # [{"column_a": "score", "column_b": "hours", "pearson_r": 0.9897, "strength": "strong"}]
 
 result = evaluate_decision("A,B", "Speed,Cost", "0.6,0.4", "A:Speed=9,Cost=5;B:Speed=6,Cost=9")
 result["winner"]  # {"option": "A", "score": 7.4, "margin": 0.2}
@@ -154,7 +169,7 @@ result["winner"]  # {"option": "A", "score": 7.4, "margin": 0.2}
 ```
 claude-101/
   src/claude_101/
-    server.py           # MCP server (27 tools via FastMCP)
+    server.py           # MCP server (27 read-only tools via the MCP Python SDK 2.x MCPServer)
     cli.py              # CLI (auto-generated from function signatures)
     _utils.py           # 14 shared computation functions
     _guides.py          # 24 embedded use-case guides
@@ -163,11 +178,11 @@ claude-101/
     coding/             # 6 tools: codegen, review, sql, apidoc, testgen, adr
     business/           # 6 tools: planning, interview, proposal, support, prd, decision
   skills/
-    claude-101-mastery.md  # Skill file (teaches Claude how to use all 24 tools)
-  tests/                   # 157 tests across 6 files
+    claude-101-mastery/    # Skill: SKILL.md + 4 reference files (teaches Claude how to use all 24 tools)
+  tests/                   # 162 tests across 6 files
 ```
 
-**Dependencies:** Only `sqlparse` (everything else is stdlib). MCP is optional.
+**Dependencies:** Only `sqlparse` (everything else is stdlib). MCP (`mcp>=2.3`) is optional and only needed for the server.
 
 ## Contributing
 

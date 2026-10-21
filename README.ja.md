@@ -29,11 +29,24 @@ Claudeの回答：「Vueが0.2ポイント差でリード。この結果はDXの
 **claude-101なし：** Claudeは数値やランキングを推測。
 **claude-101あり：** Claudeは正確な計算結果を使い、その上で推論。
 
+## 動作要件
+
+- Python 3.10 – 3.15
+- [uv](https://docs.astral.sh/uv/)（下記の `uvx` によるセットアップに必要。`pip` でのインストールも可）
+- MCPクライアント：[Claude Code](https://code.claude.com/docs) が主な対象ですが、stdio対応のMCPクライアントであれば動作します
+- MCPサーバーには `mcp` extra が必要です（MCP Python SDK 2.x、`mcp>=2.3` をインストール）
+
 ## セットアップ（2分）
 
 ### ステップ1：MCPサーバーを追加
 
-`.mcp.json`（プロジェクトルートまたは `~/.claude/.mcp.json`）に追加：
+すべてのプロジェクトで使えるようにClaude Codeへ登録：
+
+```bash
+claude mcp add --scope user claude-101 -- uvx --from "claude-101[mcp]" claude-101-server
+```
+
+またはプロジェクトルートの `.mcp.json` に追加してチームで共有：
 
 ```json
 {
@@ -62,6 +75,8 @@ curl -sLO $BASE/references/business-workflows.md   --output-dir references
 ```
 
 **完了。** 新しいClaude Codeセッションを開始して、自然に話しかけてください。
+
+> **0.2.xからアップグレードする場合：** claude-101 0.2.xはMCP Python SDK 2.xでは起動できず、`ImportError: Install mcp extra` で失敗します。0.3.0で修正済みです。MCPクライアントを再起動して `uvx` に新しいリリースを取得させてください（`uvx` の引数に `--refresh` を加えると強制的に更新されます）。または `pip install -U "claude-101[mcp]"` を実行してください。
 
 ## 24のユースケース
 
@@ -116,8 +131,8 @@ curl -sLO $BASE/references/business-workflows.md   --output-dir references
 スタンドアロンのコマンドラインツールとしても使用可能：
 
 ```bash
-# インストール
-pip install "claude-101[mcp]"
+# インストール（CLIにextraは不要。MCPサーバーには[mcp]を追加）
+pip install claude-101
 
 # 全ツール一覧
 claude-101 list
@@ -125,7 +140,7 @@ claude-101 list --category analysis
 
 # 任意のツールを直接実行
 claude-101 draft-email "meeting follow-up" --tone assertive
-claude-101 --pretty analyze-data "name,score\nAlice,95\nBob,87"
+printf 'name,score\nAlice,95\nBob,87\n' | claude-101 --pretty analyze-data -
 claude-101 scaffold-proposal business "Cloud Migration" --investment 100000 --annual-return 50000
 
 # stdinからパイプ
@@ -142,8 +157,8 @@ claude-101 draft-email --help
 from claude_101.analysis.data import analyze_data
 from claude_101.business.decision import evaluate_decision
 
-result = analyze_data("name,score\nAlice,95\nBob,87", output_format="csv", operations="all")
-result["correlations"]  # [{"column_a": "score", "column_b": "hours", "pearson_r": 0.94}]
+result = analyze_data("name,score,hours\nAlice,95,10\nBob,87,8\nCharlie,92,9", output_format="csv", operations="all")
+result["correlations"]  # [{"column_a": "score", "column_b": "hours", "pearson_r": 0.9897, "strength": "strong"}]
 
 result = evaluate_decision("A,B", "Speed,Cost", "0.6,0.4", "A:Speed=9,Cost=5;B:Speed=6,Cost=9")
 result["winner"]  # {"option": "A", "score": 7.4, "margin": 0.2}
@@ -154,7 +169,7 @@ result["winner"]  # {"option": "A", "score": 7.4, "margin": 0.2}
 ```
 claude-101/
   src/claude_101/
-    server.py           # MCPサーバー（27ツール、FastMCP）
+    server.py           # MCPサーバー（27の読み取り専用ツール、MCP Python SDK 2.xのMCPServer）
     cli.py              # CLI（関数シグネチャから自動生成）
     _utils.py           # 14の共有計算関数
     _guides.py          # 24の組み込みユースケースガイド
@@ -163,11 +178,11 @@ claude-101/
     coding/             # 6ツール：codegen、review、sql、apidoc、testgen、adr
     business/           # 6ツール：planning、interview、proposal、support、prd、decision
   skills/
-    claude-101-mastery.md  # Skillファイル（24ツール全ての使い方をClaudeに教える）
-  tests/                   # 157テスト、6テストファイル
+    claude-101-mastery/    # Skill：SKILL.md + 4つのリファレンスファイル（24ツール全ての使い方をClaudeに教える）
+  tests/                   # 162テスト、6テストファイル
 ```
 
-**依存関係：** `sqlparse`のみ（それ以外は標準ライブラリ）。MCPはオプション。
+**依存関係：** `sqlparse`のみ（それ以外は標準ライブラリ）。MCP（`mcp>=2.3`）はオプションで、サーバー利用時のみ必要です。
 
 ## コントリビュート
 

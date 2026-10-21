@@ -5,10 +5,12 @@ from __future__ import annotations
 import json
 
 try:
-    from mcp.server.fastmcp import FastMCP
+    from mcp.server.mcpserver import MCPServer
+    from mcp.types import ToolAnnotations
 except ImportError:
-    raise ImportError("Install mcp extra: pip install 'claude-101[mcp]'")
+    raise ImportError("Install mcp extra (mcp>=2.3): pip install -U 'claude-101[mcp]'")
 
+from . import __version__
 from ._guides import (
     list_guides as _list_guides,
     get_guide as _get_guide,
@@ -48,7 +50,17 @@ from .business.prd import scaffold_prd as _scaffold_prd
 from .business.decision import evaluate_decision as _evaluate_decision
 
 
-mcp = FastMCP("claude-101")
+mcp = MCPServer("claude-101", version=__version__)
+
+# Every tool is a local computation (no network, no file access) that returns
+# JSON text, so it is advertised as read-only and registered without the
+# redundant {"result": "<json>"} structured copy of that text.
+_READ_ONLY = ToolAnnotations(read_only_hint=True, open_world_hint=False)
+
+
+def _tool(fn):
+    """Register fn as a read-only MCP tool with a plain-text JSON result."""
+    return mcp.tool(annotations=_READ_ONLY, structured_output=False)(fn)
 
 
 def _json(data: dict | list) -> str:
@@ -58,7 +70,7 @@ def _json(data: dict | list) -> str:
 # ── Meta Tools ──────────────────────────────────────────────────────────────
 
 
-@mcp.tool()
+@_tool
 async def list_guides(category: str = "") -> str:
     """List all 24 Claude AI use-case guides.
 
@@ -71,7 +83,7 @@ async def list_guides(category: str = "") -> str:
     return _json(_list_guides(category or None))
 
 
-@mcp.tool()
+@_tool
 async def get_guide(guide_id: int) -> str:
     """Get full details of a specific guide.
 
@@ -87,7 +99,7 @@ async def get_guide(guide_id: int) -> str:
     return _json(guide)
 
 
-@mcp.tool()
+@_tool
 async def search_guides(query: str, category: str = "") -> str:
     """Search guides by keyword.
 
@@ -105,7 +117,7 @@ async def search_guides(query: str, category: str = "") -> str:
 # ── Writing & Communication ─────────────────────────────────────────────────
 
 
-@mcp.tool()
+@_tool
 async def draft_email(
     context: str,
     tone: str = "professional",
@@ -124,7 +136,7 @@ async def draft_email(
     return _json(_draft_email(context, tone, output_format))
 
 
-@mcp.tool()
+@_tool
 async def draft_blog_post(
     topic: str,
     target_words: int = 1500,
@@ -143,7 +155,7 @@ async def draft_blog_post(
     return _json(_draft_blog_post(topic, target_words, style))
 
 
-@mcp.tool()
+@_tool
 async def parse_meeting_notes(
     raw_notes: str,
     output_format: str = "structured",
@@ -160,7 +172,7 @@ async def parse_meeting_notes(
     return _json(_parse_meeting_notes(raw_notes, output_format))
 
 
-@mcp.tool()
+@_tool
 async def format_social_content(
     text: str,
     platform: str = "twitter",
@@ -179,7 +191,7 @@ async def format_social_content(
     return _json(_format_social_content(text, platform, include_hashtags))
 
 
-@mcp.tool()
+@_tool
 async def scaffold_tech_doc(
     doc_type: str,
     title: str,
@@ -200,7 +212,7 @@ async def scaffold_tech_doc(
     return _json(_scaffold_tech_doc(doc_type, title, sections, content))
 
 
-@mcp.tool()
+@_tool
 async def structure_story(
     genre: str = "general",
     elements: str = "",
@@ -224,7 +236,7 @@ async def structure_story(
 # ── Analysis & Research ──────────────────────────────────────────────────────
 
 
-@mcp.tool()
+@_tool
 async def analyze_data(
     data: str,
     output_format: str = "csv",
@@ -243,7 +255,7 @@ async def analyze_data(
     return _json(_analyze_data(data, output_format, operations))
 
 
-@mcp.tool()
+@_tool
 async def summarize_document(
     text: str,
     max_sentences: int = 5,
@@ -260,7 +272,7 @@ async def summarize_document(
     return _json(_summarize_document(text, max_sentences))
 
 
-@mcp.tool()
+@_tool
 async def build_comparison_matrix(
     items: str,
     criteria: str,
@@ -281,7 +293,7 @@ async def build_comparison_matrix(
     return _json(_build_comparison_matrix(items, criteria, weights, scores))
 
 
-@mcp.tool()
+@_tool
 async def analyze_survey(
     data: str,
     scale_max: int = 5,
@@ -298,7 +310,7 @@ async def analyze_survey(
     return _json(_analyze_survey(data, scale_max))
 
 
-@mcp.tool()
+@_tool
 async def analyze_financials(
     data: str,
     period: str = "quarterly",
@@ -315,7 +327,7 @@ async def analyze_financials(
     return _json(_analyze_financials(data, period))
 
 
-@mcp.tool()
+@_tool
 async def review_legal_document(
     text: str,
     doc_type: str = "contract",
@@ -335,7 +347,7 @@ async def review_legal_document(
 # ── Coding & Technical ───────────────────────────────────────────────────────
 
 
-@mcp.tool()
+@_tool
 async def scaffold_code(
     language: str,
     pattern: str,
@@ -356,7 +368,7 @@ async def scaffold_code(
     return _json(_scaffold_code(language, pattern, name, description))
 
 
-@mcp.tool()
+@_tool
 async def analyze_code(
     code: str,
     language: str = "auto",
@@ -373,7 +385,7 @@ async def analyze_code(
     return _json(_analyze_code(code, language))
 
 
-@mcp.tool()
+@_tool
 async def process_sql(
     query: str,
     operation: str = "format",
@@ -392,7 +404,7 @@ async def process_sql(
     return _json(_process_sql(query, operation, dialect))
 
 
-@mcp.tool()
+@_tool
 async def scaffold_api_doc(
     endpoints: str,
     title: str = "API Reference",
@@ -413,7 +425,7 @@ async def scaffold_api_doc(
     return _json(_scaffold_api_doc(endpoints, title, output_format, code))
 
 
-@mcp.tool()
+@_tool
 async def generate_test_cases(
     function_signature: str,
     language: str = "python",
@@ -432,7 +444,7 @@ async def generate_test_cases(
     return _json(_generate_test_cases(function_signature, language, strategy))
 
 
-@mcp.tool()
+@_tool
 async def create_adr(
     title: str,
     context: str,
@@ -456,7 +468,7 @@ async def create_adr(
 # ── Business & Productivity ──────────────────────────────────────────────────
 
 
-@mcp.tool()
+@_tool
 async def plan_project(
     description: str,
     team_size: int = 1,
@@ -475,7 +487,7 @@ async def plan_project(
     return _json(_plan_project(description, team_size, duration_weeks))
 
 
-@mcp.tool()
+@_tool
 async def prepare_interview(
     role: str,
     level: str = "mid",
@@ -498,7 +510,7 @@ async def prepare_interview(
     return _json(_prepare_interview(role, level, focus, job_description, response))
 
 
-@mcp.tool()
+@_tool
 async def scaffold_proposal(
     type: str,
     title: str,
@@ -525,7 +537,7 @@ async def scaffold_proposal(
     )
 
 
-@mcp.tool()
+@_tool
 async def build_support_response(
     issue: str,
     channel: str = "email",
@@ -546,7 +558,7 @@ async def build_support_response(
     return _json(_build_support_response(issue, channel, tone, draft_response))
 
 
-@mcp.tool()
+@_tool
 async def scaffold_prd(
     product_name: str,
     problem: str,
@@ -565,7 +577,7 @@ async def scaffold_prd(
     return _json(_scaffold_prd(product_name, problem, target_users))
 
 
-@mcp.tool()
+@_tool
 async def evaluate_decision(
     options: str,
     criteria: str,

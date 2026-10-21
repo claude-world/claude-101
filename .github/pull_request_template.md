@@ -13,7 +13,7 @@
 ## Checklist
 
 - [ ] All tests pass (`pytest`)
-- [ ] Lint passes (`ruff check src/`)
+- [ ] Lint and format pass (`ruff check src/ tests/`, `ruff format --check src/ tests/`)
 - [ ] New tool registered in both `server.py` and `cli.py`
 - [ ] Tests added for new functionality
 - [ ] README updated (if adding/changing tools)

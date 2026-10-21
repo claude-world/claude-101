@@ -57,7 +57,7 @@
 1. Understand `issue_classification` category, severity, sentiment
 2. If `escalation_risk` is high/critical, recommend escalation immediately
 3. Set expectations using `resolution_estimate`
-4. If `customer_effort.repeat_contact` is true, acknowledge frustration explicitly
+4. If `customer_effort.repeat_contact_signals` is true, acknowledge frustration explicitly
 5. Improve draft based on `response_quality` scores (if draft provided)
 6. Use `response_scaffold` as structural guide (not verbatim)
 7. Weave `empathy_phrases` naturally into the response

@@ -1,6 +1,6 @@
 ---
 name: claude-101-mastery
-description: Provides optimal workflows for 24 use cases (writing, analysis, coding, business) powered by the claude-101 MCP server. Calls the matching MCP tool to obtain structured methodology and computed metrics, then produces output grounded in real data.
+description: Provides optimal workflows for 24 use cases (writing, analysis, coding, business) powered by the claude-101 MCP server. Calls the matching MCP tool to obtain structured methodology and computed metrics, then produces output grounded in real data. Use when the user asks to draft an email, blog post, social post, technical doc, or story; organize meeting notes; analyze CSV, survey, or financial data; summarize a document or review a contract; compare options or make a decision; scaffold, review, or test code; format or explain SQL; write API docs or an architecture decision record; plan a project; prepare for an interview; or write a proposal, PRD, or customer support reply.
 allowed-tools:
   - mcp__claude-101__draft_email
   - mcp__claude-101__draft_blog_post
@@ -78,7 +78,7 @@ When the tool returns both a template/scaffold AND computed analysis, use the te
 | Summarize a document | `summarize_document` | `key_sentences` (scored), `flesch_score`, `flesch_grade`, `keywords`, `reading_time_minutes` |
 | Compare options or competitors | `build_comparison_matrix` | `rankings` (weighted scores), `winner` (option + margin), `sensitivity_framework` |
 | Analyze survey results | `analyze_survey` | `questions` (per-question mean, median, distribution), `nps` (promoter/passive/detractor), `overall_satisfaction` |
-| Review financial data | `analyze_financials` | `margins` (gross, operating, net), `growth_rates`, `burn_rate`, `cash_runway`, `summary` |
+| Review financial data | `analyze_financials` | `margins` (gross, operating, net), `growth_rates`, `burn_rate` (monthly burn + `runway_months`, only when costs exceed revenue), `summary` |
 | Review legal document | `review_legal_document` | `clauses_found` (type + risk level + snippet), `missing_clauses`, `complexity_score` |
 
 ### Coding and Technical

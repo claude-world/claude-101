@@ -7,8 +7,7 @@ Thanks for your interest in contributing! Here's how to get started.
 ```bash
 git clone https://github.com/claude-world/claude-101.git
 cd claude-101
-pip install -e ".[all]"
-pip install pytest ruff
+pip install -e ".[all,dev]"
 ```
 
 ## Running Tests
@@ -26,7 +25,7 @@ pytest tests/test_cli.py::TestToolDispatch::test_draft_email -v
 
 ## Code Style
 
-- **Linter:** `ruff check src/`
+- **Lint and format:** `ruff check src/ tests/` and `ruff format --check src/ tests/` (CI runs both)
 - **Type hints:** All public functions must have type annotations
 - **Docstrings:** Google-style with `Args:` and `Returns:` sections
 - **No new dependencies** unless absolutely necessary — prefer stdlib
@@ -38,7 +37,7 @@ pytest tests/test_cli.py::TestToolDispatch::test_draft_email -v
    - Accept typed parameters and return `dict`
    - Perform **real computation** (not just return templates)
    - Have a Google-style docstring with `Args:` and `Returns:`
-3. Register in `server.py` with `@mcp.tool()` wrapper
+3. Register in `server.py` with an async wrapper decorated with `@_tool` (a read-only MCP tool that returns JSON text)
 4. Add to `cli.py` registry in `_build_registry()`
 5. Add tests in the corresponding test file
 6. Update the tool count in `README.md` and `__init__.py`
@@ -48,7 +47,7 @@ pytest tests/test_cli.py::TestToolDispatch::test_draft_email -v
 1. Fork the repo and create a feature branch from `main`
 2. Make your changes with tests
 3. Ensure all tests pass: `pytest`
-4. Ensure lint passes: `ruff check src/`
+4. Ensure lint and format pass: `ruff check src/ tests/` and `ruff format --check src/ tests/`
 5. Open a PR against `main` with a clear description
 
 ## Commit Messages

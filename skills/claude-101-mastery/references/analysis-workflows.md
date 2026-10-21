@@ -62,7 +62,7 @@
 **Workflow:**
 1. Report `margins` (gross, operating, net) with trends
 2. Highlight `growth_rates` for revenue
-3. Flag `burn_rate` / `cash_runway` if concerning
+3. Flag `burn_rate` (`monthly`, `runway_months`) if concerning — it is only present when costs exceed revenue
 4. Reference `summary` best/worst periods and overall trend
 5. Write executive summary with actionable recommendations
 
